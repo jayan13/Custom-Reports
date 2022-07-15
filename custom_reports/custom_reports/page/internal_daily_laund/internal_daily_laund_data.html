@@ -56,19 +56,15 @@
 	<br><br>
 	<p class="pg-title">Daily Laundry Summary Report</p>
 	<table>
-		<tr><td width="20%">Bill No</td><td width="20%">Total Pieces</td><td width="20%">Credit</td><td width="20%">Room No</td></tr>
+		<tr><td width="20%">Bill No</td><td width="20%">Total Pieces</td><td width="20%">Credit</td><td width="20%">Room No</td><td>Date</td></tr>
 		{% for itm in items%}
 		<tr><td>{{itm.name}}</td><td>{{itm.total_qty}}</td><td>{{itm.grand_total}}</td><td>
-			{% if itm.po_no%}
-				{{itm.po_no}}
-			{% else %}
-				{{itm.posting_date}}
-			{% endif %}
-		</td></tr>
+			{{itm.po_no}}
+		</td><td>{{itm.posting_date}}</td></tr>
 		{%endfor%}
 		
 		{% for itm in items_total%}
-		<tr><td>TOTAL</td><td>{{itm.total_qty}}</td><td>{{itm.grand_total}}</td><td></td></tr>
+		<tr><td>TOTAL</td><td>{{itm.total_qty}}</td><td>{{itm.grand_total}}</td><td></td><td></td></tr>
 		{%endfor%}
 	</table>
 	</div>
