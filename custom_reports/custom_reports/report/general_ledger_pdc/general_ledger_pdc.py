@@ -260,6 +260,10 @@ def get_gl_entries(filters, accounting_dimensions):
 							gl_entries.pop(i)
 						else:
 							gl.pdc_value=int(gl.debit) or gl.credit
+							gl.debit=0 
+							gl.debit_in_account_currency=0
+							gl.credit=0
+							gl.credit_in_account_currency=0
 
 				if gl.voucher_type=='Journal Entry' and gl.party_type=="Supplier":
 					cheque_status=frappe.db.get_value('Payable Cheques', {'journal_entry': gl.voucher_no}, ['cheque_status'])
@@ -274,6 +278,10 @@ def get_gl_entries(filters, accounting_dimensions):
 							gl_entries.pop(i)
 						else:
 							gl.pdc_value=int(gl.debit) or gl.credit
+							gl.debit=0 
+							gl.debit_in_account_currency=0
+							gl.credit=0
+							gl.credit_in_account_currency=0
 
 				if gl.voucher_type=='Payment Entry' and gl.party_type=="Customer":
 					cheque_status=frappe.db.get_value('Receivable Cheques', {'payment_entry': gl.voucher_no}, ['cheque_status'])
@@ -288,6 +296,10 @@ def get_gl_entries(filters, accounting_dimensions):
 							gl_entries.pop(i)
 						else:
 							gl.pdc_value=int(gl.debit) or gl.credit
+							gl.debit=0 
+							gl.debit_in_account_currency=0
+							gl.credit=0
+							gl.credit_in_account_currency=0
 
 				if gl.voucher_type=='Payment Entry' and gl.party_type=="Supplier":
 					cheque_status=frappe.db.get_value('Payable Cheques', {'payment_entry': gl.voucher_no}, ['cheque_status'])
@@ -302,6 +314,10 @@ def get_gl_entries(filters, accounting_dimensions):
 							gl_entries.pop(i)
 						else:
 							gl.pdc_value=int(gl.debit) or gl.credit
+							gl.debit=0 
+							gl.debit_in_account_currency=0
+							gl.credit=0
+							gl.credit_in_account_currency=0
 				i+=1
 						
 	#frappe.msgprint(str(gl_entries))
@@ -484,6 +500,8 @@ def get_accountwise_gle(filters, accounting_dimensions, gl_entries, gle_map):
 	def update_value_in_dict(data, key, gle):
 		data[key].debit += gle.debit
 		data[key].credit += gle.credit
+		data[key].pdc_value = float(data[key].pdc_value or 0)+float(gle.pdc_value or 0)  
+		
 
 		data[key].debit_in_account_currency += gle.debit_in_account_currency
 		data[key].credit_in_account_currency += gle.credit_in_account_currency
@@ -566,7 +584,7 @@ def get_result_as_list(data, filters):
 		if not d.get('posting_date'):
 			balance, balance_in_account_currency = 0, 0
 		if d['account']!='PDC on hand':
-			balance = get_balance(d, balance, 'debit', 'credit')
+			balance = get_balance(d, balance, 'debit', 'credit',filters)
 			d['balance'] = balance
 
 		d['account_currency'] = filters.account_currency
@@ -582,8 +600,11 @@ def get_supplier_invoice_details():
 
 	return inv_details
 
-def get_balance(row, balance, debit_field, credit_field):
-	balance += (row.get(debit_field, 0) -  row.get(credit_field, 0))
+def get_balance(row, balance, debit_field, credit_field,filters):
+	if not filters.get("exclude_pdc"):
+		balance += (row.get(debit_field, 0) -  row.get(credit_field, 0)-  float(row.get('pdc_value', 0)))
+	else:	
+		balance += (row.get(debit_field, 0) -  row.get(credit_field, 0))
 
 	return balance
 
