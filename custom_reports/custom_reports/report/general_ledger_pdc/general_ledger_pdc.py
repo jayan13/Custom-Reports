@@ -242,11 +242,13 @@ def get_gl_entries(filters, accounting_dimensions):
 	#modified for pdc supplier and customer account ledger
 	global pdc_total
 	pdc_total=0
+	pdc=[]
+
 	if filters.get("party_type"):
 		ap=frappe.db.get_global('installed_apps')
 		if "cheque_management" in ap:
-			i=0
 			for gl in gl_entries:
+				del_r=0							
 				if gl.voucher_type=='Journal Entry' and gl.party_type=="Customer":
 					cheque_status=frappe.db.get_value('Receivable Cheques', {'journal_entry': gl.voucher_no}, ['cheque_status'])
 					if cheque_status=='Cheque Realized':						
@@ -254,10 +256,11 @@ def get_gl_entries(filters, accounting_dimensions):
 						gl.debit_in_account_currency=0
 						gl.credit=0
 						gl.credit_in_account_currency=0
+						del_r=1
 					elif cheque_status=='Cheque Received':
 						if filters.get("exclude_pdc"):							
 							pdc_total+=gl.debit or gl.credit
-							gl_entries.pop(i)
+							del_r=1
 						else:
 							gl.pdc_value=int(gl.debit) or gl.credit
 							gl.debit=0 
@@ -272,10 +275,11 @@ def get_gl_entries(filters, accounting_dimensions):
 						gl.debit_in_account_currency=0
 						gl.credit=0
 						gl.credit_in_account_currency=0
+						del_r=1
 					elif cheque_status=='Cheque Issued':
 						if filters.get("exclude_pdc"):							
 							pdc_total+=gl.debit or gl.credit
-							gl_entries.pop(i)
+							del_r=1
 						else:
 							gl.pdc_value=int(gl.debit) or gl.credit
 							gl.debit=0 
@@ -283,17 +287,18 @@ def get_gl_entries(filters, accounting_dimensions):
 							gl.credit=0
 							gl.credit_in_account_currency=0
 
-				if gl.voucher_type=='Payment Entry' and gl.party_type=="Customer":
+				if gl.voucher_type=='Payment Entry' and gl.party_type=="Customer":										
 					cheque_status=frappe.db.get_value('Receivable Cheques', {'payment_entry': gl.voucher_no}, ['cheque_status'])
 					if cheque_status=='Cheque Realized':						
 						gl.debit=0 
 						gl.debit_in_account_currency=0
 						gl.credit=0
 						gl.credit_in_account_currency=0
-					elif cheque_status=='Cheque Received':
+						del_r=1
+					elif cheque_status=='Cheque Received':						
 						if filters.get("exclude_pdc"):							
 							pdc_total+=gl.debit or gl.credit
-							gl_entries.pop(i)
+							del_r=1
 						else:
 							gl.pdc_value=int(gl.debit) or gl.credit
 							gl.debit=0 
@@ -308,19 +313,23 @@ def get_gl_entries(filters, accounting_dimensions):
 						gl.debit_in_account_currency=0
 						gl.credit=0
 						gl.credit_in_account_currency=0
+						del_r=1
 					elif cheque_status=='Cheque Issued':
 						if filters.get("exclude_pdc"):							
-							pdc_total+=gl.debit or gl.credit
-							gl_entries.pop(i)
+							pdc_total+=gl.debit or gl.credit							
+							del_r=1
 						else:
 							gl.pdc_value=int(gl.debit) or gl.credit
 							gl.debit=0 
 							gl.debit_in_account_currency=0
 							gl.credit=0
 							gl.credit_in_account_currency=0
-				i+=1
-						
-	#frappe.msgprint(str(gl_entries))
+				
+				if del_r==0:
+					pdc.append(gl)
+
+			gl_entries=pdc
+			
 						
 	if filters.get('presentation_currency'):
 		return convert_to_presentation_currency(gl_entries, currency_map, filters.get('company'))
