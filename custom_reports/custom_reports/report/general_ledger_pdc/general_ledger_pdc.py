@@ -249,8 +249,7 @@ def get_gl_entries(filters, accounting_dimensions):
 			for gl in gl_entries:
 				if gl.voucher_type=='Journal Entry' and gl.party_type=="Customer":
 					cheque_status=frappe.db.get_value('Receivable Cheques', {'journal_entry': gl.voucher_no}, ['cheque_status'])
-					if cheque_status=='Cheque Realized':
-						gl.pdc_value=int(gl.debit) or gl.credit
+					if cheque_status=='Cheque Realized':						
 						gl.debit=0 
 						gl.debit_in_account_currency=0
 						gl.credit=0
@@ -264,8 +263,7 @@ def get_gl_entries(filters, accounting_dimensions):
 
 				if gl.voucher_type=='Journal Entry' and gl.party_type=="Supplier":
 					cheque_status=frappe.db.get_value('Payable Cheques', {'journal_entry': gl.voucher_no}, ['cheque_status'])
-					if cheque_status=='Cheque Deducted':
-						gl.pdc_value=int(gl.debit) or gl.credit
+					if cheque_status=='Cheque Deducted':						
 						gl.debit=0 
 						gl.debit_in_account_currency=0
 						gl.credit=0
@@ -293,8 +291,7 @@ def get_gl_entries(filters, accounting_dimensions):
 
 				if gl.voucher_type=='Payment Entry' and gl.party_type=="Supplier":
 					cheque_status=frappe.db.get_value('Payable Cheques', {'payment_entry': gl.voucher_no}, ['cheque_status'])
-					if cheque_status=='Cheque Deducted':
-						gl.pdc_value=int(gl.debit) or gl.credit
+					if cheque_status=='Cheque Deducted':						
 						gl.debit=0 
 						gl.debit_in_account_currency=0
 						gl.credit=0
