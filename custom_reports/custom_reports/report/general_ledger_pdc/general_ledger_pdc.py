@@ -245,61 +245,63 @@ def get_gl_entries(filters, accounting_dimensions):
 	if filters.get("party_type"):
 		ap=frappe.db.get_global('installed_apps')
 		if "cheque_management" in ap:
+			i=0
 			for gl in gl_entries:
 				if gl.voucher_type=='Journal Entry' and gl.party_type=="Customer":
 					cheque_status=frappe.db.get_value('Receivable Cheques', {'journal_entry': gl.voucher_no}, ['cheque_status'])
 					if cheque_status=='Cheque Realized':
-						if filters.get("include_pdc"):
-							gl.pdc_value=int(gl.debit) or gl.credit
-						else:
-							pdc_total+=gl.debit or gl.credit
-
+						gl.pdc_value=int(gl.debit) or gl.credit
 						gl.debit=0 
 						gl.debit_in_account_currency=0
 						gl.credit=0
 						gl.credit_in_account_currency=0
-
+					elif cheque_status=='Cheque Received':
+						if filters.get("exclude_pdc"):							
+							pdc_total+=gl.debit or gl.credit
+							gl_entries.pop(i)
 
 				if gl.voucher_type=='Journal Entry' and gl.party_type=="Supplier":
 					cheque_status=frappe.db.get_value('Payable Cheques', {'journal_entry': gl.voucher_no}, ['cheque_status'])
 					if cheque_status=='Cheque Deducted':
-						if filters.get("include_pdc"):
-							gl.pdc_value=int(gl.debit) or gl.credit
-						else:
-							pdc_total+=gl.debit or gl.credit
-
+						gl.pdc_value=int(gl.debit) or gl.credit
 						gl.debit=0 
 						gl.debit_in_account_currency=0
 						gl.credit=0
 						gl.credit_in_account_currency=0
+					elif cheque_status=='Cheque Issued':
+						if filters.get("exclude_pdc"):							
+							pdc_total+=gl.debit or gl.credit
+							gl_entries.pop(i)
 
 				if gl.voucher_type=='Payment Entry' and gl.party_type=="Customer":
 					cheque_status=frappe.db.get_value('Receivable Cheques', {'payment_entry': gl.voucher_no}, ['cheque_status'])
 					if cheque_status=='Cheque Realized':
-						if filters.get("include_pdc"):
-							gl.pdc_value=int(gl.debit) or gl.credit
-						else:
-							pdc_total+=gl.debit or gl.credit
-
+						gl.pdc_value=int(gl.debit) or gl.credit
 						gl.debit=0 
 						gl.debit_in_account_currency=0
 						gl.credit=0
 						gl.credit_in_account_currency=0
+					elif cheque_status=='Cheque Received':
+						if filters.get("exclude_pdc"):							
+							pdc_total+=gl.debit or gl.credit
+							gl_entries.pop(i)
 
 
 				if gl.voucher_type=='Payment Entry' and gl.party_type=="Supplier":
 					cheque_status=frappe.db.get_value('Payable Cheques', {'payment_entry': gl.voucher_no}, ['cheque_status'])
 					if cheque_status=='Cheque Deducted':
-						if filters.get("include_pdc"):
-							gl.pdc_value=int(gl.debit) or gl.credit
-						else:
-							pdc_total+=gl.debit or gl.credit
-
+						gl.pdc_value=int(gl.debit) or gl.credit
 						gl.debit=0 
 						gl.debit_in_account_currency=0
 						gl.credit=0
 						gl.credit_in_account_currency=0
-
+					elif cheque_status=='Cheque Issued':
+						if filters.get("exclude_pdc"):							
+							pdc_total+=gl.debit or gl.credit
+							gl_entries.pop(i)
+				i+=1
+						
+	#frappe.msgprint(str(gl_entries))
 						
 	if filters.get('presentation_currency'):
 		return convert_to_presentation_currency(gl_entries, currency_map, filters.get('company'))
@@ -429,7 +431,7 @@ def get_data_with_opening_closing(filters, account_details, accounting_dimension
 	data.append(totals.closing)
 
 	#pdc
-	if not filters.get("include_pdc"):
+	if filters.get("exclude_pdc"):
 		data.append({'account': "PDC on hand", 'debit': pdc_total, 'credit': 0, 'debit_in_account_currency': 0, 'credit_in_account_currency': 0, 'balance': 0, 'account_currency': 'AED', 'bill_no': ''})
 
 	return data
@@ -632,7 +634,7 @@ def get_columns(filters):
 			"width": 100
 		}		
 	]
-	if filters.get("include_pdc"):
+	if not filters.get("exclude_pdc"):
 		columns.extend([
 			{
 				"label": _("PDC Value ({0})").format(currency),

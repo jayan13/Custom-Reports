@@ -216,8 +216,8 @@ frappe.query_reports["General Ledger PDC"] = {
 			"fieldtype": "Check"
 		},
 		{
-			"fieldname": "include_pdc",
-			"label": __("Include PDC"),
+			"fieldname": "exclude_pdc",
+			"label": __("Exclude PDC"),
 			"fieldtype": "Check"
 		}
 	]

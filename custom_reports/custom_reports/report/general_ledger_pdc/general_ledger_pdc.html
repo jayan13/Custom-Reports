@@ -29,6 +29,9 @@
 			<th >{%= __("Party") %}</th>
 			<th style="width: 10%">{%= __("Debit") %}</th>
 			<th style="width: 10%">{%= __("Credit") %}</th>
+			{% if not filters.exclude_pdc %}
+			<th style="width: 10%">{%= __("PDC Value") %}</th>
+			{% endif %}
 			<th style="width: 10%">{%= __("Balance (Dr - Cr)") %} T</th>
 		</tr>
 	</thead>
@@ -55,6 +58,10 @@
 						{%= format_currency(data[i].debit, filters.presentation_currency) %}</td>
 					<td style="text-align: right">
 						{%= format_currency(data[i].credit, filters.presentation_currency) %}</td>
+						{% if not filters.exclude_pdc %}
+						<td style="text-align: right">
+							{%= format_currency(data[i].pdc_value, filters.presentation_currency) %}</td>
+						{% endif %}
 			{% } else { %}
 				<td></td>
 				<td></td>
@@ -65,6 +72,10 @@
 				<td style="text-align: right">
 					{%= data[i].account && format_currency(data[i].credit, filters.presentation_currency) %}
 				</td>
+				{% if not filters.exclude_pdc %}
+						<td style="text-align: right">
+							{%= format_currency(data[i].pdc_value, filters.presentation_currency) %}</td>
+						{% endif %}
 			{% } %}
 				<td style="text-align: right">
 					{%= format_currency(data[i].balance, filters.presentation_currency) %}
