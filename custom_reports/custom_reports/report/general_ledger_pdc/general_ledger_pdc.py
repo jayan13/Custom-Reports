@@ -738,15 +738,16 @@ def get_columns(filters):
 			"width": 100
 		}		
 	]
-	if not filters.get("exclude_pdc"):
-		columns.extend([
-			{
-				"label": _("PDC Value ({0})").format(currency),
-				"fieldname": "pdc_value",
-				"fieldtype": "Float",
-				"width": 130
-			}]
-		)
+	if filters.get("party_type") in ['Customer','Supplier']:
+		if not filters.get("exclude_pdc"):
+			columns.extend([
+				{
+					"label": _("PDC Value ({0})").format(currency),
+					"fieldname": "pdc_value",
+					"fieldtype": "Float",
+					"width": 130
+				}]
+			)
 	columns.extend([
 		{
 			"label": _("Balance ({0})").format(currency),
