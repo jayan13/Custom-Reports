@@ -3,6 +3,7 @@
 
 
 from collections import OrderedDict
+from distutils.log import debug
 
 import frappe
 from frappe import _, _dict
@@ -237,13 +238,83 @@ def get_gl_entries(filters, accounting_dimensions):
 			dimension_fields=dimension_fields, select_fields=select_fields, conditions=get_conditions(filters), distributed_cost_center_query=distributed_cost_center_query,
 			order_by_statement=order_by_statement
 		),
-		filters, as_dict=1)
+		filters, as_dict=1,debug=0)
+	
+	# get each item of je from je item , GL entries are consolidated by cost center value
+	uncons=[]
+	jeno=[]
+	if filters.get("account"):		
+		for gl in gl_entries:
+			if gl.voucher_type=='Journal Entry':
+				if gl.get('voucher_no') not in jeno:					
+					jeno.append(gl.get('voucher_no'))
+					acc="','".join(filters.get("account"))
+					jeacc=frappe.db.sql(" select * from `tabJournal Entry Account` where parent='{pare}' and account in ('{acc}')".format(pare=gl.get('voucher_no'),acc=acc),as_dict=1)
+					for jei in jeacc:												
+						ne={}
+						ne['gl_entry']=gl.gl_entry						
+						ne['posting_date']=str(gl.posting_date)
+						ne['voucher_date']=str(gl.voucher_date)
+						ne['pdc_value']=gl.pdc_value or '0'
+						ne['account']=gl.account
+						ne['party_type']=gl.party_type or ''
+						ne['party']=gl.party or ''
+						ne['voucher_type']=gl.voucher_type
+						ne['voucher_no']=gl.voucher_no
+						ne['cost_center']=gl.cost_center or ''
+						ne['project']=gl.project or ''
+						ne['against_voucher_type']=gl.against_voucher_type or ''
+						ne['against_voucher']=gl.against_voucher or ''
+						ne['account_currency']=gl.account_currency
+						ne['remarks']=jei.user_remark or ''
+						ne['against']=gl.against or ''
+						ne['is_opening']=gl.is_opening
+						ne['creation']=str(gl.creation)
+						ne['debit']=str(jei.debit_in_account_currency)
+						ne['credit']=str(jei.credit_in_account_currency)
+						ne['debit_in_account_currency']=str(jei.debit_in_account_currency)
+						ne['credit_in_account_currency']=str(jei.credit_in_account_currency)
+						uncons.append(ne)
+			else:
+				uncons.append(gl)
 
-	#modified for pdc supplier and customer account ledger
+		if uncons:			
+			frappe.db.sql(
+				"""
+				CREATE TEMPORARY TABLE gl_temp_table ( select
+					name as gl_entry, posting_date, voucher_date, '0' as pdc_value, account, party_type, party,
+					voucher_type, voucher_no, {dimension_fields}
+					cost_center, project,
+					against_voucher_type, against_voucher, account_currency,
+					remarks, against, is_opening, creation {select_fields}
+				from `tabGL Entry`
+				where company=%(company)s {conditions}
+				{distributed_cost_center_query}
+				{order_by_statement} )
+				""".format(
+					dimension_fields=dimension_fields, select_fields=select_fields, conditions=get_conditions(filters), distributed_cost_center_query=distributed_cost_center_query,
+					order_by_statement=order_by_statement
+				),filters)
+
+			frappe.db.sql('TRUNCATE gl_temp_table')
+
+			for un in uncons:
+				filds=','.join(un)
+				vals = "'"+"','".join(un.values())+"'"
+				
+				frappe.db.sql(
+					"""
+					insert into gl_temp_table
+					({filds}) values ({vals})
+					""".format(filds=filds,vals=vals)
+				)
+
+			gl_entries=frappe.db.sql('select * from gl_temp_table',as_dict=1)
+
 	global pdc_total
 	pdc_total=0
 	pdc=[]
-
+	
 	if filters.get("party_type"):
 		ap=frappe.db.get_global('installed_apps')
 		if "cheque_management" in ap:
@@ -425,7 +496,7 @@ def get_data_with_opening_closing(filters, account_details, accounting_dimension
 	data = []
 
 	gle_map = initialize_gle_map(gl_entries, filters)
-
+	
 	totals, entries = get_accountwise_gle(filters, accounting_dimensions, gl_entries, gle_map)
 
 	# Opening for filtered account
@@ -592,7 +663,7 @@ def get_result_as_list(data, filters):
 	for d in data:
 		if not d.get('posting_date'):
 			balance, balance_in_account_currency = 0, 0
-		if d['account']!='PDC on hand':
+		if d.get('account')!='PDC on hand':
 			balance = get_balance(d, balance, 'debit', 'credit',filters)
 			d['balance'] = balance
 
