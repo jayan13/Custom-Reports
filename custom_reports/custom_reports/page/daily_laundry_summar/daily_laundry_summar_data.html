@@ -49,12 +49,16 @@ padding:4px;
 <div style="width: 70%;    font-size: 20px;    font-weight: bold;    float: left;    padding-bottom: 10px;">
 {% if(customer){  %}
 &nbsp;&nbsp;&nbsp;&nbsp;{{customer}} 
-{%  }  %}
+{%  }  %} <br>
+<span style="font-weight: normal;">&nbsp;&nbsp;&nbsp;TRN - {{trn}}</span>
 </div>
 <div style="width: 30%;    font-size: 20px;    font-weight: bold;    float: left;    text-align: end;    padding-bottom: 10px;">
 {{from_date}} - {{to_date}}</div></p>
 <br><br>
-<p class="pg-title">Daily Laundry Summary Report</p>
+
+	
+</p>
+<div style="clear: both;" class="pg-title">Daily Laundry Summary Report</div>
 <table>
 	<tr><td width="20%">Bill No</td><td width="20%">Total Pieces</td><td width="20%">Credit</td><td width="20%">Room No</td><td>Date</td></tr>
 	{% for itm in items%}
@@ -67,5 +71,10 @@ padding:4px;
 	<tr><td>TOTAL</td><td>{{itm.total_qty}}</td><td>{{itm.grand_total}}</td><td></td><td></td></tr>
 	{%endfor%}
 </table>
+<div style="padding-top: 100px;width: 100%;">
+	<div style="width: 32%; float: left;font-style: italic;">Prepared By :</div>
+	<div style="width: 32%; float: left;font-style: italic;">Approved By :</div>
+	<div style="width: 32%; float: left;font-style: italic;">Manager :</div>
+</div>
 </div>
     
