@@ -44,11 +44,13 @@ padding:4px;
 } 
 </style>
 <div id="report_eggs" >
-<div id="let-head">{{head}}</div>	
+<div id="let-head">{{head}}</div>
+<div style="width: 100%;    font-size: 24px;    font-weight: bold;    text-align: center;    ">TAX Invoice</div>	
 <p>
 <div style="width: 70%;    font-size: 20px;    font-weight: bold;    float: left;    padding-bottom: 10px;">
 {% if(customer){  %}
-&nbsp;&nbsp;&nbsp;&nbsp;{{customer}} 
+&nbsp;&nbsp;&nbsp;&nbsp;{{customer}}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight: normal;">TRN - {{trn}}</span> 
 {%  }  %}
 </div>
 <div style="width: 30%;    font-size: 20px;    font-weight: bold;    float: left;    text-align: end;    padding-bottom: 10px;">

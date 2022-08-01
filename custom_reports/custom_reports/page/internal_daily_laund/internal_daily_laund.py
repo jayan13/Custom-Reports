@@ -13,8 +13,8 @@ def get_report(customer=None,address_title=None,from_date=None,to_date=None):
         address_title='GUEST LAUNDRY'
         
     data['customer']=customer
-    data['from_date']=getdate(from_date).strftime('%m/%d/%Y')
-    data['to_date']=getdate(to_date).strftime('%m/%d/%Y')
+    data['from_date']=getdate(from_date).strftime('%d/%m/%Y')
+    data['to_date']=getdate(to_date).strftime('%d/%m/%Y')
     data['head']=frappe.db.get_value('Letter Head', 'Quick Laundry Letter Head', 'content')
    
     data['items']=frappe.db.sql("""select si.po_no,si.name,DATE_FORMAT(si.posting_date,'%d/%m/%Y') AS posting_date,si.total_qty,si.total,si.total_taxes_and_charges,si.grand_total from `tabSales Invoice` si left join `tabAddress` ad on ad.name=si.customer_address where si.company='Quick Laundry – Sole Proprietorship LLC' and ad.address_title='{0}' and si.docstatus=1 and si.customer='{1}' and (si.posting_date between '{2}' and '{3}') order by si.posting_date """.format(address_title,customer,from_date,to_date),as_dict=1,debug=0)
