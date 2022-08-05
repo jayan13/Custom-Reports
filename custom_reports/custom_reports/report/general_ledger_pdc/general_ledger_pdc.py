@@ -195,7 +195,7 @@ def get_gl_entries(filters, accounting_dimensions):
 		SELECT name as gl_entry,
 			posting_date,
 			voucher_date,
-			'0' as pdc_value,
+			'0' as pdc_value,'' as cheque_no,'' as cheque_date,
 			account,
 			party_type,
 			party,
@@ -225,7 +225,7 @@ def get_gl_entries(filters, accounting_dimensions):
 	gl_entries = frappe.db.sql(
 		"""
 		select
-			name as gl_entry, posting_date, voucher_date, '0' as pdc_value, account, party_type, party,
+			name as gl_entry, posting_date, voucher_date, '0' as pdc_value,'' as cheque_no,'' as cheque_date, account, party_type, party,
 			voucher_type, voucher_no, {dimension_fields}
 			cost_center, project,
 			against_voucher_type, against_voucher, account_currency,
@@ -282,7 +282,7 @@ def get_gl_entries(filters, accounting_dimensions):
 			frappe.db.sql(
 				"""
 				CREATE TEMPORARY TABLE gl_temp_table ( select
-					name as gl_entry, posting_date, voucher_date, '0' as pdc_value, account, party_type, party,
+					name as gl_entry, posting_date, voucher_date, '0' as pdc_value,'' as cheque_no,'' as cheque_date, account, party_type, party,
 					voucher_type, voucher_no, {dimension_fields}
 					cost_center, project,
 					against_voucher_type, against_voucher, account_currency,
@@ -321,7 +321,13 @@ def get_gl_entries(filters, accounting_dimensions):
 			for gl in gl_entries:
 				del_r=0							
 				if gl.voucher_type=='Journal Entry' and gl.party_type=="Customer":
-					cheque_status=frappe.db.get_value('Receivable Cheques', {'journal_entry': gl.voucher_no}, ['cheque_status'])
+					chestus=frappe.db.get_value('Receivable Cheques', {'journal_entry': gl.voucher_no}, ['cheque_status','cheque_no','cheque_date'])
+					cheque_status=''
+					if chestus:						
+						cheque_status=chestus[0]
+						gl.cheque_no=chestus[1]
+						gl.cheque_date=chestus[2]
+					
 					if cheque_status=='Cheque Realized':						
 						gl.debit=0 
 						gl.debit_in_account_currency=0
@@ -340,7 +346,13 @@ def get_gl_entries(filters, accounting_dimensions):
 							gl.credit_in_account_currency=0
 
 				if gl.voucher_type=='Journal Entry' and gl.party_type=="Supplier":
-					cheque_status=frappe.db.get_value('Payable Cheques', {'journal_entry': gl.voucher_no}, ['cheque_status'])
+					chestus=frappe.db.get_value('Payable Cheques', {'journal_entry': gl.voucher_no}, ['cheque_status','cheque_no','cheque_date'])
+					cheque_status=''
+					if chestus:						
+						cheque_status=chestus[0]
+						gl.cheque_no=chestus[1]
+						gl.cheque_date=chestus[2]
+
 					if cheque_status=='Cheque Deducted':						
 						gl.debit=0 
 						gl.debit_in_account_currency=0
@@ -359,7 +371,13 @@ def get_gl_entries(filters, accounting_dimensions):
 							gl.credit_in_account_currency=0
 
 				if gl.voucher_type=='Payment Entry' and gl.party_type=="Customer":										
-					cheque_status=frappe.db.get_value('Receivable Cheques', {'payment_entry': gl.voucher_no}, ['cheque_status'])
+					chestus=frappe.db.get_value('Receivable Cheques', {'payment_entry': gl.voucher_no}, ['cheque_status','cheque_no','cheque_date'],debug=1)
+					cheque_status=''
+					if chestus:						
+						cheque_status=chestus[0]
+						gl.cheque_no=chestus[1]
+						gl.cheque_date=chestus[2]
+
 					if cheque_status=='Cheque Realized':						
 						gl.debit=0 
 						gl.debit_in_account_currency=0
@@ -378,7 +396,13 @@ def get_gl_entries(filters, accounting_dimensions):
 							gl.credit_in_account_currency=0
 
 				if gl.voucher_type=='Payment Entry' and gl.party_type=="Supplier":
-					cheque_status=frappe.db.get_value('Payable Cheques', {'payment_entry': gl.voucher_no}, ['cheque_status'])
+					chestus=frappe.db.get_value('Payable Cheques', {'payment_entry': gl.voucher_no}, ['cheque_status','cheque_no','cheque_date'])
+					cheque_status=''
+					if chestus:												
+						cheque_status=chestus[0]
+						gl.cheque_no=chestus[1]
+						gl.cheque_date=chestus[2]
+					
 					if cheque_status=='Cheque Deducted':						
 						gl.debit=0 
 						gl.debit_in_account_currency=0
@@ -746,7 +770,20 @@ def get_columns(filters):
 					"fieldname": "pdc_value",
 					"fieldtype": "Float",
 					"width": 130
-				}]
+				},
+				{
+					"label": _("Cheque No"),
+					"fieldname": "cheque_no",
+					"fieldtype": "Data",
+					"width": 130
+				},
+				{
+					"label": _("Cheque Date"),
+					"fieldname": "cheque_date",
+					"fieldtype": "Date",
+					"width": 130
+				}
+				]
 			)
 	columns.extend([
 		{
