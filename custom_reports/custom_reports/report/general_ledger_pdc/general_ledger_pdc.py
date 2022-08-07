@@ -785,11 +785,23 @@ def get_columns(filters):
 				}
 				]
 			)
-	columns.extend([
+	columns.extend([		
 		{
 			"label": _("Balance ({0})").format(currency),
 			"fieldname": "balance",
 			"fieldtype": "Float",
+			"width": 130
+		},
+		{
+			"label": _("Cheque No"),
+			"fieldname": "cheque_no",
+			"fieldtype": "Data",
+			"width": 130
+		},
+		{
+			"label": _("Cheque Date"),
+			"fieldname": "cheque_date",
+			"fieldtype": "Date",
 			"width": 130
 		},
 		{
