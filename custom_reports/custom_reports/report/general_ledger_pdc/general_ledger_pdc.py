@@ -419,11 +419,13 @@ def get_gl_entries(filters, accounting_dimensions):
 							gl.debit_in_account_currency=0
 							gl.credit=0
 							gl.credit_in_account_currency=0
+							
 				if gl.voucher_type=='Payment Entry':
 					if not gl.cheque_no:
 						gl.cheque_no=frappe.db.get_value('Payment Entry',gl.voucher_no,['reference_no'])
 					if not gl.cheque_date:
 						gl.cheque_date=frappe.db.get_value('Payment Entry',gl.voucher_no,['reference_date'])
+
 				if gl.voucher_type=='Journal Entry':
 					if not gl.cheque_no:
 						gl.cheque_no=frappe.db.get_value('Journal Entry',gl.voucher_no,['cheque_no'])
