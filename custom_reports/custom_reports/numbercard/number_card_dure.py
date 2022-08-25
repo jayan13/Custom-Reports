@@ -67,7 +67,7 @@ def total_sales(filters=None):
 			"""select sum(total) as val from `tabSales Invoice` where 
 			company='Dure Oil Middle East Factory - Sole Proprietorship LLC' 
 			and posting_date >= '%s' and posting_date <= '%s' """%(first_day_year,to_date),
-			as_dict=1,debug=1
+			as_dict=1,debug=0
 		)[0]
 
 	if card_name=='MTD Sales Revenue':
@@ -75,7 +75,7 @@ def total_sales(filters=None):
 			"""select sum(total) as val from `tabSales Invoice` where 
 			company='Dure Oil Middle East Factory - Sole Proprietorship LLC' 
 			and posting_date >= '%s' and posting_date <= '%s' """%(first_day_month,to_date),
-			as_dict=1,debug=1
+			as_dict=1,debug=0
 		)[0]
 
 	if card_name=='YTD Sales In Tons':
