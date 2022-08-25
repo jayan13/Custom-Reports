@@ -13,19 +13,170 @@ from six import iteritems
 import erpnext
 from erpnext.stock.report.stock_ageing.stock_ageing import FIFOSlots, get_average_age
 from erpnext.stock.report.stock_ledger.stock_ledger import get_item_group_condition
-#from erpnext.stock.utils import is_reposting_item_valuation_in_progress
+#from erpnext.stock.utils import is_reposting_item_valuation_in_progress 
 
 @frappe.whitelist()
-def opening_waste_oil_month():
-	#is_reposting_item_valuation_in_progress()
+def last_wo_purchase():
+	carddata = {}
+	rate=frappe.db.sql(
+		"""
+		select	incoming_rate from 	`tabStock Ledger Entry` 
+		where docstatus < 2 and is_cancelled = 0 and item_code='wo001' and company='Dure Oil Middle East Factory - Sole Proprietorship LLC' and voucher_type='Purchase Receipt'
+		order by posting_date desc limit 0,1 """,
+		as_dict=1,debug=0
+	)[0]
+	carddata['value']=0
+	if rate:
+		carddata['value']=rate['incoming_rate'] or 0
+	carddata['fieldtype']='Float'
+	
+	return carddata
+
+@frappe.whitelist()
+def hbo_vhbo_sales():
 	carddata = {}
 	to_date = frappe.utils.today()
 	fromdate=getdate(to_date)
 	first_day_month=fromdate.replace(day=1)
 	first_day_year=fromdate.replace(month=1, day=1)
-	from_date=first_day_month
-	filters = {'from_date':from_date,'to_date':to_date,'company':'Dure Oil Middle East Factory - Sole Proprietorship LLC','item_code':['WO001','WO005']}
+	rate=frappe.db.sql(
+		"""	select sum(itm.amount) as sales from `tabSales Invoice Item` itm left join `tabSales Invoice` inv on inv.name = itm.parent where itm.item_code in ('VHBO101','HBO101') 
+		and inv.posting_date>= '%s' and inv.posting_date<='%s' and inv.docstatus=1 """%(first_day_month,to_date),
+		as_dict=1,debug=0
+	)[0]
+	carddata['value']=0
+	if rate:
+		carddata['value']=rate['sales'] or 0
+	carddata['fieldtype']='Float'
 	
+	return carddata
+
+@frappe.whitelist()
+def total_sales(filters=None):
+	import json
+	card = json.loads(filters)
+	card_name=card.get('card_name')
+	carddata={}
+	card = json.loads(filters)
+	to_date = frappe.utils.today()
+	fromdate=getdate(to_date)
+	first_day_month=fromdate.replace(day=1)
+	first_day_year=fromdate.replace(month=1, day=1)
+	if card_name=='YTD Sales Revenue':
+		rate=frappe.db.sql(
+			"""select sum(total) as val from `tabSales Invoice` where 
+			company='Dure Oil Middle East Factory - Sole Proprietorship LLC' 
+			and posting_date >= '%s' and posting_date <= '%s' """%(first_day_year,to_date),
+			as_dict=1,debug=1
+		)[0]
+
+	if card_name=='MTD Sales Revenue':
+		rate=frappe.db.sql(
+			"""select sum(total) as val from `tabSales Invoice` where 
+			company='Dure Oil Middle East Factory - Sole Proprietorship LLC' 
+			and posting_date >= '%s' and posting_date <= '%s' """%(first_day_month,to_date),
+			as_dict=1,debug=1
+		)[0]
+
+	if card_name=='YTD Sales In Tons':
+		rate=frappe.db.sql(
+			"""select sum(total_qty)/1000 as val from `tabSales Invoice` where 
+			company='Dure Oil Middle East Factory - Sole Proprietorship LLC' 
+			and posting_date >= '%s' and posting_date <= '%s' """%(first_day_year,to_date),
+			as_dict=1,debug=0
+		)[0]
+
+	if card_name=='MTD Sales In Tons':
+		rate=frappe.db.sql(
+			"""select sum(total_qty)/1000 as val from `tabSales Invoice` where 
+			company='Dure Oil Middle East Factory - Sole Proprietorship LLC' 
+			and posting_date >= '%s' and posting_date <= '%s' """%(first_day_month,to_date),
+			as_dict=1,debug=0
+		)[0]
+
+	carddata['fieldtype']='Float'
+	carddata['value']=0
+	if rate:
+		carddata['value']=rate['val']
+	return carddata
+
+@frappe.whitelist()
+def last_wo_purchase_trade():
+	carddata = {}
+	rate=frappe.db.sql(
+		"""
+		select	incoming_rate from 	`tabStock Ledger Entry` 
+		where docstatus < 2 and is_cancelled = 0 and item_code='wo005' and company='Dure Oil Middle East Factory - Sole Proprietorship LLC' and voucher_type='Purchase Receipt'
+		order by posting_date desc limit 0,1 """,
+		as_dict=1,debug=0
+	)[0]
+
+	carddata['fieldtype']='Float'
+	carddata['value']=rate['incoming_rate']
+	return carddata
+
+@frappe.whitelist()
+def get_card(filters=None):
+	import json
+	carddata={}
+	card = json.loads(filters)
+	card_name=card.get('card_name')
+	to_date = frappe.utils.today()
+	fromdate=getdate(to_date)
+	first_day_month=fromdate.replace(day=1)
+	first_day_year=fromdate.replace(month=1, day=1)
+	field=''
+
+	if 'Opening' in card_name:
+		field='opening_qty'
+	elif 'Collection' in card_name:
+		field='in_qty'
+	elif 'Issued' in card_name:
+		field='out_qty'
+	elif 'Balance' in card_name:
+		field='bal_qty'
+
+	avgitem='Wo001'
+	if 'Trade' in card_name:
+		avgitem='Wo005'
+
+	if card_name in ['MTD Waste Oil Opening Stock','MTD Waste Oil Collection','MTD Waste Oil Issued','MTD Waste Oil Balance']:
+		from_date=first_day_month
+		filters = {'from_date':from_date,'to_date':to_date,'company':'Dure Oil Middle East Factory - Sole Proprietorship LLC','item_code':['WO001'],'warehouse':['FT-1/FT-2 (WASTE OIL) - DURE','RT (WASTE OIL) - DURE']}
+		carddata=get_card_data(field,filters)
+
+	elif card_name in ['MTD Waste Oil Opening Stock Trade','MTD Waste Oil Collection Trade','MTD Waste Oil Issued Trade','MTD Waste Oil Balance Trade']:
+		from_date=first_day_month
+		filters = {'from_date':from_date,'to_date':to_date,'company':'Dure Oil Middle East Factory - Sole Proprietorship LLC','item_code':['WO005'],'warehouse':['WASTE OIL(EXTERNAL TANK) - DURE']}
+		carddata=get_card_data(field,filters)
+
+	elif card_name in ['YTD Waste Oil Opening Stock','YTD Waste Oil Collection','YTD Waste Oil Issued','YTD Waste Oil Balance']:
+		from_date=first_day_year
+		filters = {'from_date':from_date,'to_date':to_date,'company':'Dure Oil Middle East Factory - Sole Proprietorship LLC','item_code':['WO001'],'warehouse':['FT-1/FT-2 (WASTE OIL) - DURE','RT (WASTE OIL) - DURE']}
+		carddata=get_card_data(field,filters)
+
+	elif card_name in ['YTD Waste Oil Opening Stock Trade','YTD Waste Oil Collection Trade','YTD Waste Oil Issued Trade','YTD Waste Oil Balance Trade']:
+		from_date=first_day_year
+		filters = {'from_date':from_date,'to_date':to_date,'company':'Dure Oil Middle East Factory - Sole Proprietorship LLC','item_code':['WO005'],'warehouse':['WASTE OIL(EXTERNAL TANK) - DURE']}
+		carddata=get_card_data(field,filters)
+#--------------------------------------------------------------
+	elif card_name in ['YTD AVG Waste Oil Price','YTD AVG Waste Oil Price Trade']:
+		from_date=first_day_year
+		filters = {'from_date':from_date,'to_date':to_date,'company':'Dure Oil Middle East Factory - Sole Proprietorship LLC','item_code':[avgitem],'voucher_type':'Purchase Receipt'}
+		carddata=avg_waste_oil_price(filters)
+
+	elif card_name in ['MTD AVG Waste Oil Price','MTD AVG Waste Oil Price Trade']:
+		from_date=first_day_month
+		filters = {'from_date':from_date,'to_date':to_date,'company':'Dure Oil Middle East Factory - Sole Proprietorship LLC','item_code':[avgitem],'voucher_type':'Purchase Receipt'}
+		carddata=avg_waste_oil_price(filters)
+#--------------------------------------------------------------------
+	if not carddata:
+		carddata['fieldtype']='Float'
+		carddata['value']=0
+	return carddata
+
+def get_card_data(field,filters):
+	carddata = {}
 	if filters.get("company"):
 		company_currency = erpnext.get_company_currency(filters.get("company"))
 	else:
@@ -34,10 +185,6 @@ def opening_waste_oil_month():
 	include_uom = filters.get("include_uom")
 	items = get_items(filters)
 	sle = get_stock_ledger_entries(filters, items)
-
-	if filters.get("show_stock_ageing_data"):
-		filters["show_warehouse_wise_stock"] = True
-		item_wise_fifo_queue = FIFOSlots(filters, sle).generate()
 
 	iwb_map = get_item_warehouse_map(filters, sle)
 	item_map = get_item_details(items, sle, filters)
@@ -74,89 +221,41 @@ def opening_waste_oil_month():
 			data.append(report_data)
 	open_bal=0
 	for dt in data:
-		open_bal+=dt['opening_qty']
+		open_bal+=dt[field]
 		#print(str(dt['opening_qty'])+'\n')
 	carddata['fieldtype']='Float'
 	carddata['value']=open_bal
 	return carddata
 
-@frappe.whitelist()
-def opening_waste_oil_year():
-	#is_reposting_item_valuation_in_progress()
+def avg_waste_oil_price(filters):
 	carddata = {}
-	to_date = frappe.utils.today()
-	fromdate=getdate(to_date)
-	first_day_month=fromdate.replace(day=1)
-	first_day_year=fromdate.replace(month=1, day=1)
-	from_date=first_day_year
-	filters = {'from_date':from_date,'to_date':to_date,'company':'Dure Oil Middle East Factory - Sole Proprietorship LLC','item_code':['WO001','WO005']}
-	
-	if filters.get("company"):
-		company_currency = erpnext.get_company_currency(filters.get("company"))
-	else:
-		company_currency = frappe.db.get_single_value("Global Defaults", "default_currency")
-
-	include_uom = filters.get("include_uom")
 	items = get_items(filters)
-	sle = get_stock_ledger_entries(filters, items)
-
-	if filters.get("show_stock_ageing_data"):
-		filters["show_warehouse_wise_stock"] = True
-		item_wise_fifo_queue = FIFOSlots(filters, sle).generate()
-
-	iwb_map = get_item_warehouse_map(filters, sle)
-	item_map = get_item_details(items, sle, filters)
-	item_reorder_detail_map = get_item_reorder_details(item_map.keys())
-
-	data = []
-	conversion_factors = {}
-
-	_func = itemgetter(1)
-
-	for (company, item, warehouse) in sorted(iwb_map):
-		if item_map.get(item):
-			qty_dict = iwb_map[(company, item, warehouse)]
-			item_reorder_level = 0
-			item_reorder_qty = 0
-			if item + warehouse in item_reorder_detail_map:
-				item_reorder_level = item_reorder_detail_map[item + warehouse]["warehouse_reorder_level"]
-				item_reorder_qty = item_reorder_detail_map[item + warehouse]["warehouse_reorder_qty"]
-
-			report_data = {
-				"currency": company_currency,
-				"item_code": item,
-				"warehouse": warehouse,
-				"company": company,
-				"reorder_level": item_reorder_level,
-				"reorder_qty": item_reorder_qty,
-			}
-			report_data.update(item_map[item])
-			report_data.update(qty_dict)
-
-			if include_uom:
-				conversion_factors.setdefault(item, item_map[item].conversion_factor)
-
-			data.append(report_data)
+	sle = get_stock_ledger_entries(filters, items,1)
+	
 	open_bal=0
-	for dt in data:
-		open_bal+=dt['opening_qty']
-		#print(str(dt['opening_qty'])+'\n')
-	carddata['fieldtype']='Float'
-	carddata['value']=open_bal
-	return carddata
+	rtcnt=0
+	for dt in sle:
+		open_bal+=dt['incoming_rate']        
+		rtcnt+=1
 
-def get_conditions(filters):
+	carddata['fieldtype']='Float'
+	carddata['value']=open_bal/rtcnt
+	return carddata
+	
+
+def get_conditions(filters,to=''):
 	conditions = ""
-	if not filters.get("from_date"):
-		frappe.throw(_("'From Date' is required"))
+	if filters.get("from_date") and to:
+		conditions += " and sle.posting_date >= %s" % frappe.db.escape(filters.get("from_date"))
 
 	if filters.get("to_date"):
 		conditions += " and sle.posting_date <= %s" % frappe.db.escape(filters.get("to_date"))
-	else:
-		frappe.throw(_("'To Date' is required"))
 
 	if filters.get("company"):
 		conditions += " and sle.company = %s" % frappe.db.escape(filters.get("company"))
+
+	if filters.get("voucher_type"):
+		conditions += " and sle.voucher_type = %s" % frappe.db.escape(filters.get("voucher_type"))
 
 	if filters.get("warehouse"):
 		warehouse_details = filters.get("warehouse")
@@ -166,21 +265,21 @@ def get_conditions(filters):
 	return conditions
 
 
-def get_stock_ledger_entries(filters, items):
+def get_stock_ledger_entries(filters, items,to=''):
 	item_conditions_sql = ""
 	if items:
 		item_conditions_sql = " and sle.item_code in ({})".format(
 			", ".join(frappe.db.escape(i, percent=False) for i in items)
 		)
 
-	conditions = get_conditions(filters)
+	conditions = get_conditions(filters,to)
 
 	return frappe.db.sql(
 		"""
 		select
 			sle.item_code, warehouse, sle.posting_date, sle.actual_qty, sle.valuation_rate,
 			sle.company, sle.voucher_type, sle.qty_after_transaction, sle.stock_value_difference,
-			sle.item_code as name, sle.voucher_no, sle.stock_value, sle.batch_no
+			sle.item_code as name, sle.voucher_no, sle.stock_value, sle.batch_no, sle.incoming_rate
 		from
 			`tabStock Ledger Entry` sle
 		where sle.docstatus < 2 %s %s
