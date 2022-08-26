@@ -239,7 +239,9 @@ def avg_waste_oil_price(filters):
 		rtcnt+=1
 
 	carddata['fieldtype']='Float'
-	carddata['value']=open_bal/rtcnt
+	carddata['value']=0
+	if open_bal:
+		carddata['value']=open_bal/rtcnt
 	return carddata
 	
 
