@@ -67,7 +67,7 @@ def sales_revenue_tyd():
 	first_day_year=fromdate.replace(month=1, day=1)
 	rate=frappe.db.sql(
 		"""	select sum(base_net_total) as amt
-                        from `tabSales Invoice` where company = 'Bin Butti International Real Estate Management – Unincorporated' and docstatus=1 and posting_date>= '%s' """%(first_day_year),
+                        from `tabSales Invoice` where company in ('Bin Butti International Real Estate Management – Unincorporated','AL NOKHBA BUILDING') and docstatus=1 and posting_date>= '%s' """%(first_day_year),
 		as_dict=1,debug=0
 	)
 	carddata['value']=0
