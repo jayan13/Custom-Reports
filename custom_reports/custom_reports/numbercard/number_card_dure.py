@@ -29,6 +29,21 @@ def last_wo_purchase():
 	if rate:
 		carddata['value']=rate['incoming_rate'] or 0
 	carddata['fieldtype']='Float'
+
+@frappe.whitelist()
+def last_PLO_sold():
+	carddata = {}
+	rate=frappe.db.sql(
+		"""
+		select rate from `tabSales Invoice Item` 
+		where docstatus = 1  and item_code='LLB001' 
+		order by creation desc limit 0,1 """,
+		as_dict=1,debug=1
+	)
+	carddata['value']=0
+	if rate:
+		carddata['value']=rate[0]['rate'] or 0
+	carddata['fieldtype']='Float'
 	
 	return carddata
 
@@ -42,6 +57,44 @@ def hbo_vhbo_sales():
 	rate=frappe.db.sql(
 		"""	select sum(itm.amount) as sales from `tabSales Invoice Item` itm left join `tabSales Invoice` inv on inv.name = itm.parent where itm.item_code in ('VHBO101','HBO101') 
 		and inv.posting_date>= '%s' and inv.posting_date<='%s' and inv.docstatus=1 """%(first_day_month,to_date),
+		as_dict=1,debug=0
+	)[0]
+	carddata['value']=0
+	if rate:
+		carddata['value']=rate['sales'] or 0
+	carddata['fieldtype']='Float'
+	
+	return carddata
+
+@frappe.whitelist()
+def lpo_m_sales():
+	carddata = {}
+	to_date = frappe.utils.today()
+	fromdate=getdate(to_date)
+	first_day_month=fromdate.replace(day=1)
+	first_day_year=fromdate.replace(month=1, day=1)
+	rate=frappe.db.sql(
+		"""	select sum(itm.amount) as sales from `tabSales Invoice Item` itm left join `tabSales Invoice` inv on inv.name = itm.parent where itm.item_code in ('LLB001') 
+		and inv.posting_date>= '%s' and inv.posting_date<='%s' and inv.docstatus=1 """%(first_day_month,to_date),
+		as_dict=1,debug=0
+	)[0]
+	carddata['value']=0
+	if rate:
+		carddata['value']=rate['sales'] or 0
+	carddata['fieldtype']='Float'
+	
+	return carddata
+
+@frappe.whitelist()
+def lpo_y_sales():
+	carddata = {}
+	to_date = frappe.utils.today()
+	fromdate=getdate(to_date)
+	first_day_month=fromdate.replace(day=1)
+	first_day_year=fromdate.replace(month=1, day=1)
+	rate=frappe.db.sql(
+		"""	select sum(itm.amount) as sales from `tabSales Invoice Item` itm left join `tabSales Invoice` inv on inv.name = itm.parent where itm.item_code in ('LLB001') 
+		and inv.posting_date>= '%s' and inv.posting_date<='%s' and inv.docstatus=1 """%(first_day_year,to_date),
 		as_dict=1,debug=0
 	)[0]
 	carddata['value']=0
