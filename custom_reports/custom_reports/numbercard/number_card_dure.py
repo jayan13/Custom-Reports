@@ -20,15 +20,15 @@ def last_wo_purchase():
 	carddata = {}
 	rate=frappe.db.sql(
 		"""
-		select	incoming_rate from 	`tabStock Ledger Entry` 
-		where docstatus < 2 and is_cancelled = 0 and item_code='wo001' and company='Dure Oil Middle East Factory - Sole Proprietorship LLC' and voucher_type='Purchase Receipt'
+		select incoming_rate from `tabStock Ledger Entry` where docstatus < 2 and is_cancelled = 0 and item_code='wo001' and company='Dure Oil Middle East Factory - Sole Proprietorship LLC' and voucher_type='Purchase Receipt'
 		order by posting_date desc limit 0,1 """,
 		as_dict=1,debug=0
-	)[0]
+	)
 	carddata['value']=0
 	if rate:
-		carddata['value']=rate['incoming_rate'] or 0
+		carddata['value']=rate[0]['incoming_rate'] or 0
 	carddata['fieldtype']='Float'
+	return carddata
 
 @frappe.whitelist()
 def last_PLO_sold():
@@ -38,7 +38,7 @@ def last_PLO_sold():
 		select rate from `tabSales Invoice Item` 
 		where docstatus = 1  and item_code='LLB001' 
 		order by creation desc limit 0,1 """,
-		as_dict=1,debug=1
+		as_dict=1,debug=0
 	)
 	carddata['value']=0
 	if rate:
@@ -162,10 +162,10 @@ def last_wo_purchase_trade():
 		where docstatus < 2 and is_cancelled = 0 and item_code='wo005' and company='Dure Oil Middle East Factory - Sole Proprietorship LLC' and voucher_type='Purchase Receipt'
 		order by posting_date desc limit 0,1 """,
 		as_dict=1,debug=0
-	)[0]
+	)
 
 	carddata['fieldtype']='Float'
-	carddata['value']=rate['incoming_rate']
+	carddata['value']=rate[0]['incoming_rate']
 	return carddata
 
 @frappe.whitelist()
