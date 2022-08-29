@@ -9,13 +9,24 @@ from frappe.utils import cint, date_diff, flt, getdate
 import erpnext
 
 @frappe.whitelist()
-def vacant_units():
+def total_units(filters=None):
+	import json
+	card = json.loads(filters)
+	card_name=card.get('card_name')
 	carddata = {}
 	to_date = frappe.utils.today()
-	rate=frappe.db.sql(
+	if 'Musaffah Plot' in card_name:
+		rate=frappe.db.sql(
 		"""
-		select count(*) as cnt from `tabProperty Unit` where unit_status='Vacant' or unit_status='Vacant - Legal'
+		select count(*) as cnt from `tabProperty Unit` where  property_name like '%Musaffah Plot%'
 		""",
+		as_dict=1,debug=0
+	)
+	else:
+		rate=frappe.db.sql(
+		"""
+		select count(*) as cnt from `tabProperty Unit` where  property_name='{0}'
+		""".format(card_name),
 		as_dict=1,debug=0
 	)
 	carddata['value']=0
@@ -25,12 +36,56 @@ def vacant_units():
 	return carddata
 
 @frappe.whitelist()
-def occupied_units():
+def vacant_units(filters=None):
+	import json
+	card = json.loads(filters)
+	card_name=card.get('card_name')
+	carddata = {}
+	to_date = frappe.utils.today()	
+	if 'Musaffah Plot' in card_name:
+		rate=frappe.db.sql(
+		"""
+		select count(*) as cnt from `tabProperty Unit` where (unit_status='Vacant' or unit_status='Vacant - Legal')
+		 and property_name like '%Musaffah Plot%'
+		""",
+		as_dict=1,debug=0
+	)
+	else:
+		rate=frappe.db.sql(
+		"""
+		select count(*) as cnt from `tabProperty Unit` where (unit_status='Vacant' or unit_status='Vacant - Legal') 
+		and property_name='{0}'
+		""".format(card_name),
+		as_dict=1,debug=0
+	)
+	carddata['value']=0
+	if rate:
+		carddata['value']=rate[0]['cnt'] or 0
+	carddata['fieldtype']='Float'
+	return carddata
+
+@frappe.whitelist()
+def occupied_units(filters=None):
+	import json
+	card = json.loads(filters)
+	card_name=card.get('card_name')
 	carddata = {}
 	to_date = frappe.utils.today()
-	rate=frappe.db.sql(
+	
+	if 'Musaffah Plot' in card_name:
+		rate=frappe.db.sql(
 		"""
-		select count(*) as cnt from `tabProperty Unit` where unit_status='Occupied' or unit_status='Occupied - Legal' """,
+		select count(*) as cnt from `tabProperty Unit` where (unit_status='Occupied' or unit_status='Occupied - Legal')
+		 and property_name like '%Musaffah Plot%'
+		""",
+		as_dict=1,debug=0
+	)
+	else:
+		rate=frappe.db.sql(
+		"""
+		select count(*) as cnt from `tabProperty Unit` where (unit_status='Occupied' or unit_status='Occupied - Legal')
+		and property_name='{0}'
+		""".format(card_name),
 		as_dict=1,debug=0
 	)
 	carddata['value']=0
@@ -41,14 +96,26 @@ def occupied_units():
 	return carddata
 
 @frappe.whitelist()
-def this_month_renewal():
+def this_month_renewal(filters=None):
+	import json
+	card = json.loads(filters)
+	card_name=card.get('card_name')
 	carddata = {}
 	to_date = frappe.utils.today()
 	#fromdate=getdate(to_date)
 	#first_day_month=fromdate.replace(day=1)	
 	#first_day_year=fromdate.replace(month=1, day=1)
-	rate=frappe.db.sql(
-		"""	select count(*) as cnt from `tabProperty Unit` where MONTH('%s')= MONTH(contract_end_date) """%(to_date),
+	if 'Musaffah Plot' in card_name:
+		rate=frappe.db.sql(
+		"""
+		select count(*) as cnt from `tabProperty Unit` where MONTH('{0}')= MONTH(contract_end_date) and property_name like '%Musaffah Plot%'
+		""".format(to_date),as_dict=1,debug=0)
+	
+	else:
+		rate=frappe.db.sql(
+		"""
+		select count(*) as cnt from `tabProperty Unit` where  property_name='{0}' and MONTH('{1}')= MONTH(contract_end_date)
+		""".format(card_name,to_date),
 		as_dict=1,debug=0
 	)
 	carddata['value']=0
@@ -59,7 +126,67 @@ def this_month_renewal():
 	return carddata
 
 @frappe.whitelist()
-def sales_revenue_tyd():
+def next_month_renewal(filters=None):
+	import json
+	card = json.loads(filters)
+	card_name=card.get('card_name')
+	carddata = {}
+	to_date = frappe.utils.today()
+	#fromdate=getdate(to_date)
+	#first_day_month=fromdate.replace(day=1)	
+	#first_day_year=fromdate.replace(month=1, day=1)
+	if 'Musaffah Plot' in card_name:
+		rate=frappe.db.sql(
+		"""
+		select count(*) as cnt from `tabProperty Unit` where MONTH(DATE_ADD('{0}', INTERVAL 1 MONTH))= MONTH(contract_end_date) and property_name like '%Musaffah Plot%'
+		""".format(to_date),as_dict=1,debug=0)
+	
+	else:
+		rate=frappe.db.sql(
+		"""
+		select count(*) as cnt from `tabProperty Unit` where  property_name='{0}' and MONTH(DATE_ADD('{1}', INTERVAL 1 MONTH))= MONTH(contract_end_date)
+		""".format(card_name,to_date),
+		as_dict=1,debug=0
+	)
+	
+	carddata['value']=0
+	if rate:
+		carddata['value']=rate[0]['cnt'] or 0
+	carddata['fieldtype']='Float'
+	
+	return carddata
+
+@frappe.whitelist()
+def sales_revenue_tyd(filters=None):
+	import json
+	card = json.loads(filters)
+	card_name=card.get('card_name')
+	carddata = {}
+	to_date = frappe.utils.today()
+	fromdate=getdate(to_date)
+	#first_day_month=fromdate.replace(day=1)	
+	first_day_year=fromdate.replace(month=1, day=1)
+	if 'Musaffah Plot' in card_name:
+		rate=frappe.db.sql(
+		"""	select sum(base_net_total) as amt
+                        from `tabSales Invoice` where property_unit in (select name from `tabProperty Unit` where  property_name like '%Musaffah Plot%') and docstatus=1 and posting_date>= '%s' """%(first_day_year),
+		as_dict=1,debug=0
+	)
+	else:
+		rate=frappe.db.sql(
+		"""	select sum(base_net_total) as amt
+                        from `tabSales Invoice` where property_unit in (select name from `tabProperty Unit` where  property_name='%s') and docstatus=1 and posting_date>= '%s' """%(card_name,first_day_year),
+		as_dict=1,debug=0
+	)
+	carddata['value']=0
+	if rate:
+		carddata['value']=rate[0]['amt'] or 0
+	carddata['fieldtype']='Float'
+	
+	return carddata
+
+@frappe.whitelist()
+def total_sales_revenue_tyd():
 	carddata = {}
 	to_date = frappe.utils.today()
 	fromdate=getdate(to_date)
@@ -68,6 +195,42 @@ def sales_revenue_tyd():
 	rate=frappe.db.sql(
 		"""	select sum(base_net_total) as amt
                         from `tabSales Invoice` where company in ('Bin Butti International Real Estate Management – Unincorporated','AL NOKHBA BUILDING') and docstatus=1 and posting_date>= '%s' """%(first_day_year),
+		as_dict=1,debug=0
+	)
+	carddata['value']=0
+	if rate:
+		carddata['value']=rate[0]['amt'] or 0
+	carddata['fieldtype']='Float'
+	
+	return carddata
+
+@frappe.whitelist()
+def total_pdc_tyd():
+	carddata = {}
+	to_date = frappe.utils.today()
+	fromdate=getdate(to_date)
+	#first_day_month=fromdate.replace(day=1)	
+	first_day_year=fromdate.replace(month=1, day=1)
+	rate=frappe.db.sql(
+		"""	select sum(amount) as amt from `tabReceivable Cheques` where cheque_status='Cheque Received' and company in ('Bin Butti International Real Estate Management – Unincorporated','AL NOKHBA BUILDING') and DATE(creation)>= '%s' """%(first_day_year),
+		as_dict=1,debug=0
+	)
+	carddata['value']=0
+	if rate:
+		carddata['value']=rate[0]['amt'] or 0
+	carddata['fieldtype']='Float'
+	
+	return carddata
+
+@frappe.whitelist()
+def total_pdcreal_tyd():
+	carddata = {}
+	to_date = frappe.utils.today()
+	fromdate=getdate(to_date)
+	#first_day_month=fromdate.replace(day=1)	
+	first_day_year=fromdate.replace(month=1, day=1)
+	rate=frappe.db.sql(
+		"""	select sum(amount) as amt from `tabReceivable Cheques` where cheque_status='Cheque Realized' and company in ('Bin Butti International Real Estate Management – Unincorporated','AL NOKHBA BUILDING') and DATE(creation)>= '%s' """%(first_day_year),
 		as_dict=1,debug=0
 	)
 	carddata['value']=0
