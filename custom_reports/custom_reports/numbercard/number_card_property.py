@@ -212,7 +212,7 @@ def total_pdc_tyd():
 	#first_day_month=fromdate.replace(day=1)	
 	first_day_year=fromdate.replace(month=1, day=1)
 	rate=frappe.db.sql(
-		"""	select sum(amount) as amt from `tabReceivable Cheques` where cheque_status='Cheque Received' and company ='Bin Butti International Real Estate Management – Unincorporated' and DATE(creation)>= '%s' """%(first_day_year),
+		"""	select sum(amount) as amt from `tabReceivable Cheques` where cheque_status='Cheque Received' and company ='Bin Butti International Real Estate Management – Unincorporated'  """,
 		as_dict=1,debug=0
 	)
 	carddata['value']=0
@@ -230,7 +230,7 @@ def total_pdcreal_tyd():
 	#first_day_month=fromdate.replace(day=1)	
 	first_day_year=fromdate.replace(month=1, day=1)
 	rate=frappe.db.sql(
-		"""	select sum(amount) as amt from `tabReceivable Cheques` where cheque_status='Cheque Realized' and company ='Bin Butti International Real Estate Management – Unincorporated' and DATE(creation)>= '%s' """%(first_day_year),
+		"""	select sum(amount) as amt from `tabReceivable Cheques` where cheque_status='Cheque Realized' and company ='Bin Butti International Real Estate Management – Unincorporated' and DATE(cheque_date)>= '%s' """%(first_day_year),
 		as_dict=1,debug=0
 	)
 	carddata['value']=0
