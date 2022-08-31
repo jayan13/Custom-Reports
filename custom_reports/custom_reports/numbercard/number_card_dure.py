@@ -112,7 +112,7 @@ def other_income():
 	first_day_month=fromdate.replace(day=1)
 	first_day_year=fromdate.replace(month=1, day=1)
 	rate=frappe.db.sql(
-		"""	select sum(credit) as amt from `tabGL Entry` where account='420100 - Other Income - DURE' and voucher_type='Journal Entry' and posting_date>='%s' and posting_date<='%s' """%(first_day_year,to_date),
+		"""	select sum(credit-debit) as amt from `tabGL Entry` where account='420100 - Other Income - DURE' and voucher_type='Journal Entry' and posting_date>='%s' and posting_date<='%s' """%(first_day_year,to_date),
 		as_dict=1,debug=0
 	)[0]
 	carddata['value']=0
