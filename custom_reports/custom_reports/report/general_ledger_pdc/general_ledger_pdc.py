@@ -371,7 +371,7 @@ def get_gl_entries(filters, accounting_dimensions):
 							gl.credit_in_account_currency=0
 
 				if gl.voucher_type=='Payment Entry' and gl.party_type=="Customer":										
-					chestus=frappe.db.get_value('Receivable Cheques', {'payment_entry': gl.voucher_no}, ['cheque_status','cheque_no','cheque_date'],debug=1)
+					chestus=frappe.db.get_value('Receivable Cheques', {'payment_entry': gl.voucher_no}, ['cheque_status','cheque_no','cheque_date'],debug=0)
 					cheque_status=''
 					if chestus:						
 						cheque_status=chestus[0]
