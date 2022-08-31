@@ -86,6 +86,82 @@ def ytd_hbo_vhbo_sales():
 	return carddata
 
 @frappe.whitelist()
+def ytd_asphault_sales():
+	carddata = {}
+	to_date = frappe.utils.today()
+	fromdate=getdate(to_date)
+	first_day_month=fromdate.replace(day=1)
+	first_day_year=fromdate.replace(month=1, day=1)
+	rate=frappe.db.sql(
+		"""	select sum(itm.amount) as sales from `tabSales Invoice Item` itm left join `tabSales Invoice` inv on inv.name = itm.parent where itm.item_code in ('AS0001') 
+		and inv.posting_date>= '%s' and inv.posting_date<='%s' and inv.docstatus=1 and inv.is_opening='No'  """%(first_day_year,to_date),
+		as_dict=1,debug=0
+	)[0]
+	carddata['value']=0
+	if rate:
+		carddata['value']=rate['sales'] or 0
+	carddata['fieldtype']='Float'
+	
+	return carddata
+
+@frappe.whitelist()
+def mtd_asphault_sales():
+	carddata = {}
+	to_date = frappe.utils.today()
+	fromdate=getdate(to_date)
+	first_day_month=fromdate.replace(day=1)
+	first_day_year=fromdate.replace(month=1, day=1)
+	rate=frappe.db.sql(
+		"""	select sum(itm.amount) as sales from `tabSales Invoice Item` itm left join `tabSales Invoice` inv on inv.name = itm.parent where itm.item_code in ('AS0001') 
+		and inv.posting_date>= '%s' and inv.posting_date<='%s' and inv.docstatus=1 and inv.is_opening='No'  """%(first_day_month,to_date),
+		as_dict=1,debug=0
+	)[0]
+	carddata['value']=0
+	if rate:
+		carddata['value']=rate['sales'] or 0
+	carddata['fieldtype']='Float'
+	
+	return carddata
+
+@frappe.whitelist()
+def ytd_asphault_1_sales():
+	carddata = {}
+	to_date = frappe.utils.today()
+	fromdate=getdate(to_date)
+	first_day_month=fromdate.replace(day=1)
+	first_day_year=fromdate.replace(month=1, day=1)
+	rate=frappe.db.sql(
+		"""	select sum(itm.amount) as sales from `tabSales Invoice Item` itm left join `tabSales Invoice` inv on inv.name = itm.parent where itm.item_code in ('AS0002') 
+		and inv.posting_date>= '%s' and inv.posting_date<='%s' and inv.docstatus=1 and inv.is_opening='No'  """%(first_day_year,to_date),
+		as_dict=1,debug=0
+	)[0]
+	carddata['value']=0
+	if rate:
+		carddata['value']=rate['sales'] or 0
+	carddata['fieldtype']='Float'
+	
+	return carddata
+
+@frappe.whitelist()
+def mtd_asphault_1_sales():
+	carddata = {}
+	to_date = frappe.utils.today()
+	fromdate=getdate(to_date)
+	first_day_month=fromdate.replace(day=1)
+	first_day_year=fromdate.replace(month=1, day=1)
+	rate=frappe.db.sql(
+		"""	select sum(itm.amount) as sales from `tabSales Invoice Item` itm left join `tabSales Invoice` inv on inv.name = itm.parent where itm.item_code in ('AS0002') 
+		and inv.posting_date>= '%s' and inv.posting_date<='%s' and inv.docstatus=1 and inv.is_opening='No'  """%(first_day_month,to_date),
+		as_dict=1,debug=0
+	)[0]
+	carddata['value']=0
+	if rate:
+		carddata['value']=rate['sales'] or 0
+	carddata['fieldtype']='Float'
+	
+	return carddata
+
+@frappe.whitelist()
 def lpo_m_sales():
 	carddata = {}
 	to_date = frappe.utils.today()
