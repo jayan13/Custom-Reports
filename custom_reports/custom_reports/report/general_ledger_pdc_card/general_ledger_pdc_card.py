@@ -23,7 +23,10 @@ from erpnext.accounts.utils import get_account_currency
 TRANSLATIONS = frappe._dict()
 pdc_total=0
 def execute(filters=None):
-
+	to_date = frappe.utils.today()
+	fromdate=getdate(to_date)	
+	first_day_year=fromdate.replace(month=1, day=1)
+	filters.update({'from_date': str(first_day_year), 'to_date': to_date})
 	if not filters:
 		return [], []
 
@@ -747,12 +750,6 @@ def get_columns(filters):
 		{
 			"label": _("Posting Date"),
 			"fieldname": "posting_date",
-			"fieldtype": "Date",
-			"width": 90
-		},
-		{
-			"label": _("Voucher Date"),
-			"fieldname": "voucher_date",
 			"fieldtype": "Date",
 			"width": 90
 		},

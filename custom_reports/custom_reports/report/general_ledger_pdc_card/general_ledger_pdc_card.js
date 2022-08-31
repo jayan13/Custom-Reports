@@ -19,22 +19,6 @@ frappe.query_reports["General Ledger PDC Card"] = {
 			"options": "Finance Book"
 		},
 		{
-			"fieldname":"from_date",
-			"label": __("From Date"),
-			"fieldtype": "Date",
-			"default": new Date(d.getFullYear(),0,1),
-			"reqd": 1,
-			"width": "60px"
-		},
-		{
-			"fieldname":"to_date",
-			"label": __("To Date"),
-			"fieldtype": "Date",
-			"default": frappe.datetime.get_today(),
-			"reqd": 1,
-			"width": "60px"
-		},
-		{
 			"fieldname":"account",
 			"label": __("Account"),
 			"fieldtype": "MultiSelectList",
@@ -166,20 +150,6 @@ frappe.query_reports["General Ledger PDC Card"] = {
 		},
 		{
 		"fieldtype": "Break",
-		},
-		{
-		"fieldname":"voucher_from_date",
-		"label": __("Voucher From Date"),
-		"fieldtype": "Date",
-		"default": '',		
-		"width": "60px"
-		},
-		{
-		"fieldname":"voucher_to_date",
-		"label": __("Voucher To Date"),
-		"fieldtype": "Date",
-		"default": '',		
-		"width": "60px"
 		},
 		{
 			"fieldname": "include_dimensions",
