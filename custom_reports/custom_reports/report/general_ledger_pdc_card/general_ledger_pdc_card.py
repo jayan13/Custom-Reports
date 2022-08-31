@@ -196,7 +196,7 @@ def get_gl_entries(filters, accounting_dimensions):
 		SELECT name as gl_entry,
 			posting_date,
 			voucher_date,
-			'0' as pdc_value,'' as cheque_no,'' as cheque_date,
+			0 as pdc_value,'' as cheque_no,'' as cheque_date,
 			account,
 			party_type,
 			party,
@@ -226,7 +226,7 @@ def get_gl_entries(filters, accounting_dimensions):
 	gl_entries = frappe.db.sql(
 		"""
 		select
-			name as gl_entry, posting_date, voucher_date, '0' as pdc_value,'' as cheque_no,'' as cheque_date, account, party_type, party,
+			name as gl_entry, posting_date, voucher_date, 0 as pdc_value,'' as cheque_no,'' as cheque_date, account, party_type, party,
 			voucher_type, voucher_no, {dimension_fields}
 			cost_center, project,
 			against_voucher_type, against_voucher, account_currency,
@@ -283,7 +283,7 @@ def get_gl_entries(filters, accounting_dimensions):
 			frappe.db.sql(
 				"""
 				CREATE TEMPORARY TABLE gl_temp_table ( select
-					name as gl_entry, posting_date, voucher_date, '0' as pdc_value,'' as cheque_no,'' as cheque_date, account, party_type, party,
+					name as gl_entry, posting_date, voucher_date,0 as pdc_value,'' as cheque_no,'' as cheque_date, account, party_type, party,
 					voucher_type, voucher_no, {dimension_fields}
 					cost_center, project,
 					against_voucher_type, against_voucher, account_currency,
