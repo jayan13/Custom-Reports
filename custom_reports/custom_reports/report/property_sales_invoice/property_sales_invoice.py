@@ -58,4 +58,4 @@ def get_columns():
 	]
 
 def get_data(filters=None):
-	return frappe.db.sql(""" select name,customer,property,property_unit,contract_start_date,contract_end_date,base_net_total from `tabSales Invoice` where company='Bin Butti International Real Estate Management – Unincorporated' and docstatus=1 and property<>'' and posting_date >= MAKEDATE(year(now()), 1) """,as_dict=1)
+	return frappe.db.sql(""" select name,customer,property,property_unit,contract_start_date,contract_end_date,base_net_total from `tabSales Invoice` where company='Bin Butti International Real Estate Management – Unincorporated' and docstatus=1  and posting_date >= MAKEDATE(year(now()), 1) """,as_dict=1)
