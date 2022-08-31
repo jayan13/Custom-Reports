@@ -56,7 +56,7 @@ def hbo_vhbo_sales():
 	first_day_year=fromdate.replace(month=1, day=1)
 	rate=frappe.db.sql(
 		"""	select sum(itm.amount) as sales from `tabSales Invoice Item` itm left join `tabSales Invoice` inv on inv.name = itm.parent where itm.item_code in ('VHBO101','HBO101') 
-		and inv.posting_date>= '%s' and inv.posting_date<='%s' and inv.docstatus=1 and inv.is_opening='No' """%(first_day_month,to_date),
+		and inv.posting_date>= '%s' and inv.posting_date<='%s' and inv.docstatus=1 and inv.is_opening='No'  """%(first_day_month,to_date),
 		as_dict=1,debug=0
 	)[0]
 	carddata['value']=0
@@ -119,7 +119,7 @@ def total_sales(filters=None):
 		rate=frappe.db.sql(
 			"""select sum(total) as val from `tabSales Invoice` where 
 			company='Dure Oil Middle East Factory - Sole Proprietorship LLC' 
-			and posting_date >= '%s' and posting_date <= '%s' and is_opening='No' """%(first_day_year,to_date),
+			and posting_date >= '%s' and posting_date <= '%s' and is_opening='No' and docstatus=1 """%(first_day_year,to_date),
 			as_dict=1,debug=0
 		)[0]
 
@@ -127,7 +127,7 @@ def total_sales(filters=None):
 		rate=frappe.db.sql(
 			"""select sum(total) as val from `tabSales Invoice` where 
 			company='Dure Oil Middle East Factory - Sole Proprietorship LLC' 
-			and posting_date >= '%s' and posting_date <= '%s' and is_opening='No' """%(first_day_month,to_date),
+			and posting_date >= '%s' and posting_date <= '%s' and is_opening='No' and docstatus=1 """%(first_day_month,to_date),
 			as_dict=1,debug=0
 		)[0]
 
@@ -135,7 +135,7 @@ def total_sales(filters=None):
 		rate=frappe.db.sql(
 			"""select sum(total_qty)/1000 as val from `tabSales Invoice` where 
 			company='Dure Oil Middle East Factory - Sole Proprietorship LLC' 
-			and posting_date >= '%s' and posting_date <= '%s' and is_opening='No' """%(first_day_year,to_date),
+			and posting_date >= '%s' and posting_date <= '%s' and is_opening='No' and docstatus=1"""%(first_day_year,to_date),
 			as_dict=1,debug=0
 		)[0]
 
@@ -143,7 +143,7 @@ def total_sales(filters=None):
 		rate=frappe.db.sql(
 			"""select sum(total_qty)/1000 as val from `tabSales Invoice` where 
 			company='Dure Oil Middle East Factory - Sole Proprietorship LLC' 
-			and posting_date >= '%s' and posting_date <= '%s' and is_opening='No' """%(first_day_month,to_date),
+			and posting_date >= '%s' and posting_date <= '%s' and is_opening='No' and docstatus=1 """%(first_day_month,to_date),
 			as_dict=1,debug=0
 		)[0]
 
