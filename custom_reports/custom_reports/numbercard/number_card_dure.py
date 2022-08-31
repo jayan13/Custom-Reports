@@ -105,6 +105,24 @@ def lpo_y_sales():
 	return carddata
 
 @frappe.whitelist()
+def other_income():
+	carddata = {}
+	to_date = frappe.utils.today()
+	fromdate=getdate(to_date)
+	first_day_month=fromdate.replace(day=1)
+	first_day_year=fromdate.replace(month=1, day=1)
+	rate=frappe.db.sql(
+		"""	select sum(credit) as amt from `tabGL Entry` where account='420100 - Other Income - DURE' and voucher_type='Journal Entry' and posting_date>='%s' and posting_date<='%s' """%(first_day_year,to_date),
+		as_dict=1,debug=0
+	)[0]
+	carddata['value']=0
+	if rate:
+		carddata['value']=rate['amt'] or 0
+	carddata['fieldtype']='Float'
+	
+	return carddata
+
+@frappe.whitelist()
 def total_sales(filters=None):
 	import json
 	card = json.loads(filters)
