@@ -169,13 +169,13 @@ def sales_revenue_tyd(filters=None):
 	if 'Musaffah Plot' in card_name:
 		rate=frappe.db.sql(
 		"""	select sum(base_net_total) as amt
-                        from `tabSales Invoice` where property_unit in (select name from `tabProperty Unit` where  property_name like '%Musaffah Plot%') and docstatus=1 and posting_date>= '%s' """%(first_day_year),
+                        from `tabSales Invoice` where property_unit in (select name from `tabProperty Unit` where  property_name like '%Musaffah Plot%') and docstatus=1 and is_return=0 and is_opening='No' and posting_date>= '%s' """%(first_day_year),
 		as_dict=1,debug=0
 	)
 	else:
 		rate=frappe.db.sql(
 		"""	select sum(base_net_total) as amt
-                        from `tabSales Invoice` where property_unit in (select name from `tabProperty Unit` where  property_name='%s') and docstatus=1 and posting_date>= '%s' """%(card_name,first_day_year),
+                        from `tabSales Invoice` where property_unit in (select name from `tabProperty Unit` where  property_name='%s') and docstatus=1 and is_return=0 and is_opening='No' and posting_date>= '%s' """%(card_name,first_day_year),
 		as_dict=1,debug=0
 	)
 	carddata['value']=0
@@ -194,7 +194,7 @@ def total_sales_revenue_tyd():
 	first_day_year=fromdate.replace(month=1, day=1)
 	rate=frappe.db.sql(
 		"""	select sum(base_net_total) as amt
-                        from `tabSales Invoice` where company ='Bin Butti International Real Estate Management – Unincorporated' and docstatus=1 and posting_date>= '%s' """%(first_day_year),
+                        from `tabSales Invoice` where company ='Bin Butti International Real Estate Management – Unincorporated' and docstatus=1 and is_return=0 and is_opening='No' and posting_date>= '%s' """%(first_day_year),
 		as_dict=1,debug=0
 	)
 	carddata['value']=0
