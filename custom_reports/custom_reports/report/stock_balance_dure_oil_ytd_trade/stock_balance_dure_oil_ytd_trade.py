@@ -16,7 +16,7 @@ from erpnext.stock.utils import add_additional_uom_columns, is_reposting_item_va
 
 
 def execute(filters=None):
-	is_reposting_item_valuation_in_progress()
+	#is_reposting_item_valuation_in_progress()
 	if not filters:
 		filters = {}
 
