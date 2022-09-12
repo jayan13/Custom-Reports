@@ -114,7 +114,7 @@ def this_month_renewal(filters=None):
 	else:
 		rate=frappe.db.sql(
 		"""
-		select count(*) as cnt from `tabProperty Unit` where  property_name='{0}' YEAR('{1}')= YEAR(contract_end_date) and and MONTH('{1}')= MONTH(contract_end_date)
+		select count(*) as cnt from `tabProperty Unit` where  property_name='{0}' and YEAR('{1}')= YEAR(contract_end_date) and and MONTH('{1}')= MONTH(contract_end_date)
 		""".format(card_name,to_date),
 		as_dict=1,debug=0
 	)
