@@ -108,13 +108,13 @@ def this_month_renewal(filters=None):
 	if 'Musaffah Plot' in card_name:
 		rate=frappe.db.sql(
 		"""
-		select count(*) as cnt from `tabProperty Unit` where MONTH('{0}')= MONTH(contract_end_date) and property_name like '%Musaffah Plot%'
+		select count(*) as cnt from `tabProperty Unit` where MONTH('{0}')= MONTH(contract_end_date) and YEAR('{0}')= YEAR(contract_end_date) and property_name like '%Musaffah Plot%'
 		""".format(to_date),as_dict=1,debug=0)
 	
 	else:
 		rate=frappe.db.sql(
 		"""
-		select count(*) as cnt from `tabProperty Unit` where  property_name='{0}' and MONTH('{1}')= MONTH(contract_end_date)
+		select count(*) as cnt from `tabProperty Unit` where  property_name='{0}' YEAR('{0}')= YEAR(contract_end_date) and and MONTH('{1}')= MONTH(contract_end_date)
 		""".format(card_name,to_date),
 		as_dict=1,debug=0
 	)
@@ -138,13 +138,13 @@ def next_month_renewal(filters=None):
 	if 'Musaffah Plot' in card_name:
 		rate=frappe.db.sql(
 		"""
-		select count(*) as cnt from `tabProperty Unit` where MONTH(DATE_ADD('{0}', INTERVAL 1 MONTH))= MONTH(contract_end_date) and property_name like '%Musaffah Plot%'
+		select count(*) as cnt from `tabProperty Unit` where MONTH(DATE_ADD('{0}', INTERVAL 1 MONTH))= MONTH(contract_end_date) and YEAR(DATE_ADD('{0}', INTERVAL 1 MONTH))= YEAR(contract_end_date) and property_name like '%Musaffah Plot%'
 		""".format(to_date),as_dict=1,debug=0)
 	
 	else:
 		rate=frappe.db.sql(
 		"""
-		select count(*) as cnt from `tabProperty Unit` where  property_name='{0}' and MONTH(DATE_ADD('{1}', INTERVAL 1 MONTH))= MONTH(contract_end_date)
+		select count(*) as cnt from `tabProperty Unit` where  property_name='{0}' and MONTH(DATE_ADD('{1}', INTERVAL 1 MONTH))= MONTH(contract_end_date) and YEAR(DATE_ADD('{1}', INTERVAL 1 MONTH))= YEAR(contract_end_date)
 		""".format(card_name,to_date),
 		as_dict=1,debug=0
 	)
