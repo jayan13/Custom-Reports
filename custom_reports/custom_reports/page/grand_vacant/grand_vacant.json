@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2022-09-12 17:35:21.088770",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2022-09-12 17:35:21.088770",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "grand-vacant",
+ "owner": "Administrator",
+ "page_name": "grand-vacant",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Property Unit Report"
+}

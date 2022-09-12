@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2022-09-12 20:21:23.684333",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2022-09-12 20:21:23.684333",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "villas-next",
+ "owner": "Administrator",
+ "page_name": "villas-next",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Property Unit Report"
+}

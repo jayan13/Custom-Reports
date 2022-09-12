@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2022-09-12 20:47:24.697713",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2022-09-12 20:47:24.697713",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "grand-next",
+ "owner": "Administrator",
+ "page_name": "grand-next",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Property Unit Report"
+}

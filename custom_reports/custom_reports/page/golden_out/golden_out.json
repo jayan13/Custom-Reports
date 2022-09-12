@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2022-09-12 17:11:56.236174",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2022-09-12 17:11:56.236174",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "golden-out",
+ "owner": "Administrator",
+ "page_name": "golden-out",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Property Unit Report"
+}

@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2022-09-12 18:37:20.331451",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2022-09-12 18:37:20.331451",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "hamdan-occupied",
+ "owner": "Administrator",
+ "page_name": "hamdan-occupied",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Property Unit Report"
+}
