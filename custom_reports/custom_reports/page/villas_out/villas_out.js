@@ -24,7 +24,7 @@ frappe.pages['villas-out'].on_page_load = function(wrapper) {
 					freeze_message: 'Data loading ...please waite',					
 					callback: function (r) {
 					  if (r.message) {							
-							$(frappe.render_template("villas",r.message)).appendTo(wrp);	
+							$(frappe.render_template("villas_ot",r.message)).appendTo(wrp);	
 					  }
 					},
 				  });

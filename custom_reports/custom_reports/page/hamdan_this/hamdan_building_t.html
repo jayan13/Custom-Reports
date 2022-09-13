@@ -1,0 +1,68 @@
+<style>
+    #unit_report table{
+    width: 100%;
+    border-collapse: collapse;
+    border: 2px solid black;
+    }
+    #unit_report table tr{
+    border: 2px solid black;
+    }
+    #unit_report table tr td{
+    border: 2px solid black;   
+    padding:4px;
+    }
+    #let-head img{ width:100%; }
+    .pg-title{
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    #unit_report table tr:first-child td { text-align: center;font-weight: bold; background-color: #d3d3d3;}
+    
+    @media print {
+       * { color: black; background: white; }
+       table { page-break-inside:auto }
+        tr    { page-break-inside:avoid; page-break-after:auto }
+       #unit_report table { font-size: 80%; }
+       #unit_report table{
+        width: 100%;
+        border-collapse: collapse;
+        border: 2px solid black;
+        }
+        #unit_report table tr{
+        border: 2px solid black;
+        }
+        #unit_report table tr td{
+        border: 2px solid black;        
+        padding:4px;
+        }
+        #let-head img{ width:100%; }
+        #unit_report table tr:first-child td { text-align: center;font-weight: bold; background-color: #d3d3d3;}
+       
+    } 
+    </style>
+<div id="unit_report" style="background-color:#fff;width:100%; padding:14px;">
+    
+    <div style="clear: both;" class="pg-title">Hamdan Building - Expiring On This Month</div>
+    <table>
+        <tr>
+            <td width="5%">Sl </td>
+            <td width="25%">Unit</td>
+            <td width="40%">Customer</td>
+            <td width="10%">Start Date</td>
+            <td width="10%">End Date</td>
+            <td width="10%">Status</td></tr>
+        {% for itm in items%}
+        <tr>
+            <td>{{itm.row_number}}</td>
+            <td>{{itm.name}}</td>
+            <td>{{itm.customer_name}}</td>
+            <td>{{itm.contract_start_date}}</td>
+            <td>
+            {{itm.contract_end_date}}
+        </td><td>{{itm.unit_status}}</td></tr>
+        {%endfor%}
+        
+    </table>
+</div>
+    

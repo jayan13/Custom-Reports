@@ -25,7 +25,7 @@ frappe.pages['golden-next'].on_page_load = function(wrapper) {
 					freeze_message: 'Data loading ...please waite',					
 					callback: function (r) {
 					  if (r.message) {							
-							$(frappe.render_template("golden_tulip_hotel",r.message)).appendTo(wrp);	
+							$(frappe.render_template("golden_tulip_hotel_n",r.message)).appendTo(wrp);	
 					  }
 					},
 				  });

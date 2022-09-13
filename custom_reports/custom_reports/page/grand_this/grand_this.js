@@ -25,7 +25,7 @@ frappe.pages['grand-this'].on_page_load = function(wrapper) {
 					freeze_message: 'Data loading ...please waite',					
 					callback: function (r) {
 					  if (r.message) {							
-							$(frappe.render_template("grand_continental_ho",r.message)).appendTo(wrp);	
+							$(frappe.render_template("grand_continental_ho_t",r.message)).appendTo(wrp);	
 					  }
 					},
 				  });

@@ -25,7 +25,7 @@ frappe.pages['tourist-this'].on_page_load = function(wrapper) {
 					freeze_message: 'Data loading ...please waite',					
 					callback: function (r) {
 					  if (r.message) {							
-							$(frappe.render_template("tourist_club_buildin",r.message)).appendTo(wrp);	
+							$(frappe.render_template("tourist_club_buildin_t",r.message)).appendTo(wrp);	
 					  }
 					},
 				  });
