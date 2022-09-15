@@ -20,11 +20,11 @@ def send_mail(doc,event):
         intime=get_datetime(str(doc.time).split(' ')[1])
         if intime > tm:
             receiver='jayakumar@alantechnologies.net'
-            msg=""" Login Entry : {0}\n 
-                    Login Time : {1}\n 
-                    Employee Code : {2}\n
-                    Employee Name : {3}\n
-                    Shift : {4}\n
+            msg=""" Login Entry : {0}<br> 
+                    Login Time : {1}<br> 
+                    Employee Code : {2}<br>
+                    Employee Name : {3}<br>
+                    Shift : {4}<br>
                     Device ID : {5}
                     """.format(doc.name,doc.time,doc.employee,doc.employee_name,doc.shift,doc.device_id)
 
@@ -37,5 +37,5 @@ def send_mail(doc,event):
                     "reference_name": doc.name
                     }
                 frappe.enqueue(method=frappe.sendmail, queue='short', timeout=300, is_async=True, **email_args)
-                frappe.msgprint(" email send ")
+                #frappe.msgprint(" email send ")
 
