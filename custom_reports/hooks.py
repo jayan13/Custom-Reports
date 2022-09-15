@@ -102,7 +102,11 @@ app_license = "MIT"
 # 		"on_trash": "method"
 #	}
 # }
-
+doc_events = {
+	"Employee Checkin":{
+		"on_update": "custom_reports.custom_reports.employee.mailalert.send_mail",
+	}
+}
 # Scheduled Tasks
 # ---------------
 
