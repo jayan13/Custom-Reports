@@ -35,7 +35,7 @@ def get_columns(cnt):
 		"fieldtype": "Link",
 		"label": "Employee",
 		"options": "Employee",
-		"width": 100
+		"width": 150
 		},
 		{
 		"fieldname": "attendance_device_id",
