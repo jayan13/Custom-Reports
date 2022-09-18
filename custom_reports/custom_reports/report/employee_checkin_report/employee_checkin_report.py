@@ -14,7 +14,7 @@ def execute(filters=None):
 	where %s group by DATE(`time`),c.employee) cin """% conditions,as_dict=1,debug=0)[0]
 	import math
 	cnt=1
-	msgprint(str(max_chk))
+	#msgprint(str(max_chk))
 	if max_chk.checkincnt:
 		if max_chk.checkincnt > 2:
 			cnt=math.ceil(max_chk.checkincnt/2)
