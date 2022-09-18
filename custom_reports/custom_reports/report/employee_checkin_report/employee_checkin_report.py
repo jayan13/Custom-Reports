@@ -9,10 +9,13 @@ def execute(filters=None):
 	if not filters:
 		filters = {}
 	conditions=get_conditions(filters)
-	max_chk=frappe.db.sql(""" select max(cin.ckin) as checkincnt from (select count(c.name) as ckin  from `tabEmployee Checkin` c where %s group by DATE(`time`),employee) cin """% conditions,as_dict=1,debug=0)[0]
+	max_chk=frappe.db.sql(""" select max(cin.ckin) as checkincnt from (select count(c.name) as ckin  
+	from `tabEmployee Checkin` c left join `tabEmployee` e on e.name=c.employee
+	where %s group by DATE(`time`),c.employee) cin """% conditions,as_dict=1,debug=0)[0]
 	import math
 	cnt=1
-	if max_chk:
+	msgprint(str(max_chk))
+	if max_chk.checkincnt:
 		if max_chk.checkincnt > 2:
 			cnt=math.ceil(max_chk.checkincnt/2)
 	
@@ -80,7 +83,9 @@ def get_data(cnt,conditions):
 		strt=ct
 		sql += ",(select TIME_FORMAT(TIME(`time`), '%H:%i:%s') from `tabEmployee Checkin` where log_type='IN' and employee=c.employee and DATE(`time`)=DATE(c.`time`) order by `time` limit {0},1 ) as in{0},(select TIME_FORMAT(TIME(`time`), '%H:%i:%s') from `tabEmployee Checkin` where log_type='OUT' and employee=c.employee and DATE(`time`)=DATE(c.`time`) order by `time` limit {0},1) as out{0}".format(strt)
 
-	data=frappe.db.sql(""" select DATE(c.time) as `date`,c.employee,c.employee_name,c.shift,c.device_id%s  from `tabEmployee Checkin` c where %s group by DATE(c.`time`),c.employee """% (sql,conditions),as_dict=1,debug=1)
+	data=frappe.db.sql(""" select DATE(c.time) as `date`,c.employee,c.employee_name,c.shift,c.device_id%s  
+	from `tabEmployee Checkin` c left join `tabEmployee` e on e.name=c.employee
+	where %s group by DATE(c.`time`),c.employee """% (sql,conditions),as_dict=1,debug=0)
 	#msgprint(str(data))
 	return data
 
@@ -97,5 +102,9 @@ def get_conditions(filters):
 	if filters.get("employee"):
 		employee=filters.get("employee")
 		conditions += " and c.employee = '{0}'".format(employee)
+
+	if filters.get("company"):
+		company=filters.get("company")
+		conditions += " and e.company = '{0}'".format(company)
 
 	return conditions
