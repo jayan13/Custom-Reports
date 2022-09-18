@@ -38,6 +38,12 @@ def get_columns(cnt):
 		"width": 100
 		},
 		{
+		"fieldname": "attendance_device_id",
+		"fieldtype": "Data",
+		"label": "Emp Code",	
+		"width": 100
+		},
+		{
 		"fieldname": "employee_name",
 		"fieldtype": "Data",
 		"label": "Employee Name",	
@@ -83,7 +89,7 @@ def get_data(cnt,conditions):
 		strt=ct
 		sql += ",(select TIME_FORMAT(TIME(`time`), '%H:%i:%s') from `tabEmployee Checkin` where log_type='IN' and employee=c.employee and DATE(`time`)=DATE(c.`time`) order by `time` limit {0},1 ) as in{0},(select TIME_FORMAT(TIME(`time`), '%H:%i:%s') from `tabEmployee Checkin` where log_type='OUT' and employee=c.employee and DATE(`time`)=DATE(c.`time`) order by `time` limit {0},1) as out{0}".format(strt)
 
-	data=frappe.db.sql(""" select DATE(c.time) as `date`,c.employee,c.employee_name,c.shift,c.device_id%s  
+	data=frappe.db.sql(""" select DATE(c.time) as `date`,c.employee,e.attendance_device_id,c.employee_name,c.shift,c.device_id%s  
 	from `tabEmployee Checkin` c left join `tabEmployee` e on e.name=c.employee
 	where %s group by DATE(c.`time`),c.employee """% (sql,conditions),as_dict=1,debug=0)
 	#msgprint(str(data))
