@@ -35,7 +35,7 @@ def get_columns(cnt):
 		"fieldtype": "Link",
 		"label": "Employee",
 		"options": "Employee",
-		"width": 150
+		"width": 200
 		},
 		{
 		"fieldname": "attendance_device_id",
@@ -47,7 +47,7 @@ def get_columns(cnt):
 		"fieldname": "employee_name",
 		"fieldtype": "Data",
 		"label": "Employee Name",	
-		"width": 200
+		"width": 250
 		},
 		{
 		"fieldname": "shift",
