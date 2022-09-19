@@ -29,7 +29,7 @@ def send_mail(doc,event):
             else:
                 receiver='hemy@binbuttigroup.com'
 
-            receiver='jayakumar@alantechnologies.net'
+            #receiver='jayakumar@alantechnologies.net'
             msg=""" Content: Staff {2}:{3} with employee number {6} has checked in late at {1} .<br><br> 
                     Login Entry : {0}<br> 
                     Login Time : {1}<br> 
