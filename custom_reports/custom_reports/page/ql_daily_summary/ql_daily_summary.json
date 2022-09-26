@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2022-09-22 09:34:27.955564",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2022-09-22 09:34:27.955564",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "ql-daily-summary",
+ "owner": "Administrator",
+ "page_name": "ql-daily-summary",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Daily Laundry Summary"
+}

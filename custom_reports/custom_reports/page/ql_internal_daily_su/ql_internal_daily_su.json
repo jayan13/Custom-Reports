@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2022-09-22 09:33:34.418612",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2022-09-22 09:33:34.418612",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "ql-internal-daily-su",
+ "owner": "Administrator",
+ "page_name": "ql-internal-daily-su",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Internal Daily Laundry Summary"
+}

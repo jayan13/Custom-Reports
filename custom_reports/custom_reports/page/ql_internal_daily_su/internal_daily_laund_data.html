@@ -1,0 +1,71 @@
+<style>
+	#report_eggs table{
+	width: 100%;
+	border-collapse: collapse;
+	border: 2px solid black;
+	}
+	#report_eggs table tr{
+	border: 2px solid black;
+	}
+	#report_eggs table tr td{
+	border: 2px solid black;
+	text-align:center;
+	padding:4px;
+	}
+	#let-head img{ width:100%; }
+	.pg-title{
+		text-align: center;
+		font-size: 18px;
+		font-weight: bold;
+	}
+	#report_eggs table tr:first-child td { text-align: center;font-weight: bold; background-color: #d3d3d3;}
+	#report_eggs table tr:last-child td{ font-weight: bold; background-color: #d3d3d3;}
+	@media print {
+	   * { color: black; background: white; }
+	   table { page-break-inside:auto }
+		tr    { page-break-inside:avoid; page-break-after:auto }
+	   #report_eggs table { font-size: 80%; }
+	   #report_eggs table{
+		width: 100%;
+		border-collapse: collapse;
+		border: 2px solid black;
+		}
+		#report_eggs table tr{
+		border: 2px solid black;
+		}
+		#report_eggs table tr td{
+		border: 2px solid black;
+		text-align:center;
+		padding:4px;
+		}
+		#let-head img{ width:100%; }
+		#report_eggs table tr:first-child td { text-align: center;font-weight: bold; background-color: #d3d3d3;}
+		#report_eggs table tr:last-child td{ font-weight: bold; background-color: #d3d3d3;}
+	} 
+	</style>
+	<div id="report_eggs" >
+	<div id="let-head">{{head}}</div>	
+	<p>
+	<div style="width: 70%;    font-size: 20px;    font-weight: bold;    float: left;    padding-bottom: 10px;">
+	{% if(customer){  %}
+	&nbsp;&nbsp;&nbsp;&nbsp;{{customer}} 
+	{%  }  %}
+	</div>
+	<div style="width: 30%;    font-size: 20px;    font-weight: bold;    float: left;    text-align: end;    padding-bottom: 10px;">
+	{{from_date}} - {{to_date}}</div></p>
+	<br><br>
+	<p class="pg-title">Daily Laundry Summary Report</p>
+	<table>
+		<tr><td width="18%">Bill No</td><td width="18%">Invoice</td><td width="18%">Total Pieces</td><td width="18%">Credit</td><td width="18%">Room No</td><td>Date</td></tr>
+		{% for itm in items%}
+		<tr><td>{{itm.name}}</td><td>{{itm.salinv}}</td><td>{{itm.total_qty}}</td><td>{{itm.grand_total}}</td><td>
+			{{itm.po_no}}
+		</td><td>{{itm.posting_date}}</td></tr>
+		{%endfor%}
+		
+		{% for itm in items_total%}
+		<tr><td></td><td>TOTAL</td><td>{{itm.total_qty}}</td><td>{{itm.grand_total}}</td><td></td><td></td></tr>
+		{%endfor%}
+	</table>
+	</div>
+		

@@ -130,7 +130,9 @@ doc_events = {
 
 # Testing
 # -------
-
+override_whitelisted_methods = {
+	'erpnext.payroll.doctype.gratuity.gratuity.calculate_work_experience_and_amount':'custom_reports.gratuity.calculate_work_experience_and_amount'
+ }
 # before_tests = "custom_reports.install.before_tests"
 
 # Overriding Methods

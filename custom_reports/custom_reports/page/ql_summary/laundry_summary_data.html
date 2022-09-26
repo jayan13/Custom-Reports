@@ -1,0 +1,75 @@
+<style>
+#report_eggs table{
+width: 100%;
+border-collapse: collapse;
+border: 2px solid black;
+}
+#report_eggs table tr{
+border: 2px solid black;
+}
+#report_eggs table tr td{
+border: 2px solid black;
+text-align:center;
+padding:4px;
+}
+#let-head img{ width:100%; }
+.pg-title{
+	text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+#report_eggs table tr:first-child td { text-align: center;font-weight: bold; background-color: #d3d3d3;}
+#report_eggs table tr:last-child td{ font-weight: bold; background-color: #d3d3d3;}
+@media print {
+   * { color: black; background: white; }
+   table { page-break-inside:auto }
+    tr    { page-break-inside:avoid; page-break-after:auto }
+   #report_eggs table { font-size: 80%; }
+   #report_eggs table{
+	width: 100%;
+	border-collapse: collapse;
+	border: 2px solid black;
+	}
+	#report_eggs table tr{
+	border: 2px solid black;
+	}
+	#report_eggs table tr td{
+	border: 2px solid black;
+	text-align:center;
+	padding:4px;
+	}
+	#let-head img{ width:100%; }
+	#report_eggs table tr:first-child td { text-align: center;font-weight: bold; background-color: #d3d3d3;}
+	#report_eggs table tr:last-child td{ font-weight: bold; background-color: #d3d3d3;}
+} 
+</style>
+<div id="report_eggs" >
+<div id="let-head">{{head}}</div>
+<div style="width: 100%;    font-size: 24px;    font-weight: bold;    text-align: center;    ">Tax Invoice</div>	
+<p>
+<div style="width: 70%;    font-size: 20px;    font-weight: bold;    float: left;    padding-bottom: 10px;">
+{% if(customer){  %}
+&nbsp;&nbsp;&nbsp;&nbsp;{{customer}}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight: normal;">TRN - {{trn}}</span> 
+{%  }  %}
+</div>
+<div style="width: 30%;    font-size: 20px;    font-weight: bold;    float: left;    text-align: end;    padding-bottom: 10px;">
+{{from_date}} - {{to_date}}</div></p>
+<br><br>
+<div style="clear: both;" class="pg-title">Laundry Summary Report</div>
+<table>
+	<tr><td width="20%">Description</td><td width="20%">Total Pieces</td><td width="20%">Price Without vat</td><td width="20%">Vat</td><td width="20%">Total Amount With Vat</td></tr>
+	{% for itm in items%}
+	<tr><td>{{itm.address_title}}</td><td>{{itm.total_qty}}</td><td>{{itm.total}}</td><td>{{itm.total_taxes}}</td><td>{{itm.grand_total}}</td></tr>
+	{%endfor%}
+	
+	{% for itm in items_total%}
+	<tr><td>TOTAL</td><td>{{itm.total_qty}}</td><td>{{itm.total}}</td><td>{{itm.total_taxes}}</td><td>{{itm.grand_total}}</td></tr>
+	{%endfor%}
+</table>
+<div style="padding-top: 100px;width: 100%;">
+	<div style="width: 40%; float: left;padding-left: 60px;">H.K MANAGER</div>
+	<div style="width: 40%; float: right;text-align: right;padding-right: 60px;">LAUNDRY</div>
+</div>
+</div>
+    
