@@ -9,9 +9,11 @@ from frappe.utils import add_to_date,getdate,today,get_datetime
 
 def send_mail(doc,event):
 
-    checkincount_inday=frappe.db.sql("""select count(c.name) as ckin  from `tabEmployee Checkin` c 
-	where log_type='IN' and c.employee='%s' and DATE(c.time)=DATE('%s') group by DATE(`time`),c.employee"""%(doc.employee,doc.time),as_dict=1,debug=0)[0].ckin or 0
-
+    checkincount_indayres=frappe.db.sql("""select count(c.name) as ckin  from `tabEmployee Checkin` c 
+	where log_type='IN' and c.employee='%s' and DATE(c.time)=DATE('%s') group by DATE(`time`),c.employee"""%(doc.employee,doc.time),as_dict=1,debug=0)
+    checkincount_inday=0
+    if checkincount_indayres:
+        checkincount_inday=checkincount_indayres[0].ckin or 0
     tm=''    
     if doc.log_type=='IN' and doc.shift and checkincount_inday < 2:
         shifttp=frappe.get_doc("Shift Type",doc.shift)
