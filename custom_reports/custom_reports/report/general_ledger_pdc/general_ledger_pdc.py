@@ -328,7 +328,7 @@ def get_gl_entries(filters, accounting_dimensions):
 						gl.cheque_no=chestus[1]
 						gl.cheque_date=chestus[2]
 					
-					if cheque_status=='Cheque Realized':						
+					if cheque_status=='Cheque Realized' or cheque_status=='Cheque Returned':						
 						gl.debit=0 
 						gl.debit_in_account_currency=0
 						gl.credit=0
@@ -378,7 +378,7 @@ def get_gl_entries(filters, accounting_dimensions):
 						gl.cheque_no=chestus[1]
 						gl.cheque_date=chestus[2]
 
-					if cheque_status=='Cheque Realized':						
+					if cheque_status=='Cheque Realized' or cheque_status=='Cheque Returned':						
 						gl.debit=0 
 						gl.debit_in_account_currency=0
 						gl.credit=0
