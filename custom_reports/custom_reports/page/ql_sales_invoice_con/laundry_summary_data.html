@@ -30,7 +30,6 @@ Date : {{invoice.posting_date}}</div></p>
 	<tr><td style="width:120px;">Customer : </td><td>{{invoice.customer_name}}</td></tr>
 	<tr><td style="vertical-align: text-top;">Address : </td><td>{{invoice.address_display}}</td></tr>
 	<tr><td >VAT Reg. No :</td><td>{{invoice.tax_id}}</td></tr>
-	<tr><td style="vertical-align: text-top;">Room No :</td><td>{{invoice.po_no}}</td></tr>
 </table>	
  	
 </div>
@@ -42,8 +41,7 @@ Date : {{invoice.posting_date}}</div></p>
 				<tr>
 					<th width="5%">Sr. No</th>
 					<th width="38%">Description</th>
-					<th width="8%" >Qty(Nos)</th>
-					<th width="10%" >Rate</th>
+					<th width="8%" >Qty(Nos)</th>					
 					<th width="12%">Amount Excluding VAT</th>
 					<th width="5%">VAT %</th>
 					<th width="10%">VAT Amount</th>
@@ -51,9 +49,10 @@ Date : {{invoice.posting_date}}</div></p>
 				</tr>
 			</thead>
 			<tbody>
+				
 				{% for itm in items%}
 				<tr>
-					<td style="text-align:right;">{{itm.idx}}</td>
+					<td style="text-align:right;">{{itm.idxs}}</td>
 					<td>{{itm.address_title}}</td>
 					<td style="text-align:right;">{{itm.qty}}</td>					
 					<td style="text-align:right;">{{itm.amount}}</td>

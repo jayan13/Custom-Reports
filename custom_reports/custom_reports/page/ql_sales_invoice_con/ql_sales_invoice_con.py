@@ -30,15 +30,15 @@ def get_report(customer=None,sales_invoice=None):
     data['grand_total']=frappe.utils.fmt_money(inv.grand_total)
    
     data['invoice']=inv
-
     frappe.db.sql(""" SET @idx=0 """)
-    item=frappe.db.sql(""" select @idx:=@idx+1 AS idx,ad.address_title,sum(si.qty) as qty,sum(si.amount) as amount,sum(si.rate) as rate,si.tax_rate as tax_rate,sum(si.tax_amount) as tax_amount,sum(si.total_amount) as total_amount from `tabSales Invoice Item` si left join `tabDelivery Note` dn on dn.name=si.delivery_note left join `tabAddress` ad on ad.name=dn.customer_address where ad.address_title in ('F & B LINEN','F&B LINEN', 'GUEST LAUNDRY', 'ROOM LINEN', 'RECREATION LINEN', 'STAFF UNIFORM', 'MANAGEMENT LAUNDRY','ADMINISTRATION STAFF') and si.parent='{0}' group by ad.address_title """.format(sales_invoice),as_dict=1,debug=0)   
+    item=frappe.db.sql(""" select @idx:=@idx+1 AS idxs,ad.address_title,sum(si.qty) as qty,sum(ROUND(si.amount, 2)) as amount,si.tax_rate as tax_rate,sum(si.tax_amount) as tax_amount,sum(si.total_amount) as total_amount from `tabSales Invoice Item` si left join `tabDelivery Note` dn on dn.name=si.delivery_note left join `tabAddress` ad on ad.name=dn.customer_address where ad.address_title in ('F & B LINEN','F&B LINEN', 'GUEST LAUNDRY', 'ROOM LINEN', 'RECREATION LINEN', 'STAFF UNIFORM', 'MANAGEMENT LAUNDRY','ADMINISTRATION STAFF') and si.parent='{0}' group by ad.address_title order by idxs""".format(sales_invoice),as_dict=1,debug=0)   
     it=[]
     for itm in item:
-        itm.amount=frappe.utils.fmt_money(itm.amount)
-        itm.rate=frappe.utils.fmt_money(itm.rate)
-        itm.tax_amount=frappe.utils.fmt_money(itm.tax_amount)
-        itm.total_amount=frappe.utils.fmt_money(itm.total_amount)
+        amount=flt(itm.amount,2)
+        itm.amount=frappe.utils.fmt_money(amount)
+        tax_amount=flt(amount*(itm.tax_rate/100))
+        itm.tax_amount=frappe.utils.fmt_money(tax_amount)
+        itm.total_amount=frappe.utils.fmt_money(amount+tax_amount)
         it.append(itm)
 
     data['items']=it
