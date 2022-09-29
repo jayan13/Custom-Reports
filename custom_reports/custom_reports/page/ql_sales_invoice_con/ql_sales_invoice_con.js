@@ -66,6 +66,7 @@ frappe.pages['ql-sales-invoice-con'].on_page_load = function(wrapper) {
 						args: {'customer':field.get_value()},
 						callback: function (r) {
 						  if (r.message) {
+							$('[data-fieldname="sales_invoice"][type="text"]').find('option').remove();
 							  $('[data-fieldname="sales_invoice"][type="text"]').append($("<option></option>").attr("value", "").text("")); 
 							  $.each( r.message.invoices, function( key, value ) {					
 								  
