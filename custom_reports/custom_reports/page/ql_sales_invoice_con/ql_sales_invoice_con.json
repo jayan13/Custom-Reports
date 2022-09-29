@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2022-09-29 12:12:35.411126",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2022-09-29 12:12:35.411126",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "ql-sales-invoice-con",
+ "owner": "Administrator",
+ "page_name": "ql-sales-invoice-con",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Sales Invoice"
+}

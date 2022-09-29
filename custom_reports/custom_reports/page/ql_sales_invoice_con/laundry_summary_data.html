@@ -1,0 +1,112 @@
+<style>
+#let-head img{ width:100%; }
+.table-bordered tr th{border: 1px solid rgb(232, 230, 230);padding: 12px;background-color: #eeeeee;}
+@media print {
+   * { color: black; background: white; }
+   table { page-break-inside:auto }
+    tr { page-break-inside:avoid; page-break-after:auto }
+	#let-head img{ width:100%; }
+	.table-bordered{border-collapse: collapse;}
+	.table-bordered tr td{border: 1px solid rgb(232, 230, 230);padding: 12px;}
+	.table-bordered tr th{border: 1px solid rgb(232, 230, 230);padding: 12px;background-color: #eeeeee;}
+}
+</style>
+<div id="report_eggs" >
+	<!-- start -->
+<div id="let-head">{{head}}</div>
+<div style="width: 100%;    font-size: 24px;    font-weight: bold;    text-align: center;    ">Tax Invoice</div>	
+<p>
+<div style="width: 70%;float: left;">
+
+Invoice No : {{invoice.name}} 
+
+</div>
+<div style="width: 30%;        float: left;    text-align: end;    ">
+Date : {{invoice.posting_date}}</div></p>
+
+<div style="clear: both;padding-bottom: 6px;    margin-bottom: 20px;    border-bottom: 1px solid #d1d8dd;" class="pg-title"></div>
+<div style="width:100%;">
+<table>
+	<tr><td style="width:120px;">Customer : </td><td>{{invoice.customer_name}}</td></tr>
+	<tr><td style="vertical-align: text-top;">Address : </td><td>{{invoice.address_display}}</td></tr>
+	<tr><td >VAT Reg. No :</td><td>{{invoice.tax_id}}</td></tr>
+	<tr><td style="vertical-align: text-top;">Room No :</td><td>{{invoice.po_no}}</td></tr>
+</table>	
+ 	
+</div>
+
+<div style="width:100%;">
+	
+	<table class="table table-bordered" style="width:100%;">
+			<thead>
+				<tr>
+					<th width="5%">Sr. No</th>
+					<th width="38%">Description</th>
+					<th width="8%" >Qty(Nos)</th>
+					<th width="10%" >Rate</th>
+					<th width="12%">Amount Excluding VAT</th>
+					<th width="5%">VAT %</th>
+					<th width="10%">VAT Amount</th>
+					<th width="12%">Amount Including VAT</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for itm in items%}
+				<tr>
+					<td style="text-align:right;">{{itm.idx}}</td>
+					<td>{{itm.address_title}}</td>
+					<td style="text-align:right;">{{itm.qty}}</td>
+					<td style="text-align:right;">{{itm.rate}}</td>
+					<td style="text-align:right;">{{itm.amount}}</td>
+					<td style="text-align:right;">{{itm.tax_rate}}</td>
+					<td style="text-align:right;" >{{itm.tax_amount}}</td>
+					<td style="text-align:right;">{{itm.total_amount}}</td>
+				</tr>
+				{%endfor%}
+			</tbody>	
+	</table>	
+		 
+</div>
+
+<div style="width:50%;float:right;margin-top: 15px;">
+	<table align="right">
+		<tr><td>Total Amount (Excluding VAT) </td><td style="text-align:right;">{{total}}</td></tr>
+		<tr><td >Total VAT Amount (5%) </td><td style="text-align:right;">{{total_taxes_and_charges}}</td></tr>
+		<tr><td >Total Amount (Including VAT)</td><td style="text-align:right;">{{grand_total}}</td></tr>
+		<tr><td colspan="2">In Words : {{invoice.in_words}}</td></tr>
+	</table>	
+
+</div>
+<div style="padding-top: 50px;width: 100%;display: flex;">
+	<table style="width:100%;" >
+		<tr>
+			<td colspan="2" style="font-size:11px;">WE HEREBY ACKNOWLEDGE ABOVE INVOICE AS ACCEPTANCE OF GOODS/SERVICES AS PER AGREED TERMS</td>
+			
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td style="width:55%;">Receiver&#39;s Name & Sign</td>
+			<td>For <span >{{invoice.company}}</span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>Receiver&#39;s stamp</td>
+			<td>Salesman SIgn</td>
+		</tr>
+		
+	</table>
+</div>
+<br>
+<br>
+<br>
+<br>
+
+<!-- end -->
+</div>
+ 
