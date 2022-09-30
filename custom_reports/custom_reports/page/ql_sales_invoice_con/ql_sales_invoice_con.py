@@ -17,7 +17,7 @@ def get_invoice_list(customer,from_date=None,to_date=None):
 
     data["to_date"]=to_date
     data["from_date"]=from_date
-    data["invoices"] = frappe.db.sql(""" select name from `tabSales Invoice` where company='Quick Laundry – Sole Proprietorship LLC' and customer='{0}' and posting_date between '{1}' and '{2}' order by posting_date desc""".format(customer,from_date,to_date),as_dict=1,debug=1)
+    data["invoices"] = frappe.db.sql(""" select name from `tabSales Invoice` where company='Quick Laundry – Sole Proprietorship LLC' and customer='{0}' and posting_date between '{1}' and '{2}' order by posting_date desc""".format(customer,from_date,to_date),as_dict=1,debug=0)
     return data
     
 @frappe.whitelist()
