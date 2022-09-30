@@ -51,7 +51,26 @@ frappe.pages['ql-sales-invoice-con'].on_page_load = function(wrapper) {
 				  },
 				});
 				
+				let field2 = this.page.add_field({
+					label: 'Date From',
+					fieldtype: 'Date',
+					fieldname: 'from_date',
+					change() {
+						get_invoice();
+					}
+					
+				});
 		
+				let field3 = this.page.add_field({
+					label: 'Date To',
+					fieldtype: 'Date',
+					fieldname: 'to_date',
+					change() {
+						get_invoice();
+					}
+					
+				});
+
 				let field1 = this.page.add_field({
 					label: 'Sales Invoice',
 					fieldtype: 'Select',
@@ -59,13 +78,30 @@ frappe.pages['ql-sales-invoice-con'].on_page_load = function(wrapper) {
 					options: [],
 					
 				});
+				
+				fdate=frappe.datetime.add_months(frappe.datetime.get_today(), -1);
+				field2.set_value(fdate);
+				field3.set_value(frappe.datetime.get_today());	
 				function get_invoice()
 				{
 					frappe.call({
 						method: 'custom_reports.custom_reports.page.ql_sales_invoice_con.ql_sales_invoice_con.get_invoice_list',
-						args: {'customer':field.get_value()},
+						args: {
+							'customer':field.get_value(),
+							'from_date':field2.get_value(),
+							'to_date':field3.get_value(),
+					},
 						callback: function (r) {
 						  if (r.message) {
+
+							let data=r.message;
+							if(field2.get_value()==''){
+								field2.set_value(data.from_date);
+							}
+							if(field3.get_value()==''){
+								field3.set_value(data.to_date);
+							}
+
 							$('[data-fieldname="sales_invoice"][type="text"]').find('option').remove();
 							  $('[data-fieldname="sales_invoice"][type="text"]').append($("<option></option>").attr("value", "").text("")); 
 							  $.each( r.message.invoices, function( key, value ) {					

@@ -1,5 +1,5 @@
 import frappe
-from frappe.utils import formatdate, getdate, flt
+from frappe.utils import formatdate, getdate, flt, today, add_to_date  
 
 @frappe.whitelist()
 def get_customer_list():
@@ -8,9 +8,16 @@ def get_customer_list():
     return data
 
 @frappe.whitelist()
-def get_invoice_list(customer):
+def get_invoice_list(customer,from_date=None,to_date=None):
     data = {}
-    data["invoices"] = frappe.get_list("Sales Invoice", filters={ 'customer': customer,'company':'Quick Laundry – Sole Proprietorship LLC'},fields=['name'],limit_page_length=0, order_by="posting_date desc",debug=0)
+    if not to_date:
+        to_date=today()
+    if not from_date:
+        from_date=add_to_date(getdate(today()),months=-1).strftime('%Y-%m-%d')
+
+    data["to_date"]=to_date
+    data["from_date"]=from_date
+    data["invoices"] = frappe.db.sql(""" select name from `tabSales Invoice` where company='Quick Laundry – Sole Proprietorship LLC' and customer='{0}' and posting_date between '{1}' and '{2}' order by posting_date desc""".format(customer,from_date,to_date),as_dict=1,debug=1)
     return data
     
 @frappe.whitelist()
