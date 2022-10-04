@@ -12,7 +12,7 @@ from erpnext.setup.utils import get_exchange_rate
 @frappe.whitelist()
 def quotation_comparison(purchase_order):
 
-	tems=frappe.db.get_all('Purchase Order Item',filters={'parent': purchase_order},fields=['item_code','material_request','supplier_quotation'],debug=0)
+	tems=frappe.db.get_all('Purchase Order Item',filters={'parent': purchase_order},fields=['item_code','item_name','qty','material_request','supplier_quotation'],debug=0)
 	itemar=[]
 	matreq=''
 	suppqto=''
@@ -22,35 +22,44 @@ def quotation_comparison(purchase_order):
 		suppqto=pitem.supplier_quotation
 
 	request_for_quotation=frappe.db.get_value('Supplier Quotation Item', {'parent':suppqto}, ['request_for_quotation'])
-	supplier_quotation_data = get_data(request_for_quotation,itemar)
-	data= prepare_data(supplier_quotation_data)
-	return data
+	supplier_quotation_data = get_data(request_for_quotation,itemar,tems)
+	#data= prepare_data(supplier_quotation_data)
+	return supplier_quotation_data
 
-def get_data(request_for_quotation,itemar):
-	itemssql="','".join(itemar)
-	supplier_quotation_data = frappe.db.sql(
+def get_data(request_for_quotation,itemar,tems):
+	#itemssql="','".join(itemar)
+	dta=[]
+	for pitem in tems:
+		dati={}
+		dati.update({'item_code':pitem.item_code+'-'+pitem.item_name,'qty':pitem.qty})
+		supplier_quotation_item = frappe.db.sql(
 		"""
-		SELECT
-			sqi.parent, sqi.item_code,
-			sqi.qty, sqi.stock_qty, sqi.amount,
-			sqi.uom, sqi.stock_uom,
-			sqi.request_for_quotation,
-			sqi.lead_time_days, sq.supplier as supplier_name, DATE_FORMAT(sq.valid_till, "%d-%m-%Y") as valid_till
+		SELECT			
+			sqi.rate, sq.supplier as supplier_name
 		FROM
 			`tabSupplier Quotation Item` sqi,
 			`tabSupplier Quotation` sq
 		WHERE
 			sqi.parent = sq.name
 			AND sqi.docstatus < 2
-			AND sqi.item_code in ('{0}')
+			AND sqi.item_code ='{0}'
 			AND sqi.request_for_quotation='{1}'
 			order by sq.transaction_date, sqi.item_code""".format(
-			itemssql,request_for_quotation
+			pitem.item_code,request_for_quotation
 		),
 		as_dict=1,
-	)
+		)
+		spi=[]
+		for si in supplier_quotation_item:
+			sp={}
+			sp.update({'rate':si.rate,'supplier':si.supplier_name})
+			spi.append(sp)
 
-	return supplier_quotation_data
+		dati.update({'sup':spi})
+		dta.append(dati)
+
+	#frappe.msgprint(str(dta))
+	return dta
 
 
 def prepare_data(supplier_quotation_data):
