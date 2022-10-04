@@ -44,7 +44,7 @@ def get_data(request_for_quotation,itemar,tems):
 			AND sqi.docstatus < 2
 			AND sqi.item_code ='{0}'
 			AND sqi.request_for_quotation='{1}'
-			order by sq.transaction_date, sqi.item_code""".format(
+			order by sq.supplier""".format(
 			pitem.item_code,request_for_quotation
 		),
 		as_dict=1,
