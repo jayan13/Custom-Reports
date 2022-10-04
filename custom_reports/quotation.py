@@ -12,18 +12,21 @@ from erpnext.setup.utils import get_exchange_rate
 @frappe.whitelist()
 def quotation_comparison(purchase_order):
 
-	tems=frappe.db.get_all('Purchase Order Item',filters={'parent': purchase_order},fields=['item_code','material_request'],debug=0)
+	tems=frappe.db.get_all('Purchase Order Item',filters={'parent': purchase_order},fields=['item_code','material_request','supplier_quotation'],debug=0)
 	itemar=[]
 	matreq=''
+	suppqto=''
 	for pitem in tems:
 		itemar.append(pitem.item_code)
 		matreq=pitem.material_request
-	
-	supplier_quotation_data = get_data(matreq,itemar)
+		suppqto=pitem.supplier_quotation
+
+	request_for_quotation=frappe.db.get_value('Supplier Quotation Item', {'parent':suppqto}, ['request_for_quotation'])
+	supplier_quotation_data = get_data(request_for_quotation,itemar)
 	data= prepare_data(supplier_quotation_data)
 	return data
 
-def get_data(matreq,itemar):
+def get_data(request_for_quotation,itemar):
 	itemssql="','".join(itemar)
 	supplier_quotation_data = frappe.db.sql(
 		"""
@@ -40,9 +43,9 @@ def get_data(matreq,itemar):
 			sqi.parent = sq.name
 			AND sqi.docstatus < 2
 			AND sqi.item_code in ('{0}')
-			AND sqi.material_request='{1}'
+			AND sqi.request_for_quotation='{1}'
 			order by sq.transaction_date, sqi.item_code""".format(
-			itemssql,matreq
+			itemssql,request_for_quotation
 		),
 		as_dict=1,
 	)
