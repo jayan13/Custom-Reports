@@ -100,7 +100,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 				sqi.parent = sq.name
 				AND sqi.docstatus < 2
 				AND sqi.item_code ='{0}'
-				AND sq.parent='{1}'
+				AND sq.name='{1}'
 				order by sq.supplier""".format(
 				pitem.item_code,suppqto
 			),
