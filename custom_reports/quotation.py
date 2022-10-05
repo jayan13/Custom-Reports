@@ -44,7 +44,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 				order by sq.supplier""".format(
 				request_for_quotation
 			),
-			as_dict=1,
+			as_dict=1,debug=1
 			)
 	else:
 		supplier_list = frappe.db.sql(
@@ -61,7 +61,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 				order by sq.supplier""".format(
 				suppqto
 			),
-			as_dict=1,
+			as_dict=1,debug=1
 			)
 	for s in supplier_list:
 		spli.append(s.supplier_name)
