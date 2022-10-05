@@ -27,7 +27,7 @@ def quotation_comparison(purchase_order):
 	return supplier_quotation_data
 
 def get_data(request_for_quotation,itemar,tems,suppqto):
-	#itemssql="','".join(itemar)
+	itemssql="','".join(itemar)
 	spli=[]
 	if request_for_quotation:
 		supplier_list = frappe.db.sql(
@@ -41,8 +41,9 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 				sqi.parent = sq.name
 				AND sqi.docstatus < 2
 				AND sqi.request_for_quotation='{0}'
+				AND sqi.item_code in('{1}')
 				order by sq.supplier""".format(
-				request_for_quotation
+				request_for_quotation,itemssql
 			),
 			as_dict=1,debug=0
 			)
@@ -58,8 +59,9 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 				sqi.parent = sq.name
 				AND sqi.docstatus < 2
 				AND sq.name='{0}'
+				AND sqi.item_code in('{1}')
 				order by sq.supplier""".format(
-				suppqto
+				suppqto,itemssql
 			),
 			as_dict=1,debug=0
 			)
