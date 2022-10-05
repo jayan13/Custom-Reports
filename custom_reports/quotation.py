@@ -57,7 +57,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 			WHERE
 				sqi.parent = sq.name
 				AND sqi.docstatus < 2
-				AND sq.parent='{0}'
+				AND sq.name='{0}'
 				order by sq.supplier""".format(
 				suppqto
 			),
@@ -86,7 +86,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 				order by sq.supplier""".format(
 				pitem.item_code,request_for_quotation
 			),
-			as_dict=1,
+			as_dict=1,debug=1
 			)
 		else:
 			supplier_quotation_item = frappe.db.sql(
@@ -104,7 +104,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 				order by sq.supplier""".format(
 				pitem.item_code,suppqto
 			),
-			as_dict=1,
+			as_dict=1,debug=1
 			)
 
 		spi=[]
