@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2022-10-07 08:36:42.048530",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2022-10-07 08:37:12.330349",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "comments",
+ "owner": "Administrator",
+ "page_name": "comments",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Comments"
+}

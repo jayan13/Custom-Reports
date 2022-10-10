@@ -1,0 +1,65 @@
+<style>
+    #unit_report table{
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #cdc8c8;
+    }
+    #unit_report table tr{
+    border: 1px solid #cdc8c8;
+    }
+    #unit_report table tr td{
+    border: 1px solid #cdc8c8;   
+    padding:6px;
+    }
+    #let-head img{ width:100%; }
+    .pg-title{
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    #unit_report table tr:first-child td { text-align: center;font-weight: bold; background-color: #d3d3d3;}
+    
+    @media print {
+       * { color: black; background: white; }
+       table { page-break-inside:auto }
+        tr    { page-break-inside:avoid; page-break-after:auto }
+       #unit_report table { font-size: 80%; }
+       #unit_report table{
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid 1px solid #cdc8c8;
+        }
+        #unit_report table tr{
+        border: 1px solid 1px solid #cdc8c8;
+        }
+        #unit_report table tr td{
+        border: 1px solid 1px solid #cdc8c8;        
+        padding:6px;
+        }
+        #let-head img{ width:100%; }
+        #unit_report table tr:first-child td { text-align: center;font-weight: bold; background-color: #d3d3d3;}
+       
+    } 
+    </style>
+<div id="unit_report" style="background-color:#fff;width:100%; padding:14px;">
+    
+    <table>
+        <tr>
+            <td width="5%">Sl </td>
+            <td >comment</td>
+            <td width="15%">User</td>
+            <td width="10%">Date</td>
+            
+        {% for itm in comments%}
+        <tr>
+            <td>{{itm.row_number}}</td>
+            <td><a href="/app/{{itm.document_type}}/{%= itm.document_name %}"  onclick=set_read("{{itm.name}}") >
+                {%=itm.subject%}</a></td>
+            <td>{{itm.from_user}}</td>
+            <td>{{itm.creation}}</td>
+            </tr>
+        {%endfor%}
+        
+    </table>
+</div>
+    
