@@ -244,7 +244,7 @@ def total_pdcreal_tyd():
 def total_comments():
 	carddata = {}
 	rate=frappe.db.sql(
-		"""	select count(*) as cnt from `tabNotification Log` where `read`=0 and for_user='%s' """%(frappe.session.user),
+		"""	select count(*) as cnt from `tabNotification Log` where type in ('Share','Mention','Assignment') and `read`=0 and for_user='%s' """%(frappe.session.user),
 		as_dict=1,debug=0
 	)
 	carddata['value']=0
