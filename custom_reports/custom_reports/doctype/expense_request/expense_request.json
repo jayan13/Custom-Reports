@@ -1,11 +1,13 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "naming_series:",
  "creation": "2022-10-18 18:46:54.890081",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "naming_series",
   "company",
   "from_employee",
   "date",
@@ -19,18 +21,21 @@
   {
    "fieldname": "company",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Company",
    "options": "Company"
   },
   {
    "fieldname": "from_employee",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "From Employee",
    "options": "Employee"
   },
   {
    "fieldname": "date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Date"
   },
   {
@@ -61,12 +66,27 @@
    "fieldname": "expense_section",
    "fieldtype": "Section Break",
    "label": "Expense"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "EXPREQ-"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2022-10-18 18:48:02.580396",
+ "links": [
+  {
+   "link_doctype": "Expense Claim",
+   "link_fieldname": "expense_request"
+  },
+  {
+   "link_doctype": "Employee Advance",
+   "link_fieldname": "expense_request"
+  }
+ ],
+ "modified": "2022-10-19 09:57:44.452407",
  "modified_by": "Administrator",
  "module": "custom reports",
  "name": "Expense Request",
