@@ -140,7 +140,7 @@ def get_data_html(request_for_quotation,itemar,tems,suppqto):
 		supplier_list = frappe.db.sql(
 			"""
 			SELECT			
-				DISTINCT sq.supplier as supplier_name,sq.discount_amount,sq.warranty,sq.payment_terms,sq.other_notes,sq.total
+				DISTINCT sq.supplier as supplier_name,sq.discount_amount,sq.warranty,sq.payment_terms,sq.other_notes,sum(sqi.net_amount) as total
 			FROM
 				`tabSupplier Quotation Item` sqi,
 				`tabSupplier Quotation` sq
@@ -149,7 +149,7 @@ def get_data_html(request_for_quotation,itemar,tems,suppqto):
 				AND sqi.docstatus < 2
 				AND sqi.request_for_quotation='{0}'
 				AND sqi.item_code in('{1}')
-				order by sq.supplier""".format(
+				group by sq.supplier order by sq.supplier """.format(
 				request_for_quotation,itemssql
 			),
 			as_dict=1,debug=0
@@ -158,7 +158,7 @@ def get_data_html(request_for_quotation,itemar,tems,suppqto):
 		supplier_list = frappe.db.sql(
 			"""
 			SELECT			
-				DISTINCT sq.supplier as supplier_name,sq.discount_amount,sq.warranty,sq.payment_terms,sq.other_notes
+				DISTINCT sq.supplier as supplier_name,sq.discount_amount,sq.warranty,sq.payment_terms,sq.other_notes,sum(sqi.net_amount) as total
 			FROM
 				`tabSupplier Quotation Item` sqi,
 				`tabSupplier Quotation` sq
@@ -167,7 +167,7 @@ def get_data_html(request_for_quotation,itemar,tems,suppqto):
 				AND sqi.docstatus < 2
 				AND sq.name='{0}'
 				AND sqi.item_code in('{1}')
-				order by sq.supplier""".format(
+				group by sq.supplier order by sq.supplier """.format(
 				suppqto,itemssql
 			),
 			as_dict=1,debug=0
