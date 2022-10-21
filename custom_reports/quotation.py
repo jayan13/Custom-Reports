@@ -98,7 +98,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 				supplier_quotation_item = frappe.db.sql(
 				"""
 				SELECT			
-					sqi.rate, sq.supplier as supplier_name,sqi.net_amount,sq.discount_amount,sq.warranty,sq.payment_terms,sq.other_notes
+					sqi.rate, sq.supplier as supplier_name,sqi.net_amount,sq.discount_amount,sq.warranty,sq.payment_terms,sq.other_notes,sq.total
 				FROM
 					`tabSupplier Quotation Item` sqi,
 					`tabSupplier Quotation` sq
@@ -140,7 +140,7 @@ def get_data_html(request_for_quotation,itemar,tems,suppqto):
 		supplier_list = frappe.db.sql(
 			"""
 			SELECT			
-				DISTINCT sq.supplier as supplier_name,sq.discount_amount,sq.warranty,sq.payment_terms,sq.other_notes
+				DISTINCT sq.supplier as supplier_name,sq.discount_amount,sq.warranty,sq.payment_terms,sq.other_notes,sq.total
 			FROM
 				`tabSupplier Quotation Item` sqi,
 				`tabSupplier Quotation` sq
