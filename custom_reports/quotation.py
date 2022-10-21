@@ -12,7 +12,7 @@ from erpnext.setup.utils import get_exchange_rate
 @frappe.whitelist()
 def quotation_comparison(purchase_order):
 
-	tems=frappe.db.get_all('Purchase Order Item',filters={'parent': purchase_order},fields=['item_code','item_name','last_purchase_rate','qty','material_request','supplier_quotation'],debug=0)
+	tems=frappe.db.get_all('Purchase Order Item',filters={'parent': purchase_order},fields=['item_code','uom','item_name','last_purchase_rate','qty','material_request','supplier_quotation'],debug=0)
 	itemar=[]
 	matreq=''
 	suppqto=''
@@ -22,7 +22,7 @@ def quotation_comparison(purchase_order):
 		suppqto=pitem.supplier_quotation
 
 	request_for_quotation=frappe.db.get_value('Supplier Quotation Item', {'parent':suppqto}, ['request_for_quotation'])
-	supplier_quotation_data = get_data(request_for_quotation,itemar,tems,suppqto)
+	supplier_quotation_data = get_data_html(request_for_quotation,itemar,tems,suppqto)
 	#data= prepare_data(supplier_quotation_data)
 	return supplier_quotation_data
 
@@ -70,7 +70,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 	dta=[]
 	for pitem in tems:
 		dati={}
-		dati.update({'item_code':pitem.item_code+'-'+pitem.item_name,'qty':pitem.qty,'last_purchase_rate':pitem.last_purchase_rate})
+		dati.update({'item_code':pitem.item_code+'-'+pitem.item_name,'uom':pitem.uom,'qty':pitem.qty,'last_purchase_rate':pitem.last_purchase_rate})
 		spi=[]
 		for s in supplier_list:
 			#spli.append(s.supplier_name)
@@ -79,7 +79,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 				supplier_quotation_item = frappe.db.sql(
 				"""
 				SELECT			
-					sqi.rate, sq.supplier as supplier_name
+					sqi.rate, sq.supplier as supplier_name,sqi.net_amount,sq.discount_amount,sq.warranty,sq.payment_terms,sq.other_notes
 				FROM
 					`tabSupplier Quotation Item` sqi,
 					`tabSupplier Quotation` sq
@@ -98,7 +98,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 				supplier_quotation_item = frappe.db.sql(
 				"""
 				SELECT			
-					sqi.rate, sq.supplier as supplier_name
+					sqi.rate, sq.supplier as supplier_name,sqi.net_amount,sq.discount_amount,sq.warranty,sq.payment_terms,sq.other_notes
 				FROM
 					`tabSupplier Quotation Item` sqi,
 					`tabSupplier Quotation` sq
@@ -116,12 +116,14 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 
 			if supplier_quotation_item:
 				for si in supplier_quotation_item:
+					#amt=pitem.qty*si.rate
+					amt=si.net_amount
 					sp={}
-					sp.update({'rate':si.rate,'supplier':s.supplier_name})
+					sp.update({'rate':si.rate,'amount':amt,'supplier':s.supplier_name})
 					spi.append(sp)
 			else:			
 					sp={}
-					sp.update({'rate':0,'supplier':s.supplier_name})
+					sp.update({'rate':0,'amount':0,'supplier':s.supplier_name})
 					spi.append(sp)
 			
 		dati.update({'sup':spi})
@@ -130,6 +132,112 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 	#frappe.msgprint(str(dta))
 	return dta
 
+
+def get_data_html(request_for_quotation,itemar,tems,suppqto):
+	itemssql="','".join(itemar)
+	spli=[]
+	if request_for_quotation:
+		supplier_list = frappe.db.sql(
+			"""
+			SELECT			
+				DISTINCT sq.supplier as supplier_name,sq.discount_amount,sq.warranty,sq.payment_terms,sq.other_notes
+			FROM
+				`tabSupplier Quotation Item` sqi,
+				`tabSupplier Quotation` sq
+			WHERE
+				sqi.parent = sq.name
+				AND sqi.docstatus < 2
+				AND sqi.request_for_quotation='{0}'
+				AND sqi.item_code in('{1}')
+				order by sq.supplier""".format(
+				request_for_quotation,itemssql
+			),
+			as_dict=1,debug=0
+			)
+	else:
+		supplier_list = frappe.db.sql(
+			"""
+			SELECT			
+				DISTINCT sq.supplier as supplier_name,sq.discount_amount,sq.warranty,sq.payment_terms,sq.other_notes
+			FROM
+				`tabSupplier Quotation Item` sqi,
+				`tabSupplier Quotation` sq
+			WHERE
+				sqi.parent = sq.name
+				AND sqi.docstatus < 2
+				AND sq.name='{0}'
+				AND sqi.item_code in('{1}')
+				order by sq.supplier""".format(
+				suppqto,itemssql
+			),
+			as_dict=1,debug=0
+			)
+	
+	dta=[]
+	for pitem in tems:
+		dati={}
+		dati.update({'item_code':pitem.item_code+'-'+pitem.item_name,'uom':pitem.uom,'qty':pitem.qty,'last_purchase_rate':pitem.last_purchase_rate})
+		spi=[]
+		for s in supplier_list:
+			#spli.append(s.supplier_name)
+			
+			if request_for_quotation:
+				supplier_quotation_item = frappe.db.sql(
+				"""
+				SELECT			
+					sqi.rate, sq.supplier as supplier_name,sqi.net_amount
+				FROM
+					`tabSupplier Quotation Item` sqi,
+					`tabSupplier Quotation` sq
+				WHERE
+					sqi.parent = sq.name
+					AND sqi.docstatus < 2
+					AND sqi.item_code ='{0}'
+					AND sqi.request_for_quotation='{1}'
+					AND sq.supplier='{2}'
+					order by sq.supplier""".format(
+					pitem.item_code,request_for_quotation,s.supplier_name
+				),
+				as_dict=1,debug=0
+				)
+			else:
+				supplier_quotation_item = frappe.db.sql(
+				"""
+				SELECT			
+					sqi.rate, sq.supplier as supplier_name,sqi.net_amount
+				FROM
+					`tabSupplier Quotation Item` sqi,
+					`tabSupplier Quotation` sq
+				WHERE
+					sqi.parent = sq.name
+					AND sqi.docstatus < 2
+					AND sqi.item_code ='{0}'
+					AND sq.name='{1}'
+					AND sq.supplier='{2}'
+					order by sq.supplier""".format(
+					pitem.item_code,suppqto,s.supplier_name
+				),
+				as_dict=1,debug=0
+				)
+
+			if supplier_quotation_item:
+				for si in supplier_quotation_item:
+					#amt=pitem.qty*si.rate
+					amt=si.net_amount					
+					sp={}
+					sp.update({'rate':si.rate,'amount':amt,'supplier':s.supplier_name})
+					spi.append(sp)
+			else:			
+					sp={}
+					sp.update({'rate':0,'amount':0,'supplier':s.supplier_name})
+					spi.append(sp)
+			
+		dati.update({'sup':spi})
+		dta.append(dati)
+
+	#frappe.msgprint(str(dta))
+	data={'items':dta,'suplier':supplier_list}
+	return data
 
 def prepare_data(supplier_quotation_data):
 	out, groups, qty_list, suppliers=  [], [], [], []
