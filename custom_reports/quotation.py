@@ -111,7 +111,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 					AND sqi.item_code ='{0}'
 					AND sqi.request_for_quotation='{1}'
 					AND sq.supplier='{2}'
-					order by sq.supplier""".format(
+					order by sq.supplier limit 0,1""".format(
 					pitem.item_code,request_for_quotation,s.supplier_name
 				),
 				as_dict=1,debug=0
@@ -130,7 +130,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 					AND sqi.item_code ='{0}'
 					AND sq.name='{1}'
 					AND sq.supplier='{2}'
-					order by sq.supplier""".format(
+					order by sq.supplier limit 0,1""".format(
 					pitem.item_code,suppqto,s.supplier_name
 				),
 				as_dict=1,debug=0
@@ -218,10 +218,10 @@ def get_data_html(request_for_quotation,itemar,tems,suppqto):
 					AND sqi.item_code ='{0}'
 					AND sqi.request_for_quotation='{1}'
 					AND sq.supplier='{2}'
-					order by sq.supplier""".format(
+					order by sq.supplier limit 0,1""".format(
 					pitem.item_code,request_for_quotation,s.supplier_name
 				),
-				as_dict=1,debug=1
+				as_dict=1,debug=0
 				)
 			else:
 				supplier_quotation_item = frappe.db.sql(
@@ -237,10 +237,10 @@ def get_data_html(request_for_quotation,itemar,tems,suppqto):
 					AND sqi.item_code ='{0}'
 					AND sq.name='{1}'
 					AND sq.supplier='{2}'
-					order by sq.supplier""".format(
+					order by sq.supplier limit 0,1""".format(
 					pitem.item_code,suppqto,s.supplier_name
 				),
-				as_dict=1,debug=1
+				as_dict=1,debug=0
 				)
 
 			if supplier_quotation_item:
