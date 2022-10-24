@@ -48,6 +48,8 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 	itemssql="','".join(itemar)
 	spli=[]
 	if request_for_quotation:
+		suppqto=frappe.db.get_value('Supplier Quotation Item', {'request_for_quotation': request_for_quotation,'item_code':['in',itemar]}, ['parent'])
+
 		supplier_list = frappe.db.sql(
 			"""
 			SELECT			
@@ -60,8 +62,9 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 				AND sq.docstatus < 2
 				AND sqi.request_for_quotation='{0}'
 				AND sqi.item_code in('{1}')
+				AND sq.name='{2}'
 				group by sq.supplier order by sq.supplier""".format(
-				request_for_quotation,itemssql
+				request_for_quotation,itemssql,suppqto
 			),
 			as_dict=1,debug=0
 			)
@@ -160,6 +163,7 @@ def get_data_html(request_for_quotation,itemar,tems,suppqto):
 	itemssql="','".join(itemar)
 	spli=[]
 	if request_for_quotation:
+		suppqto=frappe.db.get_value('Supplier Quotation Item', {'request_for_quotation': request_for_quotation,'item_code':['in',itemar]}, ['parent'])
 		supplier_list = frappe.db.sql(
 			"""
 			SELECT			
@@ -172,8 +176,9 @@ def get_data_html(request_for_quotation,itemar,tems,suppqto):
 				AND sq.docstatus < 2
 				AND sqi.request_for_quotation='{0}'
 				AND sqi.item_code in('{1}')
+				AND sq.name='{2}'
 				group by sq.supplier order by sq.supplier """.format(
-				request_for_quotation,itemssql
+				request_for_quotation,itemssql,suppqto
 			),
 			as_dict=1,debug=0
 			)
@@ -205,6 +210,7 @@ def get_data_html(request_for_quotation,itemar,tems,suppqto):
 			#spli.append(s.supplier_name)
 			
 			if request_for_quotation:
+				
 				supplier_quotation_item = frappe.db.sql(
 				"""
 				SELECT			
