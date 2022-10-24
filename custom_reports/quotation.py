@@ -61,8 +61,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 				sqi.parent = sq.name
 				AND sq.docstatus < 2
 				AND sqi.request_for_quotation='{0}'
-				AND sqi.item_code in('{1}')
-				AND sq.name='{2}'
+				AND sqi.item_code in('{1}')				
 				group by sq.supplier order by sq.supplier""".format(
 				request_for_quotation,itemssql,suppqto
 			),
@@ -176,7 +175,6 @@ def get_data_html(request_for_quotation,itemar,tems,suppqto):
 				AND sq.docstatus < 2
 				AND sqi.request_for_quotation='{0}'
 				AND sqi.item_code in('{1}')
-				AND sq.name='{2}'
 				group by sq.supplier order by sq.supplier """.format(
 				request_for_quotation,itemssql,suppqto
 			),
