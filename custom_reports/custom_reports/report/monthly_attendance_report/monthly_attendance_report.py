@@ -55,7 +55,7 @@ def execute(filters=None):
 	holiday_list.append(default_holiday_list)
 	holiday_list = list(set(holiday_list))
 	holiday_map = get_holiday(holiday_list, filters["date_from"], filters["date_to"])
-
+	
 	data = []
 
 	leave_types = None
@@ -154,16 +154,22 @@ def add_data(
 
 		total_p = total_a = total_l = total_h = total_um = 0.0
 		emp_status_map = []
+		start_date=filters.get("date_from")		
+		df=frappe.utils.add_days(start_date,-1)
+		
 		for day in range(filters["total_days_in_month"]):
+			df=frappe.utils.add_days(df,1)
+			start_day=getdate(df).strftime("%d")+getdate(df).strftime("%m")+getdate(df).strftime("%Y")
+			
 			status = None
-			status = att_map.get(emp).get(day + 1)
+			status = att_map.get(emp).get(start_day)
 
 			if status is None and holiday_map:
 				emp_holiday_list = emp_det.holiday_list if emp_det.holiday_list else default_holiday_list
 
 				if emp_holiday_list in holiday_map:
 					for idx, ele in enumerate(holiday_map[emp_holiday_list]):
-						if day + 1 == holiday_map[emp_holiday_list][idx][0]:
+						if start_day == holiday_map[emp_holiday_list][idx][0]:
 							if holiday_map[emp_holiday_list][idx][1]:
 								status = "Weekly Off"
 							else:
@@ -268,7 +274,7 @@ def get_columns(filters):
 
 def get_attendance_list(conditions, filters):
 	attendance_list = frappe.db.sql(
-		"""select employee, day(attendance_date) as day_of_month,
+		"""select employee, concat(LPAD(day(attendance_date), 2, '0'),LPAD(month(attendance_date), 2, '0'),year(attendance_date)) as day_of_month,
 		status from tabAttendance where docstatus = 1 %s order by employee, attendance_date"""
 		% conditions,
 		filters,
@@ -345,7 +351,7 @@ def get_holiday(holiday_list, date_from,date_to):
 			holiday_map.setdefault(
 				d,
 				frappe.db.sql(
-					"""select day(holiday_date), weekly_off from `tabHoliday`
+					"""select concat(LPAD(day(holiday_date), 2, '0'),LPAD(month(holiday_date), 2, '0'),year(holiday_date)), weekly_off from `tabHoliday`
 				where parent=%s and holiday_date>=%s and holiday_date<=%s """,
 					(d, date_from,date_to),
 				),
