@@ -48,7 +48,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 	itemssql="','".join(itemar)
 	spli=[]
 	if request_for_quotation:
-		suppqto=frappe.db.get_value('Supplier Quotation Item', {'request_for_quotation': request_for_quotation,'item_code':['in',itemar]}, ['parent'])
+		
 
 		supplier_list = frappe.db.sql(
 			"""
@@ -61,9 +61,10 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 				sqi.parent = sq.name
 				AND sq.docstatus < 2
 				AND sqi.request_for_quotation='{0}'
-				AND sqi.item_code in('{1}')				
+				AND sqi.item_code in('{1}')
+				AND sq.status<>'Expired'				
 				group by sq.supplier order by sq.supplier""".format(
-				request_for_quotation,itemssql,suppqto
+				request_for_quotation,itemssql
 			),
 			as_dict=1,debug=0
 			)
@@ -80,6 +81,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 				AND sq.docstatus < 2
 				AND sq.name='{0}'
 				AND sqi.item_code in('{1}')
+				AND sq.status<>'Expired'
 				group by sq.supplier order by sq.supplier""".format(
 				suppqto,itemssql
 			),
@@ -113,6 +115,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 					AND sqi.item_code ='{0}'
 					AND sqi.request_for_quotation='{1}'
 					AND sq.supplier='{2}'
+					AND sq.status<>'Expired'
 					order by sq.supplier limit 0,1""".format(
 					pitem.item_code,request_for_quotation,s.supplier_name
 				),
@@ -132,6 +135,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 					AND sqi.item_code ='{0}'
 					AND sq.name='{1}'
 					AND sq.supplier='{2}'
+					AND sq.status<>'Expired'
 					order by sq.supplier limit 0,1""".format(
 					pitem.item_code,suppqto,s.supplier_name
 				),
@@ -162,7 +166,7 @@ def get_data_html(request_for_quotation,itemar,tems,suppqto):
 	itemssql="','".join(itemar)
 	spli=[]
 	if request_for_quotation:
-		suppqto=frappe.db.get_value('Supplier Quotation Item', {'request_for_quotation': request_for_quotation,'item_code':['in',itemar]}, ['parent'])
+		
 		supplier_list = frappe.db.sql(
 			"""
 			SELECT			
@@ -175,8 +179,9 @@ def get_data_html(request_for_quotation,itemar,tems,suppqto):
 				AND sq.docstatus < 2
 				AND sqi.request_for_quotation='{0}'
 				AND sqi.item_code in('{1}')
+				AND sq.status<>'Expired'
 				group by sq.supplier order by sq.supplier """.format(
-				request_for_quotation,itemssql,suppqto
+				request_for_quotation,itemssql
 			),
 			as_dict=1,debug=0
 			)
@@ -192,6 +197,7 @@ def get_data_html(request_for_quotation,itemar,tems,suppqto):
 				sqi.parent = sq.name
 				AND sq.docstatus < 2
 				AND sq.name='{0}'
+				AND sq.status<>'Expired'
 				AND sqi.item_code in('{1}')
 				group by sq.supplier order by sq.supplier """.format(
 				suppqto,itemssql
@@ -222,6 +228,7 @@ def get_data_html(request_for_quotation,itemar,tems,suppqto):
 					AND sqi.item_code ='{0}'
 					AND sqi.request_for_quotation='{1}'
 					AND sq.supplier='{2}'
+					AND sq.status<>'Expired'
 					order by sq.supplier limit 0,1""".format(
 					pitem.item_code,request_for_quotation,s.supplier_name
 				),
@@ -241,6 +248,7 @@ def get_data_html(request_for_quotation,itemar,tems,suppqto):
 					AND sqi.item_code ='{0}'
 					AND sq.name='{1}'
 					AND sq.supplier='{2}'
+					AND sq.status<>'Expired'
 					order by sq.supplier limit 0,1""".format(
 					pitem.item_code,suppqto,s.supplier_name
 				),
