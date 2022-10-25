@@ -32,7 +32,7 @@ def quotation_comparison_mt(material_request):
 	tems=frappe.db.get_all('Supplier Quotation Item',filters={'material_request': material_request},fields=['item_code','uom','item_name','qty','material_request','parent'],group_by='item_code',debug=0)
 	itemar=[]
 	suppqto=[]
-	qto=frappe.db.sql(""" select DISTINCT parent as quotation from `tabSupplier Quotation Item` where material_request='{0}' """.format(material_request),as_dict=1,debug=1)
+	qto=frappe.db.sql(""" select DISTINCT parent as quotation from `tabSupplier Quotation Item` where material_request='{0}' """.format(material_request),as_dict=1,debug=0)
 	for qt in qto:
 		suppqto.append(qt.quotation)
 
@@ -55,7 +55,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 		supplier_list = frappe.db.sql(
 			"""
 			SELECT			
-				DISTINCT sq.supplier as supplier_name,sq.discount_amount,sq.warranty,sq.payment_terms,sq.other_notes,sum(sqi.net_amount) as total
+				DISTINCT sq.supplier as supplier_name,sq.name as quotation,sq.discount_amount,sq.warranty,sq.payment_terms,sq.other_notes,sum(sqi.net_amount) as total
 			FROM
 				`tabSupplier Quotation Item` sqi,
 				`tabSupplier Quotation` sq
@@ -68,13 +68,13 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 				group by sq.supplier order by sq.supplier""".format(
 				request_for_quotation,itemssql
 			),
-			as_dict=1,debug=1
+			as_dict=1,debug=0
 			)
 	else:
 		supplier_list = frappe.db.sql(
 			"""
 			SELECT			
-				DISTINCT sq.supplier as supplier_name,sq.discount_amount,sq.warranty,sq.payment_terms,sq.other_notes,sum(sqi.net_amount) as total
+				DISTINCT sq.supplier as supplier_name,sq.name as quotation,sq.discount_amount,sq.warranty,sq.payment_terms,sq.other_notes,sum(sqi.net_amount) as total
 			FROM
 				`tabSupplier Quotation Item` sqi,
 				`tabSupplier Quotation` sq
@@ -87,7 +87,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 				group by sq.supplier order by sq.supplier""".format(
 				qtosql,itemssql
 			),
-			as_dict=1,debug=1
+			as_dict=1,debug=0
 			)
 	
 
@@ -139,7 +139,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 					AND sq.supplier='{2}'
 					AND sq.status<>'Expired'
 					order by sq.supplier limit 0,1""".format(
-					pitem.item_code,suppqto,s.supplier_name
+					pitem.item_code,s.quotation,s.supplier_name
 				),
 				as_dict=1,debug=0
 				)
