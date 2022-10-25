@@ -29,15 +29,16 @@ def quotation_comparison(purchase_order):
 
 @frappe.whitelist()
 def quotation_comparison_mt(material_request):
-	tems=frappe.db.get_all('Supplier Quotation Item',filters={'material_request': material_request},fields=['item_code','uom','item_name','qty','material_request','parent'],group_by='item_code',debug=1)
+	tems=frappe.db.get_all('Supplier Quotation Item',filters={'material_request': material_request},fields=['item_code','uom','item_name','qty','material_request','parent'],group_by='item_code',debug=0)
 	itemar=[]
-	matreq=''
-	suppqto=''
+	suppqto=[]
+	qto=frappe.db.sql(""" select DISTINCT parent as quotation from `tabSupplier Quotation Item` where material_request='{0}' """.format(material_request),as_dict=1,debug=1)
+	for qt in qto:
+		suppqto.append(qt.quotation)
+
 	request_for_quotation=''
 	for pitem in tems:
 		itemar.append(pitem.item_code)
-		matreq=pitem.material_request
-		suppqto=pitem.parent
 		request_for_quotation=pitem.request_for_quotation
 
 	supplier_quotation_data = get_data(request_for_quotation,itemar,tems,suppqto)
@@ -46,6 +47,7 @@ def quotation_comparison_mt(material_request):
 
 def get_data(request_for_quotation,itemar,tems,suppqto):
 	itemssql="','".join(itemar)
+	qtosql="','".join(suppqto)
 	spli=[]
 	if request_for_quotation:
 		
@@ -79,11 +81,11 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 			WHERE
 				sqi.parent = sq.name
 				AND sq.docstatus < 2
-				AND sq.name='{0}'
+				AND sq.name in('{0}')
 				AND sqi.item_code in('{1}')
 				AND sq.status<>'Expired'
 				group by sq.supplier order by sq.supplier""".format(
-				suppqto,itemssql
+				qtosql,itemssql
 			),
 			as_dict=1,debug=1
 			)
