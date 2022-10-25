@@ -1,0 +1,106 @@
+<style>
+#report_eggs table{
+width: 100%;
+border-collapse: collapse;
+border: 2px solid black;
+}
+#report_eggs table tr{
+border: 2px solid black;
+}
+#report_eggs table tr td{
+border: 2px solid black;
+text-align:center;
+padding:4px;
+}
+#let-head img{ width:100%; }
+.pg-title{
+	text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+#report_eggs table tr:first-child td { text-align: center;font-weight: bold; background-color: #d3d3d3;}
+#report_eggs table tr:last-child td{ font-weight: bold; background-color: #d3d3d3;}
+@media print {
+   * { color: black; background: white; }
+   table { page-break-inside:auto }
+    tr    { page-break-inside:avoid; page-break-after:auto }
+   #report_eggs table { font-size: 80%; }
+   #report_eggs table{
+	width: 100%;
+	border-collapse: collapse;
+	border: 2px solid black;
+	}
+	#report_eggs table tr{
+	border: 2px solid black;
+	}
+	#report_eggs table tr td{
+	border: 2px solid black;
+	text-align:center;
+	padding:4px;
+	}
+	#let-head img{ width:100%; }
+	#report_eggs table tr:first-child td { text-align: center;font-weight: bold; background-color: #d3d3d3;}
+	#report_eggs table tr:last-child td{ font-weight: bold; background-color: #d3d3d3;}
+} 
+</style>
+<div id="report_eggs" >
+<div id="let-head">{{head}}</div>
+	
+<p>
+<div style="width: 70%;    font-size: 20px;    font-weight: bold;    float: left;    padding-bottom: 10px;">
+
+</div>
+<div style="width: 30%;    font-size: 20px;    font-weight: bold;    float: left;    text-align: end;    padding-bottom: 10px;">
+{{from_date}} - {{to_date}}</div></p>
+
+<table>
+	<tr><td width="20%" rowspan="2">Date</td>
+		<td width="10%">Waste oil consumed</td>
+		<td width="20%" colspan="2">Lightend</td>
+		<td width="20%" colspan="2">Lightlube</td>
+		<td width="20%" colspan="2">Asphalt</td>
+		<td width="20%" colspan="2">Waste water</td>
+		<td width="10%" rowspan="2">Total Recovery %</td></tr>
+		<tr>
+			<td style="background-color: #d3d3d3;">Qty</td>
+			<td style="background-color: #d3d3d3;">Qty</td>
+			<td style="background-color: #d3d3d3;">Cost</td>
+			<td style="background-color: #d3d3d3;">Qty</td>
+			<td style="background-color: #d3d3d3;">Cost</td>
+			<td style="background-color: #d3d3d3;">Qty</td>
+			<td style="background-color: #d3d3d3;">Cost</td>
+			<td style="background-color: #d3d3d3;">Qty</td>
+			<td style="background-color: #d3d3d3;">Cost</td>
+
+		</tr>
+	{% for itm in items%}
+	<tr>
+		<td>{{itm.date}}</td>
+		{% for it in itm.items%}
+			{% if it.item_code=="WO001" %}	
+			<td>{{it.qty}}</td>
+			{% else %}
+			<td>{{it.qty}}</td>
+			<td>{{it.amount}}</td>
+			{% endif %}
+		{%endfor%}
+		<td>{{itm.recovery}}</td>
+	</tr>
+	{%endfor%}
+
+	<tr>
+		<td>Total</td>
+	{% for itmt in items_total%}	
+		{% if itmt.item_code=="WO001" %}	
+		<td>{{itmt.qty}}</td>
+		{% else %}
+		<td>{{itmt.qty}}</td>
+		<td>{{itmt.amount}}</td>
+		{% endif %}
+	{%endfor%}
+	<td></td>
+	</tr>
+</table>
+
+</div>
+    
