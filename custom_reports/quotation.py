@@ -13,7 +13,7 @@ from erpnext.stock.doctype.item.item import get_last_purchase_details
 @frappe.whitelist()
 def quotation_comparison(purchase_order):
 
-	tems=frappe.db.get_all('Purchase Order Item',filters={'parent': purchase_order},fields=['item_code','uom','item_name','last_purchase_rate','qty','material_request','supplier_quotation'],debug=0)
+	tems=frappe.db.get_all('Purchase Order Item',filters={'parent': purchase_order},fields=['item_code','uom','item_name','last_purchase_rate','qty','material_request','supplier_quotation','company_total_stock'],debug=0)
 	itemar=[]
 	matreq=''
 	suppqto=''
@@ -29,6 +29,7 @@ def quotation_comparison(purchase_order):
 
 @frappe.whitelist()
 def quotation_comparison_mt(material_request):
+	company=frappe.db.get_value("Material Request",material_request,'company')
 	tems=frappe.db.get_all('Supplier Quotation Item',filters={'material_request': material_request},fields=['item_code','uom','item_name','qty','material_request','parent'],group_by='item_code',debug=0)
 	itemar=[]
 	suppqto=[]
@@ -41,11 +42,11 @@ def quotation_comparison_mt(material_request):
 		itemar.append(pitem.item_code)
 		request_for_quotation=pitem.request_for_quotation
 
-	supplier_quotation_data = get_data(request_for_quotation,itemar,tems,suppqto)
+	supplier_quotation_data = get_data(request_for_quotation,itemar,tems,suppqto,company)
 	#data= prepare_data(supplier_quotation_data)
 	return supplier_quotation_data
 
-def get_data(request_for_quotation,itemar,tems,suppqto):
+def get_data(request_for_quotation,itemar,tems,suppqto,company):
 	itemssql="','".join(itemar)
 	qtosql="','".join(suppqto)
 	spli=[]
@@ -55,7 +56,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 		supplier_list = frappe.db.sql(
 			"""
 			SELECT			
-				DISTINCT sq.supplier as supplier_name,sq.name as quotation,sq.discount_amount,sq.warranty,sq.payment_terms,sq.other_notes,sum(sqi.net_amount) as total
+				DISTINCT sq.supplier as supplier_name,sq.name as quotation,sq.company,sq.discount_amount,sq.warranty,sq.payment_terms,sq.other_notes,sum(sqi.net_amount) as total
 			FROM
 				`tabSupplier Quotation Item` sqi,
 				`tabSupplier Quotation` sq
@@ -94,11 +95,19 @@ def get_data(request_for_quotation,itemar,tems,suppqto):
 	dta=[]
 	for pitem in tems:
 		dati={}
+
 		last_purchase_details = get_last_purchase_details(pitem.item_code)
 		lastpur=0
 		if last_purchase_details:
 			lastpur = last_purchase_details["base_net_rate"]
-		dati.update({'item_code':pitem.item_code+'-'+pitem.item_name,'uom':pitem.uom,'qty':pitem.qty,'last_purchase_rate':lastpur})
+
+		company_total_stock=0
+		ac_qty=frappe.db.sql(""" select sum(actual_qty) as actual_qty from `tabBin` where item_code='{0}' 
+		and warehouse in (select name from `tabWarehouse` where company='{1}') group by item_code""".format(pitem.item_code,company),as_dict=1,debug=0)
+		if ac_qty:
+			company_total_stock=ac_qty[0].actual_qty
+			
+		dati.update({'item_code':pitem.item_code+'-'+pitem.item_name,'uom':pitem.uom,'qty':pitem.qty,'last_purchase_rate':lastpur,'company_total_stock':company_total_stock})
 		spi=[]
 		for s in supplier_list:
 			#spli.append(s.supplier_name)
@@ -210,7 +219,7 @@ def get_data_html(request_for_quotation,itemar,tems,suppqto):
 	dta=[]
 	for pitem in tems:
 		dati={}
-		dati.update({'item_code':pitem.item_code+'-'+pitem.item_name,'uom':pitem.uom,'qty':pitem.qty,'last_purchase_rate':pitem.last_purchase_rate})
+		dati.update({'item_code':pitem.item_code+'-'+pitem.item_name,'uom':pitem.uom,'qty':pitem.qty,'last_purchase_rate':pitem.last_purchase_rate,'company_total_stock':pitem.company_total_stock})
 		spi=[]
 		for s in supplier_list:
 			#spli.append(s.supplier_name)
