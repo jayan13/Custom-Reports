@@ -12,7 +12,7 @@ from erpnext.stock.doctype.item.item import get_last_purchase_details
 
 @frappe.whitelist()
 def quotation_comparison(purchase_order):
-
+	company=frappe.db.get_value("Purchase Order",purchase_order,'company')
 	tems=frappe.db.get_all('Purchase Order Item',filters={'parent': purchase_order},fields=['item_code','uom','item_name','last_purchase_rate','qty','material_request','supplier_quotation','company_total_stock'],debug=0)
 	itemar=[]
 	matreq=''
@@ -23,7 +23,7 @@ def quotation_comparison(purchase_order):
 		suppqto=pitem.supplier_quotation
 
 	request_for_quotation=frappe.db.get_value('Supplier Quotation Item', {'parent':suppqto}, ['request_for_quotation'])
-	supplier_quotation_data = get_data_html(request_for_quotation,itemar,tems,suppqto)
+	supplier_quotation_data = get_data_html(request_for_quotation,itemar,tems,suppqto,company)
 	#data= prepare_data(supplier_quotation_data)
 	return supplier_quotation_data
 
@@ -173,7 +173,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto,company):
 	return data
 
 
-def get_data_html(request_for_quotation,itemar,tems,suppqto):
+def get_data_html(request_for_quotation,itemar,tems,suppqto,company):
 	itemssql="','".join(itemar)
 	spli=[]
 	if request_for_quotation:
@@ -219,7 +219,14 @@ def get_data_html(request_for_quotation,itemar,tems,suppqto):
 	dta=[]
 	for pitem in tems:
 		dati={}
-		dati.update({'item_code':pitem.item_code+'-'+pitem.item_name,'uom':pitem.uom,'qty':pitem.qty,'last_purchase_rate':pitem.last_purchase_rate,'company_total_stock':pitem.company_total_stock})
+
+		company_total_stock=0
+		ac_qty=frappe.db.sql(""" select sum(actual_qty) as actual_qty from `tabBin` where item_code='{0}' 
+		and warehouse in (select name from `tabWarehouse` where company='{1}') group by item_code""".format(pitem.item_code,company),as_dict=1,debug=0)
+		if ac_qty:
+			company_total_stock=ac_qty[0].actual_qty if ac_qty[0].actual_qty > 0 else 0
+
+		dati.update({'item_code':pitem.item_code+'-'+pitem.item_name,'uom':pitem.uom,'qty':pitem.qty,'last_purchase_rate':pitem.last_purchase_rate,'company_total_stock':company_total_stock})
 		spi=[]
 		for s in supplier_list:
 			#spli.append(s.supplier_name)
