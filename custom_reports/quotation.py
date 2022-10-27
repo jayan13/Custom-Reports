@@ -105,7 +105,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto,company):
 		ac_qty=frappe.db.sql(""" select sum(actual_qty) as actual_qty from `tabBin` where item_code='{0}' 
 		and warehouse in (select name from `tabWarehouse` where company='{1}') group by item_code""".format(pitem.item_code,company),as_dict=1,debug=0)
 		if ac_qty:
-			company_total_stock=ac_qty[0].actual_qty
+			company_total_stock=ac_qty[0].actual_qty if ac_qty[0].actual_qty > 0 else 0
 			
 		dati.update({'item_code':pitem.item_code+'-'+pitem.item_name,'uom':pitem.uom,'qty':pitem.qty,'last_purchase_rate':lastpur,'company_total_stock':company_total_stock})
 		spi=[]
