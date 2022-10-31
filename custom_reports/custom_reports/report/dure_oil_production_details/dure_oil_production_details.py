@@ -34,15 +34,15 @@ def get_columns():
 		"width": 100
 		},
 		{
-		"fieldname": "waste_water_qty",
+		"fieldname": "lightlube_qty",
 		"fieldtype": "Data",
-		"label": "Waste water Qty",	
+		"label": "Lightlube Qty",	
 		"width": 100
 		},
 		{
-		"fieldname": "waste_water_per",
+		"fieldname": "lightlube_per",
 		"fieldtype": "Currency",
-		"label": "Waste water %",	
+		"label": "Lightlube %",	
 		"width": 100
 		},
 		{
@@ -58,18 +58,6 @@ def get_columns():
 		"width": 100
 		},
 		{
-		"fieldname": "lightlube_qty",
-		"fieldtype": "Data",
-		"label": "Lightlube Qty",	
-		"width": 100
-		},
-		{
-		"fieldname": "lightlube_per",
-		"fieldtype": "Currency",
-		"label": "Lightlube %",	
-		"width": 100
-		},
-		{
 		"fieldname": "asphalt_qty",
 		"fieldtype": "Data",
 		"label": "Asphalt Qty",	
@@ -79,6 +67,18 @@ def get_columns():
 		"fieldname": "asphalt_per",
 		"fieldtype": "Currency",
 		"label": "Asphalt %",	
+		"width": 100
+		},
+		{
+		"fieldname": "waste_water_qty",
+		"fieldtype": "Data",
+		"label": "Waste water Qty",	
+		"width": 100
+		},
+		{
+		"fieldname": "waste_water_per",
+		"fieldtype": "Currency",
+		"label": "Waste water %",	
 		"width": 100
 		},		
 		{
@@ -153,7 +153,7 @@ def get_data(conditions,filters):
 		woref=frappe.db.sql(""" select d.item_code as item_code,sum(d.qty) as qty from `tabStock Entry Detail` d left join
 		`tabStock Entry` s on s.name=d.parent left join `tabProcess Order` p on s.process_order=p.name 
 		where s.posting_date='{0}' and s.process_order!='' and s.docstatus<2 and p.process_type='Waste Oil Re-refining' 
-		and s.stock_entry_type='Manufacture' group by d.item_code ORDER BY FIELD(d.item_code,'WO001','WT1-WATER', 'LLB001','LI0001','AS0001') """.format(cdate),as_dict=1,debug=0)
+		and s.stock_entry_type='Manufacture' group by d.item_code ORDER BY FIELD(d.item_code,'WO001', 'LLB001','LI0001','AS0001','WT1-WATER') """.format(cdate),as_dict=1,debug=0)
 		if woref:
 			wt=1
 			recovery=0
@@ -163,10 +163,6 @@ def get_data(conditions,filters):
 				if it.item_code=='WO001':
 					wt=it.qty				
 					manu.update({'waste_oil_consumed':it.qty})
-				if it.item_code=='WT1-WATER':
-					prd=round((it.qty/wt)*100,2)				
-					recovery+=prd
-					manu.update({'waste_water_qty':it.qty,'waste_water_per':prd})
 				if it.item_code=='LLB001':
 					prd=round((it.qty/wt)*100,2)				
 					recovery+=prd
@@ -179,6 +175,10 @@ def get_data(conditions,filters):
 					prd=round((it.qty/wt)*100,2)				
 					recovery+=prd
 					manu.update({'asphalt_qty':it.qty,'asphalt_per':prd})
+				if it.item_code=='WT1-WATER':
+					prd=round((it.qty/wt)*100,2)				
+					recovery+=prd
+					manu.update({'waste_water_qty':it.qty,'waste_water_per':prd})
 				
 			manu.update({'total_recovery':round(recovery)})
 		else:
