@@ -170,11 +170,11 @@ def get_data(conditions,filters):
 				if it.item_code=='LLB001':
 					prd=round((it.qty/wt)*100,2)				
 					recovery+=prd
-					manu.update({'lightlube_qty':it.qty,'lightend_per':prd})
+					manu.update({'lightlube_qty':it.qty,'lightlube_per':prd})
 				if it.item_code=='LI0001':
 					prd=round((it.qty/wt)*100,2)				
 					recovery+=prd
-					manu.update({'lightend_qty':it.qty,'lightlube_per':prd})
+					manu.update({'lightend_qty':it.qty,'lightend_per':prd})
 				if it.item_code=='AS0001':
 					prd=round((it.qty/wt)*100,2)				
 					recovery+=prd
