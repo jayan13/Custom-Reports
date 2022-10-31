@@ -156,9 +156,10 @@ def get_data(conditions,filters):
 		and s.stock_entry_type='Manufacture' group by d.item_code ORDER BY FIELD(d.item_code,'WO001','WT1-WATER', 'LLB001','LI0001','AS0001') """.format(cdate),as_dict=1,debug=0)
 		if woref:
 			wt=1
+			recovery=0
 			for it in woref:				
 				prd=0
-				recovery=0
+				
 				if it.item_code=='WO001':
 					wt=it.qty				
 					manu.update({'waste_oil_consumed':it.qty})
