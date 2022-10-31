@@ -106,11 +106,11 @@ def get_data(conditions):
 				wt=it.qty
 				manu.update({'waste_oil_consumed':it.qty})
 			if it.item_code=='LLB001':
-				prd+=it.qty
-				manu.update({'lightend_qty':it.qty,'lightend_cost':it.amount})
+				prd+=it.qty				
+				manu.update({'lightlube_qty':it.qty,'lightlube_cost':it.amount})
 			if it.item_code=='LI0001':
 				prd+=it.qty
-				manu.update({'lightlube_qty':it.qty,'lightlube_cost':it.amount})
+				manu.update({'lightend_qty':it.qty,'lightend_cost':it.amount})
 			if it.item_code=='AS0001':
 				prd+=it.qty
 				manu.update({'asphalt_qty':it.qty,'asphalt_cost':it.amount})
