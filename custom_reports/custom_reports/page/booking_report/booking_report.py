@@ -12,7 +12,7 @@ def get_report(from_date=None,to_date=None):
     dfrm=frappe.utils.getdate(from_date)
     data['cnt']=date_diff(endday,dfrm)+1
     datelist=frappe.utils.add_days(dfrm, -1)
-    html='<tr><td style="width:190px;"></td>'
+    html='<tr style="position: sticky; top: 0px; background-color: #ccc;"><td style="width:190px;"></td>'
     while datelist < endday:
         datelist=frappe.utils.add_days(datelist,1)
         html+='<td >'+datelist.strftime('%d/%m')+'</td>'
