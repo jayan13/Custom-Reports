@@ -1,0 +1,60 @@
+<style>
+#report_eggs table{
+width: 100%;
+border-collapse: collapse;
+border: 2px solid black;
+}
+#report_eggs table tr{
+border: 2px solid black;
+}
+#report_eggs table tr td{
+border: 2px solid black;
+text-align:center;
+padding:4px;
+}
+
+.pg-title{
+	text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+#report_eggs table tr:first-child td { text-align: center;font-weight: bold; background-color: #d3d3d3;}
+
+@media print {
+   * { color: black; background: white; }
+   table { page-break-inside:auto }
+    tr    { page-break-inside:avoid; page-break-after:auto }
+   #report_eggs table { font-size: 80%; }
+   #report_eggs table{
+	width: 100%;
+	border-collapse: collapse;
+	border: 2px solid black;
+	}
+	#report_eggs table tr{
+	border: 2px solid black;
+	}
+	#report_eggs table tr td{
+	border: 2px solid black;
+	text-align:center;
+	padding:4px;
+	}
+	
+	#report_eggs table tr:first-child td { text-align: center;font-weight: bold; background-color: #d3d3d3;}
+	
+} 
+</style>
+<div id="report_eggs" >
+
+<div style="width: 70%;    font-size: 20px;    font-weight: bold;    float: left;    padding-bottom: 10px;">
+Booking Report
+</div>
+<div style="width: 30%;    font-size: 20px;    font-weight: bold;    float: left;    text-align: end;    padding-bottom: 10px;">
+{{from_date}} - {{to_date}}</div></p>
+<div style="width:1225px;display:block;height:500px;overflow:scroll;">
+<table style="width:{{190+(cnt*50)}}px;">
+	<tr><td style="width:190px;"></td><td colspan="{{cnt}}"></td></tr>
+		{{items}}
+</table>
+</div>
+</div>
+    

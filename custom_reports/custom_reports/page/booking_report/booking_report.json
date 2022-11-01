@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2022-10-31 12:44:48.073526",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2022-10-31 12:44:48.073526",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "booking-report",
+ "owner": "Administrator",
+ "page_name": "booking-report",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Booking Report"
+}
