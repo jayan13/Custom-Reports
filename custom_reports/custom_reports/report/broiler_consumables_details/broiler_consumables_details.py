@@ -132,7 +132,9 @@ def get_data(conditions,filters):
 def get_conditions(filters):
 	
 	conditions =" 1=1 "
-	
+	if filters.get("company"):
+		company=filters.get("company")
+		conditions += " and company= '{0}' ".format(company)
 	if filters.get("project"):
 		project=filters.get("project")
 		conditions += " and project= '{0}' ".format(project)

@@ -4,6 +4,12 @@
 
 frappe.query_reports["Broiler Consumables Details"] = {
 	"filters": [{
+		"fieldname": "company",
+		"label": __("Company"),
+		"fieldtype": "Link",
+		"options":"Company",
+		"default": "ABU DHABI MODERNE POULTRY FARM L.L.C."
+	},{
 		"fieldname": "project",
 		"label": __("Project"),
 		"fieldtype": "Link",

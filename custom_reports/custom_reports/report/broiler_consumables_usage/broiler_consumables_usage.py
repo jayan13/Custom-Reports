@@ -112,6 +112,9 @@ def get_data(conditions,filters):
 def get_conditions(filters):
 	
 	conditions =" 1=1 "
+	if filters.get("company"):
+		company=filters.get("company")
+		conditions += " and company= '{0}' ".format(company)
 	if filters.get("date_from"):
 		date_from=filters.get("date_from")
 		conditions += " and DATE(posting_date) >= '{0}' ".format(date_from)
