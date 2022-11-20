@@ -42,5 +42,14 @@ and outstanding_amount <> 0 and DATEDIFF(CURDATE(),due_date)>0 order by posting_
 		overdue=over[0].overdu
 	return overdue
 
+@frappe.whitelist()
+def customer_credit(company,customer):
+	overdue=0   
+	over=frappe.db.sql(""" select credit_limit 
+	from `tabCustomer Credit Limit` where company='{0}' and parent='{1}' """.format(company,customer),as_dict=1,debug=0)
+	if over:
+		overdue=over[0].credit_limit
+	return overdue
+
 
 
