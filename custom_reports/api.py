@@ -35,11 +35,18 @@ and outstanding_amount <> 0 group by customer""".format(company,customer),as_dic
 @frappe.whitelist()
 def customer_overdue(company,customer):
 	overdue=0
-	over=frappe.db.sql(""" select DATEDIFF(CURDATE(),due_date) as overdu
-from `tabSales Invoice` where docstatus = 1 and company='{0}' and customer='{1}'
-and outstanding_amount <> 0 and DATEDIFF(CURDATE(),due_date)>0 order by posting_date limit 0,1 """.format(company,customer),as_dict=1,debug=0)
-	if over:
-		overdue=over[0].overdu
+	payment_terms = frappe.db.get_value('Customer', {'name':customer}, ['payment_terms'])
+	if payment_terms:
+		payment_terms=payment_terms.upper()
+		payment_terms=payment_terms.rstrip('S')	
+		sql=""" select DATEDIFF(CURDATE(),DATE_ADD(posting_date, INTERVAL {2})) as overdu
+	from `tabSales Invoice` where docstatus = 1 and company='{0}' and customer='{1}'
+	and outstanding_amount <> 0 and DATEDIFF(CURDATE(),DATE_ADD(posting_date, INTERVAL {2})) >0 
+	order by posting_date limit 0,1 """.format(company,customer,payment_terms)
+		
+		over=frappe.db.sql(sql,as_dict=1,debug=0)
+		if over:
+			overdue=over[0].overdu
 	return overdue
 
 @frappe.whitelist()
