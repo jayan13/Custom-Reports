@@ -58,5 +58,15 @@ def customer_credit(company,customer):
 		overdue=over[0].credit_limit
 	return overdue
 
+@frappe.whitelist()
+def update_cost_acc(doc,event):
+	frappe.msgprint("in hook")
+	item=['TELWA-330ML - 12 PACK','TELWA-330ML - 16 PACK','TELWA-600ML - 12 PACK','TELWA-600ML - 20 PACK','TELWA-600ML - 20 PCS - CTN','TELWA-1.5 L - 6 PACK','TELWA-1.5 L - 6 PCS - CTN','TELWA-NEW GALLON','TELWA-RE-FILLING GALLON']
+	acc=['513101 - COGS .330 Ltrs - TELWA','513101 - COGS .330 Ltrs - TELWA','513102 - COGS .600 Ltrs - TELWA','513102 - COGS .600 Ltrs - TELWA','513102 - COGS .600 Ltrs - TELWA','513103 - COGS 1.5 Ltrs - TELWA','513103 - COGS 1.5 Ltrs - TELWA','513201 - COGS 20 Ltrs Bottle - TELWA','513202 - COGS 20 Ltrs Refill - TELWA']
+	if doc.company=='Nigerienne De Reffraichissement Telwa – Socite a Resposabilite Limitee.':
+		for itm in doc.items:
+			if itm.item_code in item and itm.expense_account=='':
+				index = item.index(itm.item_code)
+				itm.expense_account=acc[index]
 
 
