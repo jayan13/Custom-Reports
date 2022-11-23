@@ -110,7 +110,10 @@ doc_events = {
 	},
 	"Sales Invoice": {        
         "before_insert": "custom_reports.api.update_cost_acc",
-    }
+    },
+	"Delivery Note" : {        
+        "before_insert": "custom_reports.api.update_cost_acc",
+    },
 }
 # Scheduled Tasks
 # ---------------
