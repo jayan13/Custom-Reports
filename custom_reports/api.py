@@ -25,38 +25,39 @@ def maintanse_items(sub_gp):
 @frappe.whitelist()
 def customer_outstanding(company,customer):
 	outsta=0
-	out=frappe.db.sql(""" select sum(outstanding_amount) as outstanding_amount 
-from `tabSales Invoice` where docstatus = 1 and company='{0}' and customer='{1}'
-and outstanding_amount <> 0 group by customer""".format(company,customer),as_dict=1,debug=0)
+
+	out=frappe.db.get_list('Sales Invoice',
+    fields=['sum(outstanding_amount) as outstanding_amount'],
+	filters={'docstatus':1,'company':company,'customer':customer,'outstanding_amount':['>',0]},
+    group_by='customer')
 	if out:
 		outsta=out[0].outstanding_amount
 	return outsta
 
+
 @frappe.whitelist()
 def customer_overdue(company,customer):
 	overdue=0
+	
 	payment_terms = frappe.db.get_value('Customer', {'name':customer}, ['payment_terms'])
 	if payment_terms:
-		payment_terms=payment_terms.upper()
-		payment_terms=payment_terms.rstrip('S')	
-		sql=""" select DATEDIFF(CURDATE(),DATE_ADD(posting_date, INTERVAL {2})) as overdu
-	from `tabSales Invoice` where docstatus = 1 and company='{0}' and customer='{1}'
-	and outstanding_amount <> 0 and DATEDIFF(CURDATE(),DATE_ADD(posting_date, INTERVAL {2})) >0 
-	order by posting_date limit 0,1 """.format(company,customer,payment_terms)
+		import re		
 		
-		over=frappe.db.sql(sql,as_dict=1,debug=0)
+		payment_terms=re.findall('\d+', payment_terms)
+		
+		values = {'company': company,'customer':customer,'payment_terms':payment_terms}
+		over = frappe.db.sql("""
+			SELECT DATEDIFF(CURDATE(),DATE_ADD(posting_date, INTERVAL %(payment_terms)s DAY)) as overdu from `tabSales Invoice` where docstatus = 1 and company=%(company)s and customer=%(customer)s and outstanding_amount <> 0 and DATEDIFF(CURDATE(),DATE_ADD(posting_date, INTERVAL %(payment_terms)s DAY)) >0 order by posting_date limit 0,1
+		""", values=values, as_dict=0,debug=0)
 		if over:
 			overdue=over[0].overdu
 	return overdue
 
 @frappe.whitelist()
 def customer_credit(company,customer):
-	overdue=0   
-	over=frappe.db.sql(""" select credit_limit 
-	from `tabCustomer Credit Limit` where company='{0}' and parent='{1}' """.format(company,customer),as_dict=1,debug=0)
-	if over:
-		overdue=over[0].credit_limit
-	return overdue
+	overdue=0   	
+	overdue=frappe.db.get_value('Customer Credit Limit', {'company':company,'parent':customer}, ['credit_limit'])
+	return overdue or 0
 
 @frappe.whitelist()
 def update_cost_acc(doc,event):
