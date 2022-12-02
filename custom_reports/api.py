@@ -48,7 +48,7 @@ def customer_overdue(company,customer):
 		values = {'company': company,'customer':customer,'payment_terms':payment_terms}
 		over = frappe.db.sql("""
 			SELECT DATEDIFF(CURDATE(),DATE_ADD(posting_date, INTERVAL %(payment_terms)s DAY)) as overdu from `tabSales Invoice` where docstatus = 1 and company=%(company)s and customer=%(customer)s and outstanding_amount <> 0 and DATEDIFF(CURDATE(),DATE_ADD(posting_date, INTERVAL %(payment_terms)s DAY)) >0 order by posting_date limit 0,1
-		""", values=values, as_dict=0,debug=0)
+		""", values=values, as_dict=1,debug=0)
 		if over:
 			overdue=over[0].overdu
 	return overdue
