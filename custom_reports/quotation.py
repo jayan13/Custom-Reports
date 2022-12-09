@@ -46,6 +46,32 @@ def quotation_comparison_mt(material_request):
 	#data= prepare_data(supplier_quotation_data)
 	return supplier_quotation_data
 
+@frappe.whitelist()
+def getorderdetails(payment):
+	ref=frappe.db.get_all('Payment Entry Reference',filters={'parent': payment,'reference_doctype':'Purchase Invoice'},fields=['reference_name'],debug=0)
+	data=''
+	
+	if ref:
+		data=[]
+		for refe in ref:			
+			purchase_orders=frappe.db.sql(""" select DISTINCT purchase_order from `tabPurchase Invoice Item` where parent='{0}' """.format(refe.reference_name),as_dict=1,debug=0)
+			for purchase_order in purchase_orders:
+				name=''
+				user=''
+				status=''
+				amount =frappe.db.get_value('Purchase Order', purchase_order.purchase_order, 'total')			
+				#for workflow in  frappe.db.get_all('Comment',filters={'reference_doctype': 'Purchase Order','reference_name':purchase_order.purchase_order,'comment_type':'Workflow' },fields=['content','modified_by'],order_by='creation desc'):
+				workflow=frappe.db.sql(""" select content,modified_by from `tabComment` where reference_doctype='Purchase Order' and comment_type='Workflow' and reference_name='{0}' order by creation desc limit 0,1""".format(purchase_order.purchase_order),as_dict=1,debug=0)
+				if workflow:
+					user,name=frappe.db.get_value('User', {'user':workflow[0].modified_by}, ['name','full_name'])
+					status=workflow[0].content
+					data=status
+				data.append({'order':purchase_order.purchase_order,'name':name,'user_name':user,'status':status,'amount':amount})
+
+	return data
+
+
+
 def get_data(request_for_quotation,itemar,tems,suppqto,company):
 	itemssql="','".join(itemar)
 	qtosql="','".join(suppqto)
