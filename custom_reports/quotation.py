@@ -23,7 +23,7 @@ def quotation_comparison(purchase_order):
 		suppqto=pitem.supplier_quotation
 
 	request_for_quotation=frappe.db.get_value('Supplier Quotation Item', {'parent':suppqto}, ['request_for_quotation'])
-	supplier_quotation_data = get_data_html(request_for_quotation,itemar,tems,suppqto,company)
+	supplier_quotation_data = get_data_html(request_for_quotation,itemar,tems,suppqto,company,purchase_order)
 	#data= prepare_data(supplier_quotation_data)
 	return supplier_quotation_data
 
@@ -144,8 +144,8 @@ def get_data(request_for_quotation,itemar,tems,suppqto,company):
 		and warehouse in (select name from `tabWarehouse` where company='{1}') group by item_code""".format(pitem.item_code,company),as_dict=1,debug=0)
 		if ac_qty:
 			company_total_stock=ac_qty[0].actual_qty if ac_qty[0].actual_qty > 0 else 0
-			
-		dati.update({'item_code':pitem.item_code+'-'+pitem.item_name,'uom':pitem.uom,'qty':pitem.qty,'last_purchase_rate':lastpur,'company_total_stock':company_total_stock})
+		orditmcnt=getitemordercount(pitem.item_code)	
+		dati.update({'item_code':pitem.item_code+'-'+pitem.item_name,'uom':pitem.uom,'qty':pitem.qty,'last_purchase_rate':lastpur,'company_total_stock':company_total_stock,'orditmcnt':orditmcnt})
 		spi=[]
 		for s in supplier_list:
 			#spli.append(s.supplier_name)
@@ -211,7 +211,7 @@ def get_data(request_for_quotation,itemar,tems,suppqto,company):
 	return data
 
 
-def get_data_html(request_for_quotation,itemar,tems,suppqto,company):
+def get_data_html(request_for_quotation,itemar,tems,suppqto,company,purchase_order):
 	itemssql="','".join(itemar)
 	spli=[]
 	if request_for_quotation:
@@ -263,8 +263,8 @@ def get_data_html(request_for_quotation,itemar,tems,suppqto,company):
 		and warehouse in (select name from `tabWarehouse` where company='{1}') group by item_code""".format(pitem.item_code,company),as_dict=1,debug=0)
 		if ac_qty:
 			company_total_stock=ac_qty[0].actual_qty if ac_qty[0].actual_qty > 0 else 0
-
-		dati.update({'item_code':pitem.item_code+'-'+pitem.item_name,'uom':pitem.uom,'qty':pitem.qty,'last_purchase_rate':pitem.last_purchase_rate,'company_total_stock':company_total_stock})
+		orditmcnt=getitemordercount(pitem.item_code,purchase_order)
+		dati.update({'item_code':pitem.item_code+'-'+pitem.item_name,'uom':pitem.uom,'qty':pitem.qty,'last_purchase_rate':pitem.last_purchase_rate,'company_total_stock':company_total_stock,'orditmcnt':orditmcnt})
 		spi=[]
 		for s in supplier_list:
 			#spli.append(s.supplier_name)
@@ -313,7 +313,7 @@ def get_data_html(request_for_quotation,itemar,tems,suppqto,company):
 
 			if supplier_quotation_item:
 				for si in supplier_quotation_item:
-					#amt=pitem.qty*si.rate
+					#amt=pitem.qty*si.rate					
 					amt=si.net_amount					
 					sp={}
 					sp.update({'rate':si.rate,'amount':amt,'supplier':s.supplier_name})
@@ -400,3 +400,17 @@ def prepare_data(supplier_quotation_data):
 
 
 	return out
+
+def getitemordercount(itm,purchase_order=""):
+	cont=0
+	if purchase_order:
+		itmc=frappe.db.sql(""" select sum(i.qty-i.received_qty) as qty from `tabPurchase Order` p left join `tabPurchase Order Item` i on p.name=i.parent
+	where i.item_code='{0}' and p.status not in ('Close','Hold') and p.docstatus=1 and p.name<>'{1}' group by i.item_code limit 0,1""".format(itm,purchase_order),as_dict=1,debug=0)
+	else:
+		itmc=frappe.db.sql(""" select sum(i.qty-i.received_qty) as qty from `tabPurchase Order` p left join `tabPurchase Order Item` i on p.name=i.parent
+	where i.item_code='{0}' and p.status not in ('Close','Hold') and p.docstatus=1 group by i.item_code limit 0,1""".format(itm),as_dict=1,debug=0)
+	
+	if itmc:
+		cont=itmc[0].qty
+
+	return cont
