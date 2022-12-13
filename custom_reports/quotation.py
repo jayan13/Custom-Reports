@@ -405,13 +405,14 @@ def getitemordercount(itm,purchase_order=""):
 	cont=''
 	if purchase_order:
 		itmc=frappe.db.sql(""" select i.qty-i.received_qty as qty,p.name from `tabPurchase Order` p left join `tabPurchase Order Item` i on p.name=i.parent
-	where i.item_code='{0}' and p.status not in ('Close','Hold') and p.docstatus=1 and p.name<>'{1}' and (i.qty-i.received_qty)>0 group by p.name""".format(itm,purchase_order),as_dict=1,debug=0)
+	where i.item_code='{0}' and p.status not in ('Closed','Hold') and p.docstatus=1 and p.name<>'{1}' and (i.qty-i.received_qty)>0 group by p.name""".format(itm,purchase_order),as_dict=1,debug=0)
 	else:
 		itmc=frappe.db.sql(""" select i.qty-i.received_qty as qty,p.name from `tabPurchase Order` p left join `tabPurchase Order Item` i on p.name=i.parent
-	where i.item_code='{0}' and p.status not in ('Close','Hold') and p.docstatus=1 and (i.qty-i.received_qty)>0 group by p.name""".format(itm),as_dict=1,debug=0)
+	where i.item_code='{0}' and p.status not in ('Closed','Hold') and p.docstatus=1 and (i.qty-i.received_qty)>0 group by p.name""".format(itm),as_dict=1,debug=0)
 	
 	if itmc:
 		for it in itmc:
-			cont+=it.name+' (<b>'+str(it.qty)+'</b>), '
+			url=frappe.utils.get_url("app/purchase-order/{0}".format(it.name))
+			cont+='<a href="'+url+'" target="_blank">'+it.name+'</a> (<b>'+str(it.qty)+'</b>), '
 
 	return cont
