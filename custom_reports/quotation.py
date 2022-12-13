@@ -402,15 +402,16 @@ def prepare_data(supplier_quotation_data):
 	return out
 
 def getitemordercount(itm,purchase_order=""):
-	cont=0
+	cont=''
 	if purchase_order:
-		itmc=frappe.db.sql(""" select sum(i.qty-i.received_qty) as qty from `tabPurchase Order` p left join `tabPurchase Order Item` i on p.name=i.parent
-	where i.item_code='{0}' and p.status not in ('Close','Hold') and p.docstatus=1 and p.name<>'{1}' group by i.item_code limit 0,1""".format(itm,purchase_order),as_dict=1,debug=0)
+		itmc=frappe.db.sql(""" select i.qty-i.received_qty as qty,p.name from `tabPurchase Order` p left join `tabPurchase Order Item` i on p.name=i.parent
+	where i.item_code='{0}' and p.status not in ('Close','Hold') and p.docstatus=1 and p.name<>'{1}' group by p.name""".format(itm,purchase_order),as_dict=1,debug=0)
 	else:
-		itmc=frappe.db.sql(""" select sum(i.qty-i.received_qty) as qty from `tabPurchase Order` p left join `tabPurchase Order Item` i on p.name=i.parent
-	where i.item_code='{0}' and p.status not in ('Close','Hold') and p.docstatus=1 group by i.item_code limit 0,1""".format(itm),as_dict=1,debug=0)
+		itmc=frappe.db.sql(""" select i.qty-i.received_qty as qty,p.name from `tabPurchase Order` p left join `tabPurchase Order Item` i on p.name=i.parent
+	where i.item_code='{0}' and p.status not in ('Close','Hold') and p.docstatus=1 group by p.name""".format(itm),as_dict=1,debug=0)
 	
 	if itmc:
-		cont=itmc[0].qty
+		for it in itmc:
+			cont+=it.name+'('+str(it.qty)+'), '
 
 	return cont
