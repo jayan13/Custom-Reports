@@ -412,6 +412,6 @@ def getitemordercount(itm,purchase_order=""):
 	
 	if itmc:
 		for it in itmc:
-			cont+=it.name+'(<b>'+str(it.qty)+'</b>), '
+			cont+=it.name+' (<b>'+str(it.qty)+'</b>), '
 
 	return cont
