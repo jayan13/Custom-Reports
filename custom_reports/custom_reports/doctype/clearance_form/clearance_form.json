@@ -14,6 +14,7 @@
   "designation",
   "department",
   "date_of_retirement",
+  "posting_date",
   "employees_dept_section",
   "files_documents",
   "cabinet_keys",
@@ -309,12 +310,17 @@
   {
    "fieldname": "column_break_43",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-12-14 18:26:20.295186",
+ "modified": "2022-12-14 23:47:04.726488",
  "modified_by": "Administrator",
  "module": "custom reports",
  "name": "Clearance Form",
