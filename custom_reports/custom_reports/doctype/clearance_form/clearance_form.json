@@ -1,0 +1,338 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-12-14 16:32:05.737861",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "leave_type",
+  "employee",
+  "employee_name",
+  "date_of_joining",
+  "column_break_5",
+  "designation",
+  "department",
+  "date_of_retirement",
+  "employees_dept_section",
+  "files_documents",
+  "cabinet_keys",
+  "column_break_12",
+  "work_equipments",
+  "drawer_keys",
+  "column_break_15",
+  "office_keys",
+  "accommodation",
+  "column_break_18",
+  "dept_others",
+  "accounts_dept_section",
+  "petty_cash",
+  "column_break_22",
+  "salary_advance",
+  "column_break_24",
+  "acc_others",
+  "info_system_dept_section",
+  "computer",
+  "email",
+  "column_break_29",
+  "software_package",
+  "internet",
+  "column_break_32",
+  "network_account",
+  "computer_accessories",
+  "hr_department_section",
+  "passport",
+  "medical_card",
+  "emirates_id",
+  "column_break_39",
+  "company_car_key",
+  "mobile_phone",
+  "hr_others",
+  "column_break_43",
+  "car_reg_card",
+  "mobile_card",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "leave_type",
+   "fieldtype": "Select",
+   "label": "Leave Type",
+   "options": "Emergency Leave\nAnnual Leave\nEnd of Service"
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "label": "Employee Name"
+  },
+  {
+   "fetch_from": "employee.date_of_joining",
+   "fieldname": "date_of_joining",
+   "fieldtype": "Date",
+   "label": "Hiring Date"
+  },
+  {
+   "fetch_from": "employee.designation",
+   "fieldname": "designation",
+   "fieldtype": "Data",
+   "label": "Job Title"
+  },
+  {
+   "fetch_from": "employee.department",
+   "fieldname": "department",
+   "fieldtype": "Data",
+   "label": "Division/Dept"
+  },
+  {
+   "fetch_from": "employee.date_of_retirement",
+   "fieldname": "date_of_retirement",
+   "fieldtype": "Date",
+   "label": "Last Working day"
+  },
+  {
+   "default": "0",
+   "fieldname": "files_documents",
+   "fieldtype": "Check",
+   "label": "Files & Documents"
+  },
+  {
+   "default": "0",
+   "fieldname": "work_equipments",
+   "fieldtype": "Check",
+   "label": "Work Equipments"
+  },
+  {
+   "default": "0",
+   "fieldname": "office_keys",
+   "fieldtype": "Check",
+   "label": "Office keys"
+  },
+  {
+   "default": "0",
+   "fieldname": "dept_others",
+   "fieldtype": "Check",
+   "label": "Others"
+  },
+  {
+   "default": "0",
+   "fieldname": "cabinet_keys",
+   "fieldtype": "Check",
+   "label": "Cabinet Keys"
+  },
+  {
+   "default": "0",
+   "fieldname": "drawer_keys",
+   "fieldtype": "Check",
+   "label": "Drawer Keys"
+  },
+  {
+   "default": "0",
+   "fieldname": "accommodation",
+   "fieldtype": "Check",
+   "label": "Accommodation"
+  },
+  {
+   "default": "0",
+   "fieldname": "petty_cash",
+   "fieldtype": "Check",
+   "label": "Petty Cash"
+  },
+  {
+   "default": "0",
+   "fieldname": "salary_advance",
+   "fieldtype": "Check",
+   "label": "Salary Advance"
+  },
+  {
+   "default": "0",
+   "description": "Traffic fines/Violation penalty etc..",
+   "fieldname": "acc_others",
+   "fieldtype": "Check",
+   "label": "Others"
+  },
+  {
+   "default": "0",
+   "fieldname": "computer",
+   "fieldtype": "Check",
+   "label": "Computer"
+  },
+  {
+   "default": "0",
+   "fieldname": "software_package",
+   "fieldtype": "Check",
+   "label": "Software Package"
+  },
+  {
+   "default": "0",
+   "fieldname": "network_account",
+   "fieldtype": "Check",
+   "label": "Network Account"
+  },
+  {
+   "default": "0",
+   "fieldname": "email",
+   "fieldtype": "Check",
+   "label": "Email"
+  },
+  {
+   "default": "0",
+   "fieldname": "internet",
+   "fieldtype": "Check",
+   "label": "Internet"
+  },
+  {
+   "default": "0",
+   "fieldname": "computer_accessories",
+   "fieldtype": "Check",
+   "label": "Computer Accessories"
+  },
+  {
+   "default": "0",
+   "fieldname": "passport",
+   "fieldtype": "Check",
+   "label": "Passport"
+  },
+  {
+   "default": "0",
+   "fieldname": "company_car_key",
+   "fieldtype": "Check",
+   "label": "Company Car key"
+  },
+  {
+   "default": "0",
+   "fieldname": "car_reg_card",
+   "fieldtype": "Check",
+   "label": "Car Reg. Card"
+  },
+  {
+   "default": "0",
+   "fieldname": "medical_card",
+   "fieldtype": "Check",
+   "label": "Medical Card"
+  },
+  {
+   "default": "0",
+   "fieldname": "mobile_phone",
+   "fieldtype": "Check",
+   "label": "Mobile Phone"
+  },
+  {
+   "default": "0",
+   "fieldname": "mobile_card",
+   "fieldtype": "Check",
+   "label": "Mobile Card"
+  },
+  {
+   "default": "0",
+   "fieldname": "emirates_id",
+   "fieldtype": "Check",
+   "label": "Emirates ID"
+  },
+  {
+   "default": "0",
+   "fieldname": "hr_others",
+   "fieldtype": "Check",
+   "label": "Others"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Clearance Form",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "employees_dept_section",
+   "fieldtype": "Section Break",
+   "label": "Employees Dept"
+  },
+  {
+   "fieldname": "accounts_dept_section",
+   "fieldtype": "Section Break",
+   "label": "Accounts Dept"
+  },
+  {
+   "fieldname": "info_system_dept_section",
+   "fieldtype": "Section Break",
+   "label": "Info. System Dept"
+  },
+  {
+   "fieldname": "hr_department_section",
+   "fieldtype": "Section Break",
+   "label": "HR Department"
+  },
+  {
+   "fieldname": "column_break_12",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_15",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_18",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_22",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_24",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_29",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_32",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_39",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_43",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2022-12-14 18:26:20.295186",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "Clearance Form",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
