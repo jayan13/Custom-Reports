@@ -70,4 +70,44 @@ def update_cost_acc(doc,event):
 				index = item.index(itm.item_code)
 				itm.expense_account=acc[index]
 
+@frappe.whitelist()
+def get_last_workingday(employee,leave_application):
+	from_date=frappe.db.get_value('Leave Application', leave_application, ['from_date'])
+	last_working=frappe.utils.getdate(from_date)
+	df=frappe.utils.add_days(last_working,-1)
+	if leave_application:
+		holiday_list=frappe.db.get_value('Employee', employee, ['holiday_list'])
+		if holiday_list:
+			holiday_date=frappe.db.get_all('Holiday',filters={'parent': holiday_list,'holiday_date':['<',last_working]},fields=['holiday_date'],pluck='holiday_date')
+			if holiday_date:
+				df=check_last_day(df,holiday_date)
+	return df
+def check_last_day(day,Holiday):
+	if day in Holiday:
+		last_working=frappe.utils.getdate(day)
+		day=frappe.utils.add_days(last_working,-1)
+		check_last_day(day,Holiday)
+	return day
+
+@frappe.whitelist()
+def send_notification(name,handover_staff,employee_name): 
+	receiver,full_name=frappe.db.get_value('User', handover_staff, ['email','full_name'])
+	url=frappe.utils.get_url()
+	Email_Subject="""Pending Handover Approval {0}:{1}""".format(name,employee_name)
+	pgurl='<a href="'+url+'/app/clearance-form/'+name+'" >'+name+'</a>'
+	#receiver='jayakumar@alantechnologies.net'
+	msg=""" Dear {0}<br> 
+                    Employee Clearance Form (Leave/End of Service) handover is pending for your verification & approval for the employee {1}.<br> 
+                    Please click here {2} to verify and approve<br> 
+                    """.format(full_name,employee_name,pgurl)
+	if receiver:
+		email_args = {
+                    "recipients": [receiver],
+                    "message": msg,
+                    "subject": Email_Subject,
+                    "reference_doctype": 'Clearance Form',
+                    "reference_name": name
+                    }
+		frappe.enqueue(method=frappe.sendmail, queue='short', timeout=300, is_async=True, **email_args)
+	return 'Notification Email Send to '+handover_staff
 
