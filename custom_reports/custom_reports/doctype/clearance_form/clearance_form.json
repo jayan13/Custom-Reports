@@ -1,57 +1,65 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "naming_series:",
  "creation": "2022-12-14 16:32:05.737861",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "naming_series",
   "leave_type",
   "employee",
+  "leave_application",
   "employee_name",
   "date_of_joining",
   "column_break_5",
+  "posting_date",
   "designation",
   "department",
-  "date_of_retirement",
-  "posting_date",
+  "last_working_day",
+  "handover_staff",
   "employees_dept_section",
   "files_documents",
   "cabinet_keys",
   "column_break_12",
-  "work_equipments",
+  "hand_over_docs",
   "drawer_keys",
   "column_break_15",
   "office_keys",
-  "accommodation",
+  "work_equipments",
   "column_break_18",
-  "dept_others",
+  "accommodation",
+  "emp_approve",
+  "handover_staff_approval",
   "accounts_dept_section",
   "petty_cash",
-  "column_break_22",
   "salary_advance",
-  "column_break_24",
-  "acc_others",
+  "column_break_22",
+  "petty_cash_procedure",
+  "salary_advance_procedure",
+  "accounts_dept_approval",
+  "pro_dept_section",
+  "pro_others",
+  "column_break_33",
+  "pro_procedure",
+  "column_break_35",
+  "company_car_key",
+  "pro_dept_approval",
   "info_system_dept_section",
   "computer",
-  "email",
+  "email_and_password_changed",
   "column_break_29",
   "software_package",
-  "internet",
+  "passwords",
   "column_break_32",
   "network_account",
-  "computer_accessories",
+  "mobile_sim",
+  "system_dept_approval",
   "hr_department_section",
+  "hr_department_approval",
   "passport",
-  "medical_card",
-  "emirates_id",
-  "column_break_39",
-  "company_car_key",
-  "mobile_phone",
-  "hr_others",
-  "column_break_43",
-  "car_reg_card",
-  "mobile_card",
+  "documents",
   "amended_from"
  ],
  "fields": [
@@ -64,8 +72,10 @@
   {
    "fieldname": "employee",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Employee",
-   "options": "Employee"
+   "options": "Employee",
+   "reqd": 1
   },
   {
    "fetch_from": "employee.employee_name",
@@ -92,52 +102,46 @@
    "label": "Division/Dept"
   },
   {
-   "fetch_from": "employee.date_of_retirement",
-   "fieldname": "date_of_retirement",
-   "fieldtype": "Date",
-   "label": "Last Working day"
-  },
-  {
    "default": "0",
    "fieldname": "files_documents",
    "fieldtype": "Check",
-   "label": "Files & Documents"
+   "label": "Files & Documents",
+   "read_only_depends_on": "eval:frappe.user!=doc.handover_staff || doc.handover_staff_approval"
   },
   {
    "default": "0",
    "fieldname": "work_equipments",
    "fieldtype": "Check",
-   "label": "Work Equipments"
+   "label": "Work Equipments",
+   "read_only_depends_on": "eval:frappe.user!=doc.handover_staff || doc.handover_staff_approval"
   },
   {
    "default": "0",
    "fieldname": "office_keys",
    "fieldtype": "Check",
-   "label": "Office keys"
-  },
-  {
-   "default": "0",
-   "fieldname": "dept_others",
-   "fieldtype": "Check",
-   "label": "Others"
+   "label": "Office keys",
+   "read_only_depends_on": "eval:frappe.user!=doc.handover_staff || doc.handover_staff_approval"
   },
   {
    "default": "0",
    "fieldname": "cabinet_keys",
    "fieldtype": "Check",
-   "label": "Cabinet Keys"
+   "label": "Cabinet Keys",
+   "read_only_depends_on": "eval:frappe.user!=doc.handover_staff || doc.handover_staff_approval"
   },
   {
    "default": "0",
    "fieldname": "drawer_keys",
    "fieldtype": "Check",
-   "label": "Drawer Keys"
+   "label": "Drawer Keys",
+   "read_only_depends_on": "eval:frappe.user!=doc.handover_staff || doc.handover_staff_approval"
   },
   {
    "default": "0",
    "fieldname": "accommodation",
    "fieldtype": "Check",
-   "label": "Accommodation"
+   "label": "Accommodation",
+   "read_only_depends_on": "eval:frappe.user!=doc.handover_staff || doc.handover_staff_approval"
   },
   {
    "default": "0",
@@ -150,13 +154,6 @@
    "fieldname": "salary_advance",
    "fieldtype": "Check",
    "label": "Salary Advance"
-  },
-  {
-   "default": "0",
-   "description": "Traffic fines/Violation penalty etc..",
-   "fieldname": "acc_others",
-   "fieldtype": "Check",
-   "label": "Others"
   },
   {
    "default": "0",
@@ -178,24 +175,6 @@
   },
   {
    "default": "0",
-   "fieldname": "email",
-   "fieldtype": "Check",
-   "label": "Email"
-  },
-  {
-   "default": "0",
-   "fieldname": "internet",
-   "fieldtype": "Check",
-   "label": "Internet"
-  },
-  {
-   "default": "0",
-   "fieldname": "computer_accessories",
-   "fieldtype": "Check",
-   "label": "Computer Accessories"
-  },
-  {
-   "default": "0",
    "fieldname": "passport",
    "fieldtype": "Check",
    "label": "Passport"
@@ -205,42 +184,6 @@
    "fieldname": "company_car_key",
    "fieldtype": "Check",
    "label": "Company Car key"
-  },
-  {
-   "default": "0",
-   "fieldname": "car_reg_card",
-   "fieldtype": "Check",
-   "label": "Car Reg. Card"
-  },
-  {
-   "default": "0",
-   "fieldname": "medical_card",
-   "fieldtype": "Check",
-   "label": "Medical Card"
-  },
-  {
-   "default": "0",
-   "fieldname": "mobile_phone",
-   "fieldtype": "Check",
-   "label": "Mobile Phone"
-  },
-  {
-   "default": "0",
-   "fieldname": "mobile_card",
-   "fieldtype": "Check",
-   "label": "Mobile Card"
-  },
-  {
-   "default": "0",
-   "fieldname": "emirates_id",
-   "fieldtype": "Check",
-   "label": "Emirates ID"
-  },
-  {
-   "default": "0",
-   "fieldname": "hr_others",
-   "fieldtype": "Check",
-   "label": "Others"
   },
   {
    "fieldname": "amended_from",
@@ -258,7 +201,7 @@
   {
    "fieldname": "employees_dept_section",
    "fieldtype": "Section Break",
-   "label": "Employees Dept"
+   "label": "Handover Staff"
   },
   {
    "fieldname": "accounts_dept_section",
@@ -292,10 +235,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "column_break_24",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "column_break_29",
    "fieldtype": "Column Break"
   },
@@ -304,23 +243,149 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "column_break_39",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "column_break_43",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "posting_date",
    "fieldtype": "Date",
-   "label": "Posting Date"
+   "label": "Posting Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "leave_application",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Leave Application",
+   "options": "Leave Application"
+  },
+  {
+   "fieldname": "handover_staff",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Handover Staff",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "last_working_day",
+   "fieldtype": "Date",
+   "label": "Last Working day"
+  },
+  {
+   "default": "0",
+   "fieldname": "hand_over_docs",
+   "fieldtype": "Check",
+   "label": "Hand over Docs",
+   "read_only_depends_on": "eval:frappe.user!=doc.handover_staff || doc.handover_staff_approval"
+  },
+  {
+   "default": "0",
+   "fieldname": "handover_staff_approval",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Handover Staff Approval"
+  },
+  {
+   "fieldname": "petty_cash_procedure",
+   "fieldtype": "Data",
+   "label": "Procedure"
+  },
+  {
+   "fieldname": "salary_advance_procedure",
+   "fieldtype": "Data",
+   "label": "Procedure"
+  },
+  {
+   "default": "0",
+   "fieldname": "accounts_dept_approval",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Accounts Dept Approval"
+  },
+  {
+   "fieldname": "pro_dept_section",
+   "fieldtype": "Section Break",
+   "label": "PRO Dept"
+  },
+  {
+   "default": "0",
+   "description": "Traffic fines/Violation penalty etc",
+   "fieldname": "pro_others",
+   "fieldtype": "Check",
+   "label": "Others"
+  },
+  {
+   "fieldname": "column_break_33",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "pro_procedure",
+   "fieldtype": "Check",
+   "label": "Procedure"
+  },
+  {
+   "fieldname": "column_break_35",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "pro_dept_approval",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "PRO Dept Approval"
+  },
+  {
+   "default": "0",
+   "fieldname": "email_and_password_changed",
+   "fieldtype": "Check",
+   "label": "Email and password changed"
+  },
+  {
+   "default": "0",
+   "fieldname": "passwords",
+   "fieldtype": "Check",
+   "label": "Passwords"
+  },
+  {
+   "default": "0",
+   "fieldname": "mobile_sim",
+   "fieldtype": "Check",
+   "label": "Mobile & Sim"
+  },
+  {
+   "default": "0",
+   "fieldname": "system_dept_approval",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "System Dept Approval"
+  },
+  {
+   "default": "0",
+   "fieldname": "documents",
+   "fieldtype": "Check",
+   "label": "Documents"
+  },
+  {
+   "default": "0",
+   "fieldname": "hr_department_approval",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "HR Department Approval"
+  },
+  {
+   "fieldname": "emp_approve",
+   "fieldtype": "Button",
+   "label": "Approve"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "HR-CF-.YY.-"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-12-14 23:47:04.726488",
+ "modified": "2022-12-16 10:13:36.961395",
  "modified_by": "Administrator",
  "module": "custom reports",
  "name": "Clearance Form",
