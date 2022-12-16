@@ -67,7 +67,7 @@ def get_data(conditions,filters):
 	
 	data=[]
 	conc=frappe.db.sql(""" select GROUP_CONCAT(name) as name,project,posting_date from `tabStock Entry` where stock_entry_type ='Manufacture' 
-		and manufacturing_type='Broiler Chicken' and docstatus<2 and %s group by project order by project"""% (conditions),as_dict=1,debug=0)
+		and manufacturing_type='Broiler Chicken' and docstatus=1 and %s group by project order by project"""% (conditions),as_dict=1,debug=0)
 	for cosu in conc:
 		names=cosu.name.replace(",", "','")
 

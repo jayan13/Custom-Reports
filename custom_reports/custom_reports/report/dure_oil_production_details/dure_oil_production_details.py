@@ -152,7 +152,7 @@ def get_data(conditions,filters):
 		manu.update({'posting_date':cdate})
 		woref=frappe.db.sql(""" select d.item_code as item_code,sum(d.qty) as qty from `tabStock Entry Detail` d left join
 		`tabStock Entry` s on s.name=d.parent left join `tabProcess Order` p on s.process_order=p.name 
-		where s.posting_date='{0}' and s.process_order!='' and s.docstatus<2 and p.process_type='Waste Oil Re-refining' 
+		where s.posting_date='{0}' and s.process_order!='' and s.docstatus=1 and p.process_type='Waste Oil Re-refining' 
 		and s.stock_entry_type='Manufacture' group by d.item_code ORDER BY FIELD(d.item_code,'WO001', 'LLB001','LI0001','AS0001','WT1-WATER') """.format(cdate),as_dict=1,debug=0)
 		if woref:
 			wt=1
@@ -190,7 +190,7 @@ def get_data(conditions,filters):
 			manu.update({'total_recovery':0})		
 		#..................................................................
 		litnt=frappe.db.sql(""" select d.item_code as item_code,sum(d.qty) as qty,d.expense_account from `tabStock Entry Detail` d left join
-		`tabStock Entry` s on s.name=d.parent where s.posting_date='{0}' and d.item_code in ('LI0001','LLB001') and s.docstatus<2 
+		`tabStock Entry` s on s.name=d.parent where s.posting_date='{0}' and d.item_code in ('LI0001','LLB001') and s.docstatus=1 
 		and s.stock_entry_type='Material Issue' and 
 		d.expense_account in ('501120 - Light Lube Issued to Vacum Pump - DURE','501119 - Lightend Issued to Internal Consumption - DURE') 
 		group by d.item_code ORDER BY FIELD(d.item_code,'LI0001','LLB001')""".format(cdate),as_dict=1,debug=0)
@@ -206,7 +206,7 @@ def get_data(conditions,filters):
 		#...................................................................
 		woref1=frappe.db.sql(""" select d.item_code as item_code,sum(d.qty) as qty from `tabStock Entry Detail` d left join
 		`tabStock Entry` s on s.name=d.parent left join `tabProcess Order` p on s.process_order=p.name 
-		where s.posting_date='{0}' and s.process_order!='' and s.docstatus<2 and p.process_type='VHBO Production' 
+		where s.posting_date='{0}' and s.process_order!='' and s.docstatus=1 and p.process_type='VHBO Production' 
 		and s.stock_entry_type='Manufacture' group by d.item_code ORDER BY FIELD(d.item_code,'AS0001','VHBO101') """.format(cdate),as_dict=1,debug=0)
 		manu.update({'asphalt_issued':0})
 		manu.update({'VHBO_production':0}) 
@@ -221,7 +221,7 @@ def get_data(conditions,filters):
 		#...................................................................
 		woref2=frappe.db.sql(""" select d.item_code as item_code,sum(d.qty) as qty from `tabStock Entry Detail` d left join
 		`tabStock Entry` s on s.name=d.parent left join `tabProcess Order` p on s.process_order=p.name 
-		where s.posting_date='{0}' and s.process_order!='' and s.docstatus<2 and p.process_type='HBO Production' 
+		where s.posting_date='{0}' and s.process_order!='' and s.docstatus=1 and p.process_type='HBO Production' 
 		and s.stock_entry_type='Manufacture' group by d.item_code ORDER BY FIELD(d.item_code,'VHBO101','LLB001','HBO101') """.format(cdate),as_dict=1,debug=0)
 		manu.update({'VHBO_issued':0})
 		manu.update({'lightlube_issued':0})
@@ -238,7 +238,7 @@ def get_data(conditions,filters):
 	
 		#..................................................................
 		litnt=frappe.db.sql(""" select d.item_code as item_code,sum(d.qty) as qty,d.expense_account from `tabStock Entry Detail` d left join
-		`tabStock Entry` s on s.name=d.parent where s.posting_date='{0}' and d.item_code in ('LI0001') and s.docstatus<2 
+		`tabStock Entry` s on s.name=d.parent where s.posting_date='{0}' and d.item_code in ('LI0001') and s.docstatus=1 
 		and s.stock_entry_type='Material Issue' and 
 		d.expense_account in ('501614 - Temp-Water Drained Out From Lightened - DURE') 
 		group by d.item_code """.format(cdate),as_dict=1,debug=0)

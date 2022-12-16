@@ -91,7 +91,7 @@ def get_data(conditions):
 	data=[]	
 	stkentry=frappe.db.sql(""" select p.name as process_order,s.name,s.posting_date as posting_date from `tabStock Entry` s 
 		left join `tabProcess Order` p on s.process_order=p.name 
-		where s.process_order!='' and s.docstatus<2 and p.process_type='Waste Oil Re-refining' and s.stock_entry_type='Manufacture'
+		where s.process_order!='' and s.docstatus=1 and p.process_type='Waste Oil Re-refining' and s.stock_entry_type='Manufacture'
 		and %s order by s.posting_date"""% (conditions),as_dict=1,debug=0)
 	for stk in stkentry:
 		manu={}

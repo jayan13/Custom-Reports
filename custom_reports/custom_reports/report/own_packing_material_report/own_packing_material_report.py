@@ -60,7 +60,7 @@ def get_data(conditions,filters):
 	
 	conc=frappe.db.sql(""" select s.posting_date,CONCAT(d.item_code,' - ',d.item_name) as item,sum(d.transfer_qty) as transfer_qty,d.stock_uom,d.basic_rate,sum(d.basic_amount) as basic_amount from `tabStock Entry Detail` d left join `tabStock Entry` s on s.name=d.parent 
 where d.item_code in(select DISTINCT item from `tabPacking Items`) and s.stock_entry_type ='Manufacture' 
-and s.manufacturing_type='Chicken Slaughtering' and s.docstatus<2 and %s group by d.item_code order by d.item_name """% (conditions),as_dict=1,debug=0)
+and s.manufacturing_type='Chicken Slaughtering' and s.docstatus=1 and %s group by d.item_code order by d.item_name """% (conditions),as_dict=1,debug=1)
 	
 	return conc
 

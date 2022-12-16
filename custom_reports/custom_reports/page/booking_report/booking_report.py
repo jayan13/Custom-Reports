@@ -21,7 +21,7 @@ def get_report(from_date=None,to_date=None):
         html+='<tr><td style="width:190px;">'+unit.name+'</td>'
         booking=[]
         order=frappe.db.sql(""" select contract_start_date,contract_end_date from `tabSales Order` where company='AL NOKHBA BUILDING' 
-        and property='AL NOKHBA BUILDING' and property_unit='{0}' and docstatus<2 
+        and property='AL NOKHBA BUILDING' and property_unit='{0}' and docstatus=1 
         and ((contract_start_date between '{1}' and '{2}') or (contract_end_date between '{1}' and '{2}')) """.format(unit.name,from_date,to_date),as_dict=1,debug=0)
         for ord in order:
             cdate=frappe.utils.add_days(getdate(ord.contract_start_date), -1)            
@@ -30,7 +30,7 @@ def get_report(from_date=None,to_date=None):
                 booking.append(cdate)
 
         invoice=frappe.db.sql(""" select contract_start_date,contract_end_date from `tabSales Invoice` where company='AL NOKHBA BUILDING' 
-        and property='AL NOKHBA BUILDING' and property_unit='{0}' and docstatus<2 
+        and property='AL NOKHBA BUILDING' and property_unit='{0}' and docstatus=1 
         and ((contract_start_date between '{1}' and '{2}') or (contract_end_date between '{1}' and '{2}')) """.format(unit.name,from_date,to_date),as_dict=1,debug=0)
         for ord in invoice:
             cdate=frappe.utils.add_days(getdate(ord.contract_start_date), -1)            

@@ -82,10 +82,10 @@ def get_columns():
 def get_data(conditions):
 
 	data=[]	
-	stkentry=frappe.db.sql(""" select name,transaction_date,property,property_unit,contract_start_date,contract_end_date,'' as invoice_status,'' as auto_repeat,DATEDIFF(contract_end_date, contract_start_date)+1 as number_of_days from `tabSales Order` where  docstatus<2 and company='AL NOKHBA BUILDING' 
+	stkentry=frappe.db.sql(""" select name,transaction_date,property,property_unit,contract_start_date,contract_end_date,'' as invoice_status,'' as auto_repeat,DATEDIFF(contract_end_date, contract_start_date)+1 as number_of_days from `tabSales Order` where  docstatus=1 and company='AL NOKHBA BUILDING' 
 		and %s order by transaction_date"""% (conditions),as_dict=1,debug=0)
 	for stk in stkentry:
-		itm=frappe.db.sql("""select count(s.name) as cnt,s.auto_repeat from `tabSales Invoice Item` it left join `tabSales Invoice` s on s.name=it.parent where  s.docstatus < 2 and it.sales_order='{0}' """.format(stk.name),as_dict=1,debug=0)
+		itm=frappe.db.sql("""select count(s.name) as cnt,s.auto_repeat from `tabSales Invoice Item` it left join `tabSales Invoice` s on s.name=it.parent where  s.docstatus=1 and it.sales_order='{0}' """.format(stk.name),as_dict=1,debug=0)
 		stk.update({'invoice_status':itm[0].cnt})
 		stk.update({'auto_repeat':itm[0].auto_repeat})
 		#s.auto_repeat='' and

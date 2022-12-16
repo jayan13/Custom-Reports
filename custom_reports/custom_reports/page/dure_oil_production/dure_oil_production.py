@@ -17,9 +17,9 @@ def get_report(from_date=None,to_date=None):
     
     data['head']=frappe.db.get_value('Letter Head', 'Dure Oil Letter Head', 'content')
     manu=[]
-    stkentry=frappe.db.sql(""" select p.name as process_order,s.name,s.posting_date from `tabStock Entry` s 
+    stkentry=frappe.db.sql(""" select p.name as process_order,s.name,DATE_FORMAT(s.posting_date,'%d/%m/%Y') as posting_date from `tabStock Entry` s 
 left join `tabProcess Order` p on s.process_order=p.name 
-where s.process_order!='' and s.docstatus<2 and p.process_type='Waste Oil Re-refining' and s.stock_entry_type='Manufacture'
+where s.process_order!='' and s.docstatus=1 and p.process_type='Waste Oil Re-refining' and s.stock_entry_type='Manufacture'
 and s.posting_date between '{0}' and '{1}' order by s.posting_date""".format(from_date,to_date),as_dict=1,debug=0)
     for stk in stkentry:
         itm=frappe.db.sql(""" select item_code,qty,uom,amount from `tabStock Entry Detail` 
@@ -41,7 +41,7 @@ and s.posting_date between '{0}' and '{1}' order by s.posting_date""".format(fro
     
     data['items_total']=frappe.db.sql(""" select sd.item_code,sum(qty) as qty,sum(amount) as amount from `tabStock Entry` s left join `tabStock Entry Detail` sd on s.name=sd.parent 
 left join `tabProcess Order` p on s.process_order=p.name 
-where s.process_order!='' and s.docstatus<2 and p.process_type='Waste Oil Re-refining' and s.stock_entry_type='Manufacture'
+where s.process_order!='' and s.docstatus=1 and p.process_type='Waste Oil Re-refining' and s.stock_entry_type='Manufacture'
 AND s.posting_date between '{0}' and '{1}' group by sd.item_code ORDER BY FIELD(sd.item_code, 'WO001', 'LLB001','LI0001','AS0001','WT1-WATER') """.format(from_date,to_date),as_dict=1,debug=0)
     
 

@@ -59,4 +59,4 @@ def get_columns():
 		]
 
 def get_data(filters=None):	
-	return frappe.db.sql(""" select property_name,name,customer_name,contract_start_date,contract_end_date,unit_status,unit from `tabProperty Unit`  """,as_dict=1)
+	return frappe.db.sql(""" select property_name,name,customer_name,contract_start_date,contract_end_date,unit_status,unit_no from `tabProperty Unit`  """,as_dict=1)
