@@ -75,8 +75,10 @@ def get_last_workingday(employee,leave_application):
 	from_date=frappe.db.get_value('Leave Application', leave_application, ['from_date'])
 	last_working=frappe.utils.getdate(from_date)
 	df=frappe.utils.add_days(last_working,-1)
-	if leave_application:
-		holiday_list=frappe.db.get_value('Employee', employee, ['holiday_list'])
+	if leave_application:		
+		holiday_list,default_shift=frappe.db.get_value('Employee', employee, ['holiday_list','default_shift'])
+		if default_shift:
+			holiday_list=frappe.db.get_value('Shift Type', default_shift, ['holiday_list']) or holiday_list
 		if holiday_list:
 			holiday_date=frappe.db.get_all('Holiday',filters={'parent': holiday_list,'holiday_date':['<',last_working]},fields=['holiday_date'],pluck='holiday_date')
 			if holiday_date:
