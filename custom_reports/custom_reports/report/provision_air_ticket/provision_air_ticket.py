@@ -116,14 +116,15 @@ def get_data(conditions,filters):
 		absents=getabsents(emp.name,emp.opening_absent)		
 		actual_worked=total_days-absents
 		years=total_days/365
-		perodical='Once in a '+emp.ticket_period+' Years'
+		perodical=''
 		ticket_per_month=0
 		eligible=0
 		accrued=0
 		amount_balance=0
 		balance=0
-		
+
 		if float(emp.ticket_period) > 0:
+			perodical='Once in a '+emp.ticket_period+' Years'
 			ticket_per_month=1/(float(emp.ticket_period)*12)
 			eligible=years//float(emp.ticket_period)
 			accrued=years/float(emp.ticket_period)
