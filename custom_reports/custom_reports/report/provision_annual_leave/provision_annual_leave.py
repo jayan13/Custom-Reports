@@ -27,6 +27,12 @@ def get_columns():
 		"width": 200
 		},
 		{
+		"fieldname": "leave_code",
+		"fieldtype": "Data",
+		"label": "Leave Code",	
+		"width": 100
+		},
+		{
 		"fieldname": "gross_salary",
 		"fieldtype": "Data",
 		"label": "Gross Salary ",	
@@ -92,13 +98,15 @@ def get_data(conditions,filters):
 		gross_salary=get_gross_salary(emp.name,processing_month)
 		absents=getabsents(emp.name,emp.opening_absent)
 		usedleave=getused(emp.name,emp.opening_used_leaves)
+		leave_code=str(emp.leaves_per_year)+'D'
 		actual_worked=total_days-absents
-		accrued=round((actual_worked/365)*30,2)
+		accrued=round((actual_worked/365)*emp.leaves_per_year,2)
 		balance=accrued-usedleave
 		amount_balance=round(((gross_salary*12)/365)*balance,2)	
 		emp.update({'total_days':total_days})
 		emp.update({'gross_salary':gross_salary})
 		emp.update({'absent':absents})
+		emp.update({'leave_code':leave_code})
 		emp.update({'actual_worked':actual_worked})
 		emp.update({'accrued':accrued})
 		emp.update({'used':usedleave})
