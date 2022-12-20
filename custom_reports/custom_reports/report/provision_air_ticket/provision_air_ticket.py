@@ -30,7 +30,7 @@ def get_columns():
 		"fieldname": "perodical",
 		"fieldtype": "Data",
 		"label": "Perodical",	
-		"width": 80
+		"width": 150
 		},
 		{
 		"fieldname": "ticket_per_month",
