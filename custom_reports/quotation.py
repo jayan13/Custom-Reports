@@ -232,7 +232,7 @@ def get_data_html(request_for_quotation,itemar,tems,suppqto,company,purchase_ord
 				group by sq.supplier order by sq.supplier """.format(
 				request_for_quotation,itemssql
 			),
-			as_dict=1,debug=0
+			as_dict=1,debug=1
 			)
 	else:
 		supplier_list = frappe.db.sql(
@@ -251,7 +251,7 @@ def get_data_html(request_for_quotation,itemar,tems,suppqto,company,purchase_ord
 				group by sq.supplier order by sq.supplier """.format(
 				suppqto,itemssql
 			),
-			as_dict=1,debug=0
+			as_dict=1,debug=1
 			)
 	
 	dta=[]
