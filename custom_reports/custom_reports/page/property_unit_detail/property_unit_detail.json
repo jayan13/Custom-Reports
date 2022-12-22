@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2022-12-22 09:58:17.267658",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2022-12-22 20:45:56.973016",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "property-unit-detail",
+ "owner": "Administrator",
+ "page_name": "property-unit-detail",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 1,
+ "title": "Property Unit Details"
+}
