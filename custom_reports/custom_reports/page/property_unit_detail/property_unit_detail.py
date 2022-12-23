@@ -22,7 +22,8 @@ def get_report(unit_name):
 
     maintance=[]
     tot=0
-    maint=frappe.db.sql("select * from `tabProperty Maintenance` where docstatus=1 and ((propperty_unit='{0}' and  property='{1}') or (propperty_unit='' and  property='{1}')) and YEAR(start_date)=YEAR(CURDATE()) order by start_date desc limit 0,1".format(unit_details.name,unit_details.property_name),as_dict=1,debug=0)
+    maint=frappe.db.sql("select * from `tabProperty Maintenance` where docstatus=1 and ((propperty_unit='{0}' and  property='{1}') or (propperty_unit='' and  property='{1}')) and YEAR(start_date)=YEAR(CURDATE()) order by start_date desc".format(unit_details.name,unit_details.property_name),as_dict=1,debug=1)
+    
     for mt in maint:
         mtd={}
         mname='<a href="'+frappe.utils.get_url()+'/app/property-maintenance/'+mt.name+'" target="_blank">'+mt.name+'</a>'
@@ -48,7 +49,7 @@ def get_report(unit_name):
         tot+=actual_costing
 
     prvmaintance=[]
-    maint=frappe.db.sql("select * from `tabProperty Maintenance` where docstatus=1 and ((propperty_unit='{0}' and  property='{1}') or (propperty_unit='' and  property='{1}')) and YEAR(start_date)<YEAR(CURDATE()) order by start_date desc limit 0,1".format(unit_details.name,unit_details.property_name),as_dict=1,debug=0)
+    maint=frappe.db.sql("select * from `tabProperty Maintenance` where docstatus=1 and ((propperty_unit='{0}' and  property='{1}') or (propperty_unit='' and  property='{1}')) and YEAR(start_date)<YEAR(CURDATE()) order by start_date desc".format(unit_details.name,unit_details.property_name),as_dict=1,debug=0)
     for mt in maint:
         mtd={}
         mname='<a href="'+frappe.utils.get_url()+'/app/property-maintenance/'+mt.name+'" target="_blank">'+mt.name+'</a>'
