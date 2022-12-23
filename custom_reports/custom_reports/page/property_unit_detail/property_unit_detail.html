@@ -11,7 +11,10 @@
     border: 2px solid black;   
     padding:4px;
     }
-    
+    #maint table tr td a{
+        color: rgb(105, 133, 244);
+        font-weight: 700;
+    }
     #maint table tr:first-child td { text-align: center;font-weight: bold; background-color: #d3d3d3;}
     </style>
 
@@ -37,6 +40,14 @@
             <tr><td>Contract End Date : </td><td>{{prebook.contract_end_date}}</td></tr>
             <tr><td>Rent : </td><td>{{prebook.net_total}}</td></tr>
         </table>
+        Item Details
+        
+        <table>
+            <tr><td>Item Name</td><td>Amount</td></tr>
+            {% for m in items%}
+            <tr><td>{{m.item_name}}</td><td>{{m.amount}}</td></tr>
+            {% endfor %}
+        </table>
         {% else %}
             Nill
         {% endif %}
@@ -46,18 +57,35 @@
     <div id="maint"><h3>Maintenance This Year</h3>
         {% if maintance %}
         <table>
-            <tr><td>Maintenance</td><td>Description</td><td>Start Date</td><td>End Date</td><td>Estimated Costing</td><td>Actual Costing</td></tr>
+            <tr><td style="width:10%;">Maintenance</td><td >Description</td><td style="width:10%;">Start Date</td><td style="width:10%;">End Date</td><td style="width:10%;">Estimated Costing</td><td style="width:10%;">Actual Costing</td></tr>
             {% for itm in maintance%}
-            <tr><td>{{itm.name}}</td><td>{{itm.desc}}</td><td>{{itm.start_date}}</td><td>{{itm.end_date}}</td><td>{{itm.estimated_costing}}</td><td>{{itm.actual_costing}}</td></tr>
+            <tr><td>{{itm.name}}</td><td>{{itm.desc}}</td><td>{{itm.start_date}}</td><td>{{itm.end_date}}</td><td style="text-align:right;">{{itm.estimated_costing}}</td><td style="text-align:right;">{{itm.actual_costing}}</td></tr>
             {% endfor %}
             
         </table>
         <br>
-       Total Maintenance This Year : {{totmain}}
         {% else %}
             Nill
         {% endif %}
         
+    </div>
+    <br>
+    <br>
+    <div id="maint"><h3>Maintenance Previous Years</h3>
+        {% if prvmaintance %}
+        <table>
+            <tr><td style="width:10%;">Maintenance</td><td >Description</td><td style="width:10%;">Start Date</td><td style="width:10%;">End Date</td><td style="width:10%;">Estimated Costing</td><td style="width:10%;">Actual Costing</td></tr>
+            {% for itm in prvmaintance%}
+            <tr><td>{{itm.name}}</td><td>{{itm.desc}}</td><td>{{itm.start_date}}</td><td>{{itm.end_date}}</td><td style="text-align:right;">{{itm.estimated_costing}}</td><td style="text-align:right;">{{itm.actual_costing}}</td></tr>
+            {% endfor %}
+            
+        </table>
+        
+        {% else %}
+            Nill
+        {% endif %}
+    <br>
+       <b>Total Maintenance : {{totmain}}</b>
     </div>
     <br>
     <br>
