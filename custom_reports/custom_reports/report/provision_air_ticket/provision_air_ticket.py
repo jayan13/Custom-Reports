@@ -157,7 +157,7 @@ def get_data(conditions,filters):
 			eligible=years//float(emp.ticket_period)
 			accrued=years/float(emp.ticket_period)
 		
-		balance=accrued-emp.used_tickets
+		balance=accrued-float(emp.used_tickets)
 		
 		if float(emp.ticket_period) > 0:
 			amount_balance=(emp.ticket_price/float(emp.ticket_period))*balance
