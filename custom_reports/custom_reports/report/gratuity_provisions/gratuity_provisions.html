@@ -1,0 +1,87 @@
+<h2 class="text-center">{%= __("Provision Annual Leave") %}</h2>
+<hr>
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<th style="width: 2%"></th>
+			<th style="width: 15%">{%= __("Employee") %}</th>
+			<th style="width: 16%">{%= __("Employee Name") %}</th>
+			<th style="width: 7%">{%= __("Salary") %}</th>
+			<th style="width: 10%">{%= __("DOJ") %}</th>
+			<th style="width: 7%">{%= __("Total Days") %}</th>
+			<th style="width: 7%">{%= __("Absent") %}</th>
+			<th style="width: 7%">{%= __("Actual Worked") %}</th>
+			<th style="width: 7%">{%= __("Accr'd") %}</th>
+			<th style="width: 7%">{%= __("Accrued") %}</th>
+			<th style="width: 7%">{%= __("Paid") %}</th>
+			<th style="width: 7%">{%= __("Balance") %}</th>
+		</tr>
+	</thead>
+	<tbody>
+		
+		{% for(var i=0, j=-1, l=data.length; i<l; i++,j++) { 
+			 if(i==0 && data[i].department){ %}
+		<tr><td colspan="12">{%=data[i].parent_department%}</td></tr>
+		<tr><td colspan="12">{%=data[i].department_name%}</td></tr>
+		{% } else if (i >1){  
+			if(data[j].parent_department!=data[i].parent_department){ %} 
+			<tr><td colspan="12"><b>{%=data[i].parent_department%}</b></td></tr>
+			{% }
+			if(data[j].department_name!=data[i].department_name){ %}
+		<tr><td colspan="12"><b>{%=data[i].department_name%}</b></td></tr>
+		{% } } %}
+			<tr>
+			
+				<td style="text-align: right">
+					{%=i+1 %}
+				</td>
+				<td >
+					{%=data[i].employee %}
+				</td>
+				<td >
+					{%=data[i].employee_name %}
+				</td>
+				<td style="text-align: right">
+					{%=format_currency(data[i].gross_salary) %}
+				</td>
+				<td >
+					{%=frappe.datetime.str_to_user(data[i].date_of_joining) %}
+				</td>
+				<td style="text-align: right">
+					{%=data[i].total_days %}
+				</td>
+				<td style="text-align: right">
+					{%=data[i].absent %}
+				</td>
+				<td style="text-align: right">
+					{%=data[i].actual_worked %}
+				</td>
+				<td style="text-align: right">
+					{%=data[i].accr_d %}
+				</td>
+				<td style="text-align: right">
+					{%=format_currency(data[i].accrued) %}
+				</td>
+				<td style="text-align: right">
+					{%=data[i].paid %}
+				</td>
+				<td style="text-align: right">
+					{%=format_currency(data[i].balance) %}
+				</td>
+			</tr>
+			{% if(i==(l-1)) { %}
+			<tr><td></td><td></td><td colspan="4" ><b># of Employees : {%=data[i].department_name_emp_tot%}</b></td><td colspan="5" style="text-align: right"><b>Department Total :</b></td><td style="text-align: right"><b>{%=format_currency(data[i].department_name_tot)%}</b></td></tr>
+			<tr><td></td><td></td><td colspan="4" ><b># of Employees : {%=data[i].parent_department_emp_tot%}</b></td> <td colspan="5" style="text-align: right"><b>Main Department Total :</b></td><td style="text-align: right"><b>{%=format_currency(data[i].parent_department_tot)%}</b></td></tr>
+			{% } else if (i >1){  
+				if(data[i].department_name!=data[i+1].department_name){ %} 
+				<tr><td></td><td></td><td colspan="4" ><b># of Employees : {%=data[i].department_name_emp_tot%}</b></td><td colspan="5" style="text-align: right"><b>Department Total :</b></td> <td style="text-align: right"><b>{%=format_currency(data[i].department_name_tot)%}</b></td></tr>
+				{% }
+				if(data[i].parent_department!=data[i+1].parent_department){ %}
+			<tr><td></td><td></td><td colspan="4" ><b># of Employees : {%=data[i].parent_department_emp_tot%}</b></td><td colspan="5" style="text-align: right"><b>Main Department Total :</b></td> <td style="text-align: right"><b>{%=format_currency(data[i].parent_department_tot)%}</b></td></tr>
+			{% } } %}
+
+
+		{% } %}
+	</tbody>
+</table>
+
