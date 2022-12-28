@@ -226,14 +226,14 @@ def getabsents(emp,opn,start_date,end_date):
 			absent+=dc
 
 	sal5=frappe.db.sql(""" select count(*) as absent FROM `tabAttendance` where status='Absent' and employee='{0}' 
-	and attendance_date between '{1}' and  '{2}'""".format(emp,start_date,end_date),as_dict=1,debug=0)
+	and attendance_date between '{1}' and  '{2}'""".format(emp,start_date,end_date),as_dict=1,debug=1)
 	if sal5:
-		absent+=sal5[0].absent
+		absent+=float(sal5[0].absent)
 	
 	sal6=frappe.db.sql(""" select count(*) as absent FROM `tabAttendance` where status='Half Day' and employee='{0}' 
-	and attendance_date between '{1}' and  '{2}' and leave_type=''""".format(emp,start_date,end_date),as_dict=1,debug=0)
+	and attendance_date between '{1}' and  '{2}' and leave_type=''""".format(emp,start_date,end_date),as_dict=1,debug=1)
 	if sal6:
-		absent+=sal6[0].absent
+		absent+=float(sal6[0].absent)
 	
 	return absent
 
