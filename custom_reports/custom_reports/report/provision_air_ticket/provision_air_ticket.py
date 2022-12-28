@@ -2,7 +2,21 @@
 # For license information, please see license.txt
 
 import frappe
-
+from frappe.utils import (
+	add_days,
+	cint,
+	cstr,
+	date_diff,
+	flt,
+	formatdate,
+	get_link_to_form,
+	get_datetime,
+	get_first_day,
+	getdate,
+	money_in_words,
+	rounded,
+)
+from erpnext.hr.utils import get_holiday_dates_for_employee
 
 def execute(filters=None):
 	if not filters:
@@ -141,7 +155,15 @@ def get_data(conditions,filters):
 			department_name_tot=0
 			department_name_emp_tot=0
 		total_days=frappe.utils.date_diff(processing_month,emp.date_of_joining)
-		absents=getabsents(emp.name,emp.opening_absent)		
+		
+		start_date=emp.date_of_joining
+		openabs=0
+		if emp.openning_entry_date:
+			day = getdate(emp.openning_entry_date)
+			start_date = add_days(day, 1)
+			openabs=emp.opening_absent
+			
+		absents=getabsents(emp.name,openabs,start_date,processing_month)	
 		actual_worked=total_days-absents
 		years=total_days/365
 		perodical=''
@@ -152,7 +174,7 @@ def get_data(conditions,filters):
 		balance=0
 
 		if float(emp.ticket_period) > 0:
-			perodical='Once in a '+emp.ticket_period+' Years'
+			perodical=str(emp.no_of_tickets_eligible)+"'s in a "+emp.ticket_period+' Years'
 			ticket_per_month=1/(float(emp.ticket_period)*12)
 			eligible=years//float(emp.ticket_period)
 			accrued=years/float(emp.ticket_period)
@@ -206,10 +228,46 @@ def get_gross_salary(emp,processing_month):
 		gsal=sal[0].gross_salary
 	return gsal
 
-def getabsents(emp,opn):
-	absent=0
-	sal=frappe.db.sql(""" select sum(l.total_leave_days)+{0} as absent from `tabLeave Application` l left join `tabLeave Type` p on l.leave_type=p.name where l.employee='{1}' and p.is_lwp='1' and l.status='Approved' group by l.employee""".format(opn,emp),as_dict=1,debug=0)
+def getabsents(emp,opn,start_date,end_date):
+	absent=opn
+	sal=frappe.db.sql(""" select sum(l.total_leave_days) as absent from `tabLeave Application` l 
+	left join `tabLeave Type` p on l.leave_type=p.name where l.employee='{0}' and p.is_lwp='1' 
+	and l.status='Approved' and l.from_date >= '{1}' and l.to_date <= '{2}' group by l.employee""".format(emp,start_date,end_date),as_dict=1,debug=0)
 	if sal:
-		absent=sal[0].absent
+		absent+=sal[0].absent
+	
+	sal2=frappe.db.sql(""" select sum(l.total_leave_days) as absent from `tabLeave Application` l 
+	left join `tabLeave Type` p on l.leave_type=p.name where l.employee='{0}' and p.is_ppl='1' 
+	and l.status='Approved' and l.from_date >= '{1}' and l.to_date <= '{2}' group by l.employee""".format(emp,start_date,end_date),as_dict=1,debug=0)
+	if sal2:
+		absent+=sal2[0].absent
+
+	sal3=frappe.db.sql(""" select l.to_date as absent from `tabLeave Application` l 
+	left join `tabLeave Type` p on l.leave_type=p.name where l.employee='{0}' and p.is_lwp='1' 
+	and l.status='Approved' and  '{1}' between l.from_date and l.to_date """.format(emp,start_date),as_dict=1,debug=0)
+	if sal3:
+		for s in sal3:
+			dc=date_diff(s.absent,start_date)
+			absent+=dc
+
+	sal4=frappe.db.sql(""" select l.from_date as absent from `tabLeave Application` l 
+	left join `tabLeave Type` p on l.leave_type=p.name where l.employee='{0}' and p.is_lwp='1' 
+	and l.status='Approved' and '{1}' between l.from_date and l.to_date """.format(emp,end_date),as_dict=1,debug=0)
+	if sal4:
+		for s in sal4:
+			dc=date_diff(end_date,s.absent)
+			absent+=dc
+
+	sal5=frappe.db.sql(""" select count(*) as absent FROM `tabAttendance` where status='Absent' and employee='{0}' 
+	and attendance_date between '{1}' and  '{2}'""".format(emp,start_date,end_date),as_dict=1,debug=0)
+	if sal5:
+		absent+=sal5[0].absent
+	
+	sal6=frappe.db.sql(""" select count(*) as absent FROM `tabAttendance` where status='Half Day' and employee='{0}' 
+	and attendance_date between '{1}' and  '{2}' and leave_type=''""".format(emp,start_date,end_date),as_dict=1,debug=0)
+	if sal6:
+		absent+=sal6[0].absent
+	
 	return absent
+
 
