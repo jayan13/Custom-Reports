@@ -229,7 +229,7 @@ def get_gross_salary(emp,processing_month):
 	return gsal
 
 def getabsents(emp,opn,start_date,end_date):
-	absent=opn
+	absent=float(opn)
 	sal=frappe.db.sql(""" select sum(l.total_leave_days) as absent from `tabLeave Application` l 
 	left join `tabLeave Type` p on l.leave_type=p.name where l.employee='{0}' and p.is_lwp='1' 
 	and l.status='Approved' and l.from_date >= '{1}' and l.to_date <= '{2}' group by l.employee""".format(emp,start_date,end_date),as_dict=1,debug=0)

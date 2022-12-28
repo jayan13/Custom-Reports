@@ -196,7 +196,7 @@ def get_gross_salary(emp,processing_month):
 	return gsal
 
 def getabsents(emp,opn,start_date,end_date):
-	absent=opn
+	absent=float(opn)
 	sal=frappe.db.sql(""" select sum(l.total_leave_days) as absent from `tabLeave Application` l 
 	left join `tabLeave Type` p on l.leave_type=p.name where l.employee='{0}' and p.is_lwp='1' 
 	and l.status='Approved' and l.from_date >= '{1}' and l.to_date <= '{2}' group by l.employee""".format(emp,start_date,end_date),as_dict=1,debug=0)
@@ -228,17 +228,17 @@ def getabsents(emp,opn,start_date,end_date):
 	sal5=frappe.db.sql(""" select count(*) as absent FROM `tabAttendance` where status='Absent' and employee='{0}' 
 	and attendance_date between '{1}' and  '{2}'""".format(emp,start_date,end_date),as_dict=1,debug=1)
 	if sal5:
-		absent+=float(sal5[0].absent)
+		absent+=sal5[0].absent
 	
 	sal6=frappe.db.sql(""" select count(*) as absent FROM `tabAttendance` where status='Half Day' and employee='{0}' 
 	and attendance_date between '{1}' and  '{2}' and leave_type=''""".format(emp,start_date,end_date),as_dict=1,debug=1)
 	if sal6:
-		absent+=float(sal6[0].absent)
+		absent+=sal6[0].absent
 	
 	return absent
 
 def getused(emp,opn,start_date,end_date):
-	used=opn
+	used=float(opn)
 	sal=frappe.db.sql(""" select sum(total_leave_days) as used from `tabLeave Application` where employee='{0}' 
 	and status='Approved' and leave_type='Annual Leave' and from_date >= '{1}' and to_date <= '{2}' group by employee""".format(emp,start_date,end_date),as_dict=1,debug=0)
 	if sal:
