@@ -151,7 +151,7 @@ def get_data(conditions,filters):
 		if totleave:
 			leaves_per_year=totleave
 		
-		total_days=date_diff(processing_month,emp.date_of_joining)
+		total_days=date_diff(processing_month,emp.date_of_joining)+1
 		gross_salary=get_gross_salary(emp.name,company,processing_month)
 		absents=getabsents(emp.name,openabs,start_date,processing_month)
 		usedleave=getused(emp.name,opnused,start_date,processing_month)
@@ -339,10 +339,13 @@ def get_applicable_components(rule):
 
 def get_provision_rule(company,processing_month):
 	set = frappe.db.sql(""" select name from `tabProvision Annual Leave Setting` where company='{0}' and 
-	((date_from != '' and date_from <= '{1}') or (date_to != '' and date_to >= '{1}')) """.format(company,processing_month),as_dict=1,debug=0)
+	((date_to = '' and date_from != '' and date_from <= '{1}') 
+	or (date_from = '' and date_to != '' and date_to >= '{1}')
+	or (date_from != '' and date_to != '' and '{1}' between date_from and date_to)) """.format(company,processing_month),as_dict=1,debug=0)
+	
 	if not set:
-		set = frappe.db.sql(""" select name from `tabProvision Annual Leave Setting` where company='' and 
-	((date_from != '' and date_from <= '{0}') or (date_to != '' and date_to >= '{0}')) """.format(processing_month),as_dict=1,debug=0)
+		set = frappe.db.sql(""" select name from `tabProvision Annual Leave Setting` where company='' and 	((date_to = '' and date_from != '' and date_from <= '{0}') 
+	or (date_from = '' and date_to != '' and date_to >= '{0}') 	or (date_from != '' and date_to != '' and '{0}' between date_from and date_to) ) """.format(processing_month),as_dict=1,debug=0)
 	if not set:
 		return
 	return set[0].name

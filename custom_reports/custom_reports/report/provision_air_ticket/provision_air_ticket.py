@@ -154,7 +154,7 @@ def get_data(conditions,filters):
 			department_name=emp.department_name
 			department_name_tot=0
 			department_name_emp_tot=0
-		total_days=frappe.utils.date_diff(processing_month,emp.date_of_joining)
+		total_days=frappe.utils.date_diff(processing_month,emp.date_of_joining)+1
 		
 		start_date=emp.date_of_joining
 		openabs=0
