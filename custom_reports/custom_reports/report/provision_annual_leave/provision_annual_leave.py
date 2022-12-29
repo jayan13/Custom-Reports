@@ -116,6 +116,7 @@ def get_columns():
 
 def get_data(conditions,filters):
 	processing_month=filters.get("processing_month")
+	company=filters.get("company")
 	conc=frappe.db.sql(""" select e.*,d.parent_department,d.department_name from `tabEmployee` e left join `tabDepartment` d on e.department=d.name where  %s  order by d.parent_department,d.name"""% (conditions),as_dict=1,debug=0)
 	
 	data=[]
@@ -125,6 +126,7 @@ def get_data(conditions,filters):
 	department_name_tot=0
 	parent_department_emp_tot=0
 	department_name_emp_tot=0
+	#Provision Annual Leave Setting
 	for emp in conc:
 		if emp.parent_department != parent_department:
 			parent_department=emp.parent_department
@@ -135,7 +137,7 @@ def get_data(conditions,filters):
 			department_name_tot=0
 			department_name_emp_tot=0
 		total_days=date_diff(processing_month,emp.date_of_joining)
-		gross_salary=get_gross_salary(emp.name,processing_month)
+		gross_salary=get_gross_salary(emp.name,company,processing_month)
 		start_date=emp.date_of_joining
 		openabs=0
 		opnused=0
@@ -187,12 +189,18 @@ def get_conditions(filters):
 
 	return conditions
 
-def get_gross_salary(emp,processing_month):
-	salary_structure=frappe.db.get_value("Salary Structure Assignment",{'employee':emp,'from_date':['<=',processing_month]},'salary_structure',debug=0)
+def get_gross_salary(emp,company,processing_month):
 	gsal=0
-	sal=frappe.db.sql(""" select sum(amount) as gross_salary from `tabSalary Detail` where parent='%s' and parentfield='earnings'  group by parent"""% (salary_structure),as_dict=1,debug=0)
-	if sal:
-		gsal=sal[0].gross_salary
+	rule=get_provision_rule(company,processing_month)
+	applicable_earnings_component=[]
+	if rule:
+		applicable_earnings_component=get_applicable_components(rule)
+
+	gsal=get_total_applicable_component_amount(emp, applicable_earnings_component, processing_month)
+	#salary_structure=frappe.db.get_value("Salary Structure Assignment",{'employee':emp,'from_date':['<=',processing_month]},'salary_structure',debug=0)
+	#sal=frappe.db.sql(""" select sum(amount) as gross_salary from `tabSalary Detail` where parent='%s' and parentfield='earnings'  group by parent"""% (salary_structure),as_dict=1,debug=0)
+	#if sal:
+	#	gsal=sal[0].gross_salary
 	return gsal
 
 def getabsents(emp,opn,start_date,end_date):
@@ -260,5 +268,76 @@ def getused(emp,opn,start_date,end_date):
 			
 	return used
 
+#========================================================
+def get_total_applicable_component_amount(employee, applicable_earnings_component, processing_month):
+	sal_slip = get_last_salary_slip(employee,processing_month)
+	sal_stru = get_last_salary_structure(employee,processing_month)
+	pare= sal_slip or sal_stru
+	component_and_amounts=''
+	if pare:
+		if len(applicable_earnings_component):
+			component_and_amounts = frappe.get_all(
+			"Salary Detail",
+			filters={
+				"docstatus": 1,
+				"parent": pare,
+				"parentfield": "earnings",
+				"salary_component": ("in", applicable_earnings_component),
+			},
+			fields=["amount"],debug=0
+			)
+		else:
+			component_and_amounts = frappe.get_all(
+			"Salary Detail",
+			filters={
+				"docstatus": 1,
+				"parent": pare,
+				"parentfield": "earnings",
+			},
+			fields=["amount"],
+			)
 
+	total_applicable_components_amount = 0
+
+	for data in component_and_amounts:
+		total_applicable_components_amount += data.amount
+	return total_applicable_components_amount
+
+def get_last_salary_slip(employee,processing_month):
+	salary_slips = frappe.get_list(
+		"Salary Slip", filters={"employee": employee, "docstatus": 1,'start_date':['<=',processing_month]}, order_by="start_date desc"
+	)
+	if not salary_slips:
+		return
+	return salary_slips[0].name
+
+def get_last_salary_structure(employee,processing_month):
+
+	salary_structure = frappe.get_list(
+		"Salary Structure Assignment", filters={"employee": employee, "docstatus": 1,'from_date':['<=',processing_month]},fields=['salary_structure'], order_by="from_date desc"
+	)
+	if not salary_structure:
+		return
+	return salary_structure[0].salary_structure
+
+def get_applicable_components(rule):
+	applicable_earnings_components = frappe.get_all(
+		"Provision Applicable Component", filters={"parent": rule}, fields=["salary_component"],debug=0)
+	applicable_earnings_component = []
+	if len(applicable_earnings_components):		
+		applicable_earnings_component = [
+		component.salary_component for component in applicable_earnings_components
+		]
+
+	return applicable_earnings_component
+
+def get_provision_rule(company,processing_month):
+	set = frappe.db.sql(""" select name from `tabProvision Annual Leave Setting` where company='{0}' and 
+	((date_from != '' and date_from <= '{1}') or (date_to != '' and date_to >= '{1}')) """.format(company,processing_month),as_dict=1,debug=0)
+	if not set:
+		set = frappe.db.sql(""" select name from `tabProvision Annual Leave Setting` where company='' and 
+	((date_from != '' and date_from <= '{0}') or (date_to != '' and date_to >= '{0}')) """.format(processing_month),as_dict=1,debug=0)
+	if not set:
+		return
+	return set[0].name
 

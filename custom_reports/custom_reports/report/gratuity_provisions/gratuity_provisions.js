@@ -8,6 +8,7 @@ frappe.query_reports["Gratuity Provisions"] = {
 		"label": __("Company"),
 		"fieldtype": "Link",
 		"options":"Company",
+		"reqd": 1 ,
 	},{
 		"fieldname": "processing_month",
 		"label": __("Processing Month"),
