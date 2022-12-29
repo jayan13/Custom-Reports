@@ -345,7 +345,7 @@ def get_provision_rule(company,processing_month):
 	
 	if not set:
 		set = frappe.db.sql(""" select name from `tabProvision Annual Leave Setting` where company='' and 	((date_to = '' and date_from != '' and date_from <= '{0}') 
-	or (date_from = '' and date_to != '' and date_to >= '{0}') 	or (date_from != '' and date_to != '' and '{0}' between date_from and date_to) ) """.format(processing_month),as_dict=1,debug=0)
+	or (date_from = '' and date_to != '' and date_to >= '{0}') 	or (date_from != '' and date_to != '' and '{0}' between date_from and date_to) ) """.format(processing_month),as_dict=1,debug=1)
 	if not set:
 		return
 	return set[0].name
