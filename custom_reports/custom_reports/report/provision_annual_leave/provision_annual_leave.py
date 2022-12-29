@@ -135,23 +135,31 @@ def get_data(conditions,filters):
 		if emp.department_name != department_name:
 			department_name=emp.department_name
 			department_name_tot=0
-			department_name_emp_tot=0
-		total_days=date_diff(processing_month,emp.date_of_joining)
-		gross_salary=get_gross_salary(emp.name,company,processing_month)
+			department_name_emp_tot=0		
+		
 		start_date=emp.date_of_joining
 		openabs=0
 		opnused=0
+		cf_leave=0
 		if emp.openning_entry_date:
 			day = getdate(emp.openning_entry_date)
 			start_date = add_days(day, 1)
 			openabs=emp.opening_absent
 			opnused=emp.opening_used_leaves
+		totleave,cfleave=get_leave_no(emp.name,processing_month)
+		leaves_per_year=emp.leaves_per_year
+		if totleave:
+			leaves_per_year=totleave
+		if cfleave:
+			cf_leave=cfleave
 
+		total_days=date_diff(processing_month,emp.date_of_joining)
+		gross_salary=get_gross_salary(emp.name,company,processing_month)
 		absents=getabsents(emp.name,openabs,start_date,processing_month)
 		usedleave=getused(emp.name,opnused,start_date,processing_month)
-		leave_code=str(emp.leaves_per_year)+'D'
+		leave_code=str(leaves_per_year)+'D'
 		actual_worked=total_days-absents
-		accrued=round((actual_worked/365)*emp.leaves_per_year,2)
+		accrued=round((actual_worked/365)*leaves_per_year,2)
 		balance=accrued-usedleave
 		amount_balance=round(((gross_salary*12)/365)*balance,2)
 		parent_department_tot+=amount_balance
@@ -341,3 +349,10 @@ def get_provision_rule(company,processing_month):
 		return
 	return set[0].name
 
+def get_leave_no(emp,processing_month):
+	
+	set = frappe.db.sql(""" select new_leaves_allocated,unused_leaves from `tabLeave Allocation` where employee='{0}' 
+	and '{1}' between from_date and to_date """.format(emp,processing_month),as_dict=1,debug=0)
+	if not set:
+		return
+	return set[0].new_leaves_allocated,set[0].unused_leaves
