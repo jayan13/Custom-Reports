@@ -157,9 +157,9 @@ def get_data(conditions,filters):
 		usedleave=getused(emp.name,opnused,start_date,processing_month)
 		leave_code=str(leaves_per_year)+'D'
 		actual_worked=total_days-absents
-		accrued=round((actual_worked/365)*leaves_per_year,2)
+		accrued=(actual_worked/365)*leaves_per_year
 		balance=accrued-usedleave
-		amount_balance=round(((gross_salary*12)/365)*balance,2)
+		amount_balance=((gross_salary*12)/365)*balance
 		parent_department_tot+=amount_balance
 		department_name_tot+=amount_balance
 		parent_department_emp_tot+=1
