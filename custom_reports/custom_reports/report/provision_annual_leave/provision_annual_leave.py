@@ -157,9 +157,9 @@ def get_data(conditions,filters):
 		usedleave=getused(emp.name,opnused,start_date,processing_month)
 		leave_code=str(leaves_per_year)+'D'
 		actual_worked=total_days-absents
-		accrued=(actual_worked/365)*leaves_per_year
+		accrued=round((actual_worked/365)*leaves_per_year,4)
 		balance=accrued-usedleave
-		amount_balance=((gross_salary*12)/365)*balance
+		amount_balance=round(((gross_salary*12)/365)*balance,2)
 		parent_department_tot+=amount_balance
 		department_name_tot+=amount_balance
 		parent_department_emp_tot+=1
@@ -339,13 +339,14 @@ def get_applicable_components(rule):
 
 def get_provision_rule(company,processing_month):
 	set = frappe.db.sql(""" select name from `tabProvision Annual Leave Setting` where company='{0}' and 
-	((date_to is null and date_from is not null and date_from <= '{1}') 
-	or (date_from is null and date_to is not null and date_to >= '{1}')
-	or (date_from is not null and date_to is not null and '{1}' between date_from and date_to)) """.format(company,processing_month),as_dict=1,debug=0)
-	
+	((date_to = '' and date_from != '' and date_from <= '{1}') 
+	or (date_from = '' and date_to != '' and date_to >= '{1}')
+	or (date_from != '' and date_to != '' and '{1}' between date_from and date_to)) """.format(company,processing_month),as_dict=1,debug=0)
 	if not set:
-		set = frappe.db.sql(""" select name from `tabProvision Annual Leave Setting` where company='' and 	((date_to is null and date_from is not null and date_from <= '{0}') 
-	or (date_from is null and date_to is not null and date_to >= '{0}') 	or (date_from is not null and date_to is not null and '{0}' between date_from and date_to) ) """.format(processing_month),as_dict=1,debug=0)
+		set = frappe.db.sql(""" select name from `tabProvision Annual Leave Setting` where company='' and 
+	((date_to = '' and date_from != '' and date_from <= '{1}') 
+	or (date_from = '' and date_to != '' and date_to >= '{1}') 
+	or (date_from != '' and date_to != '' and '{1}' between date_from and date_to) ) """.format(processing_month),as_dict=1,debug=0)
 	if not set:
 		return
 	return set[0].name
