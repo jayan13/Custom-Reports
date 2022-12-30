@@ -125,6 +125,18 @@ def get_columns():
 		"width": 80
 		},
 		{
+		"fieldname": "amount_accrued",
+		"fieldtype": "Data",
+		"label": "Amount Accrued",	
+		"width": 100
+		},
+		{
+		"fieldname": "amount_used",
+		"fieldtype": "Data",
+		"label": "Amount Used",	
+		"width": 100
+		},
+		{
 		"fieldname": "amount_balance",
 		"fieldtype": "Data",
 		"label": "Amount Balance",	
@@ -136,7 +148,7 @@ def get_columns():
 
 def get_data(conditions,filters):
 	processing_month=filters.get("processing_month")
-	conc=frappe.db.sql(""" select e.*,d.parent_department,d.department_name from `tabEmployee` e left join `tabDepartment` d on e.department=d.name where  %s  order by d.parent_department,d.name"""% (conditions),as_dict=1,debug=0)
+	conc=frappe.db.sql(""" select e.*,d.parent_department,d.department_name from `tabEmployee` e left join `tabDepartment` d on e.department=d.name where  %s  order by d.parent_department,d.name"""% (conditions),as_dict=1,debug=1)
 
 	data=[]
 	parent_department=''
@@ -165,24 +177,29 @@ def get_data(conditions,filters):
 			
 		absents=getabsents(emp.name,openabs,start_date,processing_month)	
 		actual_worked=total_days-absents
-		years=total_days/365
+		years=actual_worked/365		
 		perodical=''
 		ticket_per_month=0
 		eligible=0
 		accrued=0
 		amount_balance=0
 		balance=0
-
+		amount_accrued=0
+		amount_used=0
 		if float(emp.ticket_period) > 0:
 			perodical=str(emp.no_of_tickets_eligible)+"'s in a "+emp.ticket_period+' Years'
 			ticket_per_month=1/(float(emp.ticket_period)*12)
 			eligible=years//float(emp.ticket_period)
 			accrued=years/float(emp.ticket_period)
 		
-		balance=accrued-float(emp.used_tickets)
 		
+		balance=accrued-float(emp.used_tickets)
+		amount_accrued=accrued*emp.ticket_price
+		amount_used=float(emp.used_tickets)*emp.ticket_price
+
 		if float(emp.ticket_period) > 0:
-			amount_balance=(emp.ticket_price/float(emp.ticket_period))*balance
+			#amount_balance=(emp.ticket_price/float(emp.ticket_period))*balance
+			amount_balance=emp.ticket_price*balance
 		
 		parent_department_tot+=amount_balance
 		department_name_tot+=amount_balance
@@ -199,8 +216,10 @@ def get_data(conditions,filters):
 		emp.update({'actual_worked':actual_worked})
 		emp.update({'years':years})
 		emp.update({'eligible':eligible})
-		emp.update({'accrued':accrued})
+		emp.update({'accrued':accrued})		
 		emp.update({'balance':balance})
+		emp.update({'amount_accrued':amount_accrued})
+		emp.update({'amount_used':amount_used})
 		emp.update({'amount_balance':amount_balance})
 		data.append(emp)
 	return data
