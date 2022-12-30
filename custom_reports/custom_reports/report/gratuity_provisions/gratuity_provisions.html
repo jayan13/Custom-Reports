@@ -23,7 +23,7 @@
 			 if(i==0 && data[i].department){ %}
 		<tr><td colspan="12">{%=data[i].parent_department%}</td></tr>
 		<tr><td colspan="12">{%=data[i].department_name%}</td></tr>
-		{% } else if (i >1){  
+		{% } else if (i >1 && data[i].department){  
 			if(data[j].parent_department!=data[i].parent_department){ %} 
 			<tr><td colspan="12"><b>{%=data[i].parent_department%}</b></td></tr>
 			{% }
@@ -70,8 +70,7 @@
 				</td>
 			</tr>
 			{% if(i==(l-1)) { %}
-			<tr><td></td><td></td><td colspan="4" ><b># of Employees : {%=data[i].department_name_emp_tot%}</b></td><td colspan="5" style="text-align: right"><b>Department Total :</b></td><td style="text-align: right"><b>{%=format_currency(data[i].department_name_tot)%}</b></td></tr>
-			<tr><td></td><td></td><td colspan="4" ><b># of Employees : {%=data[i].parent_department_emp_tot%}</b></td> <td colspan="5" style="text-align: right"><b>Main Department Total :</b></td><td style="text-align: right"><b>{%=format_currency(data[i].parent_department_tot)%}</b></td></tr>
+
 			{% } else if (i >1){  
 				if(data[i].department_name!=data[i+1].department_name){ %} 
 				<tr><td></td><td></td><td colspan="4" ><b># of Employees : {%=data[i].department_name_emp_tot%}</b></td><td colspan="5" style="text-align: right"><b>Department Total :</b></td> <td style="text-align: right"><b>{%=format_currency(data[i].department_name_tot)%}</b></td></tr>
