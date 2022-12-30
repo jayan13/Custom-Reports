@@ -196,9 +196,13 @@ def get_data(conditions,filters):
 						basic_salary=sal
 						#amountbalance=round(((sal*12)/365)*bala,2)
 						#amount_balance+=amountbalance
-						amountaccrued=round(((sal*12)/365)*accru,2)
+						if company=='GRAND CONTINENTAL FLAMINGO HOTEL':
+							ondaydalary=sal/30
+						else:
+							ondaydalary=(sal*12)/365
+						amountaccrued=round(ondaydalary*accru,2)
 						amount_accrued+=amountaccrued
-						amountused=round(((sal*12)/365)*usedleaves,2)
+						amountused=round(ondaydalary*usedleaves,2)
 						amount_used+=amountused
 						amount_balance+=amountaccrued-amountused
 
@@ -222,7 +226,7 @@ def get_data(conditions,filters):
 						leave_code=str(totleave)+'D'
 						actualworked=totaldays-absent
 						actual_worked+=actualworked
-						accru=round((actualworked/365)*float(totleave),2)						
+						accru=round((actualworked/365)*float(totleave),4)						
 						accrued+=accru
 						bala=accru-usedleaves
 						balance+=bala
@@ -256,7 +260,7 @@ def get_data(conditions,filters):
 			usedleave=getused(emp.name,opnused,start_date,processing_month)
 			leave_code=str(leaves_per_year)+'D'
 			actual_worked=total_days-absents
-			accrued=round((actual_worked/365)*leaves_per_year,2)			
+			accrued=round((actual_worked/365)*leaves_per_year,4)			
 			balance=accrued-usedleave
 			amount_accrued=round(((gross_salary*12)/365)*accrued,2)
 			amount_used=round(((gross_salary*12)/365)*usedleave,2)

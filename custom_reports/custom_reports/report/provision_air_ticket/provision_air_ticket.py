@@ -59,12 +59,6 @@ def get_columns():
 		"width": 150
 		},
 		{
-		"fieldname": "ticket_per_month",
-		"fieldtype": "Data",
-		"label": "Ticket Per Month",	
-		"width": 80
-		},
-		{
 		"fieldname": "ticket_price",
 		"fieldtype": "Data",
 		"label": "Ticket Fare ",	
@@ -188,9 +182,8 @@ def get_data(conditions,filters):
 		amount_used=0
 		if float(emp.ticket_period) > 0:
 			perodical=str(emp.no_of_tickets_eligible)+"'s in a "+emp.ticket_period+' Years'
-			ticket_per_month=1/(float(emp.ticket_period)*12)
-			eligible=years//float(emp.ticket_period)
-			accrued=years/float(emp.ticket_period)
+			eligible=(years//float(emp.ticket_period))*emp.no_of_tickets_eligible
+			accrued=(years/float(emp.ticket_period))*emp.no_of_tickets_eligible
 		
 		
 		balance=accrued-float(emp.used_tickets)
