@@ -183,10 +183,10 @@ def get_data(conditions,filters):
 		if float(emp.ticket_period) > 0:
 			perodical=str(emp.no_of_tickets_eligible)+"'s in a "+emp.ticket_period+' Years'
 			eligible=(years//float(emp.ticket_period))*emp.no_of_tickets_eligible
-			accrued=(years/float(emp.ticket_period))*emp.no_of_tickets_eligible
+			accrued=round(years/float(emp.ticket_period),3)*emp.no_of_tickets_eligible
 		
 		
-		balance=accrued-float(emp.used_tickets)
+		balance=round(accrued-float(emp.used_tickets),3)
 		amount_accrued=accrued*emp.ticket_price
 		amount_used=float(emp.used_tickets)*emp.ticket_price
 
