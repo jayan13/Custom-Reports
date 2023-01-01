@@ -177,8 +177,8 @@ def get_data(conditions,filters):
 			for rul in alrules:
 				
 				if emp.openning_entry_date:
-					if (rul.date_from=='None' or (rul.date_from!='None' and getdate(rul.date_from) <= emp.openning_entry_date)) and rul.date_to!='None' and getdate(rul.date_to)>=emp.openning_entry_date:
-						#frappe.msgprint(str(rul.date_from)+' '+str(rul.date_to)+' '+str(emp.openning_entry_date))
+					if (rul.date_from==None or (rul.date_from!=None and getdate(rul.date_from) <= emp.openning_entry_date)) and rul.date_to!=None and getdate(rul.date_to)>=emp.openning_entry_date:
+
 						totaldays=date_diff(emp.openning_entry_date,emp.date_of_joining)+1
 						total_days+=totaldays
 						applicable_earnings_component=get_applicable_components(rul.name)
@@ -207,6 +207,7 @@ def get_data(conditions,filters):
 						amount_balance+=amountaccrued-amountused
 
 					elif getdate(processing_month) > emp.openning_entry_date and getdate(rul.date_from) <= getdate(processing_month):
+						
 						totleave=emp.leaves_per_year
 						tot_leave=get_leave_no(emp.name,processing_month)
 						if tot_leave:
