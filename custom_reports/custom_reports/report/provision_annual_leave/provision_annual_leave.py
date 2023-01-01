@@ -206,7 +206,7 @@ def get_data(conditions,filters):
 						amount_used+=amountused
 						amount_balance+=amountaccrued-amountused
 
-					elif getdate(processing_month) > emp.openning_entry_date and rul.date_from <= getdate(processing_month):
+					elif getdate(processing_month) > emp.openning_entry_date and getdate(rul.date_from) <= getdate(processing_month):
 						totleave=emp.leaves_per_year
 						tot_leave=get_leave_no(emp.name,processing_month)
 						if tot_leave:
