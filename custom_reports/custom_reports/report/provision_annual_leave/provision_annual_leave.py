@@ -178,7 +178,7 @@ def get_data(conditions,filters):
 				
 				if emp.openning_entry_date:
 					if (rul.date_from==None or (rul.date_from!=None and getdate(rul.date_from) <= emp.openning_entry_date)) and rul.date_to!=None and getdate(rul.date_to)>=emp.openning_entry_date:
-
+						
 						totaldays=date_diff(emp.openning_entry_date,emp.date_of_joining)+1
 						total_days+=totaldays
 						applicable_earnings_component=get_applicable_components(rul.name)
@@ -186,7 +186,11 @@ def get_data(conditions,filters):
 						actualworked=totaldays-float(emp.opening_absent)
 						absents+=float(emp.opening_absent)
 						actual_worked+=actualworked
-						accru=round((actualworked/365)*emp.leaves_per_year,4)
+						if emp.opening_leaves_accrued > 0:
+							accru=emp.opening_leaves_accrued
+						else:
+							accru=round((actualworked/365)*emp.leaves_per_year,4)
+
 						accrued+=accru
 						leave_code=str(emp.leaves_per_year)+'D'
 						usedleaves=float(emp.opening_used_leaves)
@@ -197,14 +201,26 @@ def get_data(conditions,filters):
 						#amountbalance=round(((sal*12)/365)*bala,2)
 						#amount_balance+=amountbalance
 						if company=='GRAND CONTINENTAL FLAMINGO HOTEL':
-							ondaydalary=sal/30
+							ondaydalary=round(sal/30,4)
 						else:
-							ondaydalary=(sal*12)/365
-						amountaccrued=round(ondaydalary*accru,2)
-						amount_accrued+=amountaccrued
+							ondaydalary=round((sal*12)/365,4)
+						
+						
 						amountused=round(ondaydalary*usedleaves,2)
 						amount_used+=amountused
-						amount_balance+=amountaccrued-amountused
+
+						#if emp.opening_balance_amount > 0:
+						#	amountaccrued=emp.opening_balance_amount+amountused
+						#else:
+						#	amountaccrued=round(ondaydalary*accru,2)
+
+						amountaccrued=round(ondaydalary*accru,2)
+						amount_accrued+=amountaccrued
+
+						if emp.opening_balance_amount > 0:
+							amount_balance+=emp.opening_balance_amount
+						else:
+							amount_balance+=amountaccrued-amountused
 
 					elif getdate(processing_month) > emp.openning_entry_date and getdate(rul.date_from) <= getdate(processing_month):
 						
@@ -216,7 +232,7 @@ def get_data(conditions,filters):
 						start_date = add_days(day, 1)
 						openabs=0
 						opnused=0
-						totaldays=date_diff(processing_month,emp.openning_entry_date)
+						totaldays=date_diff(processing_month,emp.openning_entry_date)						
 						total_days+=totaldays
 						applicable_earnings_component=get_applicable_components(rul.name)
 						gross_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
@@ -227,7 +243,7 @@ def get_data(conditions,filters):
 						leave_code=str(totleave)+'D'
 						actualworked=totaldays-absent
 						actual_worked+=actualworked
-						accru=round((actualworked/365)*float(totleave),4)						
+						accru=round((actualworked/365)*float(totleave),4)										
 						accrued+=accru
 						bala=accru-usedleaves
 						balance+=bala
