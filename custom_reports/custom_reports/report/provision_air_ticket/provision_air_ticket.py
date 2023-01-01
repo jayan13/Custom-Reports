@@ -160,41 +160,70 @@ def get_data(conditions,filters):
 			department_name=emp.department_name
 			department_name_tot=0
 			department_name_emp_tot=0
-		#if len(emp.tickets):
 
-		total_days=frappe.utils.date_diff(processing_month,emp.date_of_joining)+1
-		
-		start_date=emp.date_of_joining
-		openabs=0
-		if emp.openning_entry_date:
-			day = getdate(emp.openning_entry_date)
-			start_date = add_days(day, 1)
-			openabs=emp.opening_absent
+		if len(emp.tickets):
+			for ticket in emp.tickets:
+				total_days=0
+				if ticket.from_date and ticket.to_date:
+					total_days=frappe.utils.date_diff(ticket.to_date,ticket.from_date)+1
+					date_from=ticket.from_date
+					date_to=ticket.to_date
+				elif ticket.from_date and ticket.to_date==None:
+					total_days=frappe.utils.date_diff(processing_month,ticket.from_date)+1
+					date_from=ticket.from_date
+					date_to=processing_month
+				if total_days:
+					if ticket.absents:
+						absents=ticket.absents
+					else:
+						openabs=0
+						absents=getabsents(emp.name,openabs,date_from,date_to)
+					
+					actual_worked=total_days-absents
+					years=actual_worked/365
+					if float(ticket.periodical) > 0:
+						perodical=str(ticket.no_of_tickets_eligible)+"'s in a "+ticket.periodical+' Years'
+						eligible=(years//float(ticket.periodical))*ticket.no_of_tickets_eligible
+						accrued=round(years/float(ticket.periodical),3)*ticket.no_of_tickets_eligible
+
+					balance=round(accrued-float(ticket.used_tickets),3)
+					amount_accrued=accrued*ticket.ticket_fare
+					amount_used=float(ticket.used_tickets)*ticket.ticket_fare	
+
+		else:
+			total_days=frappe.utils.date_diff(processing_month,emp.date_of_joining)+1
 			
-		absents=getabsents(emp.name,openabs,start_date,processing_month)	
-		actual_worked=total_days-absents
-		years=actual_worked/365		
-		perodical=''
-		ticket_per_month=0
-		eligible=0
-		accrued=0
-		amount_balance=0
-		balance=0
-		amount_accrued=0
-		amount_used=0
-		if float(emp.ticket_period) > 0:
-			perodical=str(emp.no_of_tickets_eligible)+"'s in a "+emp.ticket_period+' Years'
-			eligible=(years//float(emp.ticket_period))*emp.no_of_tickets_eligible
-			accrued=round(years/float(emp.ticket_period),3)*emp.no_of_tickets_eligible
-		
-		
-		balance=round(accrued-float(emp.used_tickets),3)
-		amount_accrued=accrued*emp.ticket_price
-		amount_used=float(emp.used_tickets)*emp.ticket_price
+			start_date=emp.date_of_joining
+			openabs=0
+			if emp.openning_entry_date:
+				day = getdate(emp.openning_entry_date)
+				start_date = add_days(day, 1)
+				openabs=emp.opening_absent
+				
+			absents=getabsents(emp.name,openabs,start_date,processing_month)	
+			actual_worked=total_days-absents
+			years=actual_worked/365		
+			perodical=''
+			ticket_per_month=0
+			eligible=0
+			accrued=0
+			amount_balance=0
+			balance=0
+			amount_accrued=0
+			amount_used=0
+			if float(emp.ticket_period) > 0:
+				perodical=str(emp.no_of_tickets_eligible)+"'s in a "+emp.ticket_period+' Years'
+				eligible=(years//float(emp.ticket_period))*emp.no_of_tickets_eligible
+				accrued=round(years/float(emp.ticket_period),3)*emp.no_of_tickets_eligible
+			
+			
+			balance=round(accrued-float(emp.used_tickets),3)
+			amount_accrued=accrued*emp.ticket_price
+			amount_used=float(emp.used_tickets)*emp.ticket_price
 
-		if float(emp.ticket_period) > 0:
-			#amount_balance=(emp.ticket_price/float(emp.ticket_period))*balance
-			amount_balance=emp.ticket_price*balance
+			if float(emp.ticket_period) > 0:
+				#amount_balance=(emp.ticket_price/float(emp.ticket_period))*balance
+				amount_balance=emp.ticket_price*balance
 		
 		parent_department_tot+=amount_balance
 		department_name_tot+=amount_balance
@@ -204,8 +233,7 @@ def get_data(conditions,filters):
 		emp.update({'department_name_tot':department_name_tot})
 		emp.update({'parent_department_emp_tot':parent_department_emp_tot})
 		emp.update({'department_name_emp_tot':department_name_emp_tot})		
-		emp.update({'perodical':perodical})
-		emp.update({'ticket_per_month':ticket_per_month})
+		emp.update({'perodical':perodical})		
 		emp.update({'total_days':total_days})
 		emp.update({'absent':absents})
 		emp.update({'actual_worked':actual_worked})

@@ -75,6 +75,12 @@ def get_columns():
 		"width":100
 		},
 		{
+		"fieldname": "opening_balance_amount",
+		"fieldtype": "Data",
+		"label": "Opening Bal Amt ",	
+		"width": 80
+		},
+		{
 		"fieldname": "total_days",
 		"fieldtype": "Data",
 		"label": "Total Days ",	
@@ -169,6 +175,7 @@ def get_data(conditions,filters):
 		absents=0
 		basic_salary=0
 		amount_balance=0
+		opening_balance_amount=0
 		total_days=0
 		actual_worked=0
 		amount_accrued=0
@@ -198,6 +205,7 @@ def get_data(conditions,filters):
 						bala=accru-float(emp.opening_used_leaves)
 						balance+=bala
 						basic_salary=sal
+						opening_balance_amount=emp.opening_balance_amount
 						#amountbalance=round(((sal*12)/365)*bala,2)
 						#amount_balance+=amountbalance
 						if company=='GRAND CONTINENTAL FLAMINGO HOTEL':
@@ -292,6 +300,8 @@ def get_data(conditions,filters):
 		parent_department_emp_tot+=1
 		department_name_emp_tot+=1
 		
+
+		emp.update({'opening_balance_amount':opening_balance_amount})
 		emp.update({'parent_department_tot':parent_department_tot})
 		emp.update({'department_name_tot':department_name_tot})
 		emp.update({'parent_department_emp_tot':parent_department_emp_tot})
