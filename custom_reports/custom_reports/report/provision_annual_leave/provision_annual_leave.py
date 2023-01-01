@@ -235,7 +235,7 @@ def get_data(conditions,filters):
 						amountused=round(((gross_salary*12)/365)*usedleaves,2)
 						amount_used+=amountused
 						amount_balance+=amountaccrued-amountused
-						frappe.msgprint(str(amountaccrued))
+						#frappe.msgprint(str(amountaccrued))
 						#amountbalance=round(((gross_salary*12)/365)*balance,2)
 						#amount_balance+=amountbalance
 		else:
