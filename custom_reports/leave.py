@@ -929,7 +929,7 @@ def get_remaining_leaves(
 		if totalday:
 			absent=getabsents(allocation.employee,allocation.from_date,allocation.to_date)
 			actualworked=totalday-absent
-			new_leaves_allocated=round((actualworked/365)*allocation.new_leaves_allocated,4)
+			new_leaves_allocated=round(allocation.new_leaves_allocated/365,4)*actualworked
 			
 			total_leaves_allocated=(allocation.total_leaves_allocated-allocation.new_leaves_allocated)+new_leaves_allocated
 			#frappe.msgprint(str(total_leaves_allocated)+' - '+str(new_leaves_allocated))

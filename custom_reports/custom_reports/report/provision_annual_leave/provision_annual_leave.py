@@ -196,7 +196,8 @@ def get_data(conditions,filters):
 						if emp.opening_leaves_accrued > 0:
 							accru=emp.opening_leaves_accrued
 						else:
-							accru=round((actualworked/365)*emp.leaves_per_year,4)
+							#accru=round((actualworked/365)*emp.leaves_per_year,4)
+							accru=round(emp.leaves_per_year/365,4)*actualworked
 
 						accrued+=accru
 						leave_code=str(emp.leaves_per_year)+'D'
@@ -251,7 +252,8 @@ def get_data(conditions,filters):
 						leave_code=str(totleave)+'D'
 						actualworked=totaldays-absent
 						actual_worked+=actualworked
-						accru=round((actualworked/365)*float(totleave),4)										
+						#accru=round((actualworked/365)*float(totleave),4)
+						accru=round(float(totleave)/365,4)*actualworked										
 						accrued+=accru
 						bala=accru-usedleaves
 						balance+=bala
@@ -285,7 +287,8 @@ def get_data(conditions,filters):
 			usedleave=getused(emp.name,opnused,start_date,processing_month)
 			leave_code=str(leaves_per_year)+'D'
 			actual_worked=total_days-absents
-			accrued=round((actual_worked/365)*leaves_per_year,4)			
+			#accrued=round((actual_worked/365)*leaves_per_year,4)
+			accrued=round(leaves_per_year/365,4)*actual_worked			
 			balance=accrued-usedleave
 			amount_accrued=round(((gross_salary*12)/365)*accrued,2)
 			amount_used=round(((gross_salary*12)/365)*usedleave,2)
