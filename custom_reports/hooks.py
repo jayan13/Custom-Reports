@@ -91,7 +91,8 @@ app_license = "MIT"
 # 	"ToDo": "custom_app.overrides.CustomToDo"
 # }
 override_doctype_class = {
-	'Payroll Entry':'custom_reports.override.PayrollEntryCustom',
+	'Leave Application':'custom_reports.leave.LeaveApplicationCustom',
+	'Payroll Entry':'custom_reports.override.PayrollEntryCustom',	
  }
 # Document Events
 # ---------------
@@ -139,8 +140,11 @@ doc_events = {
 # Testing
 # -------
 override_whitelisted_methods = {
-	'erpnext.payroll.doctype.gratuity.gratuity.calculate_work_experience_and_amount':'custom_reports.gratuity.calculate_work_experience_and_amount'
+	'erpnext.payroll.doctype.gratuity.gratuity.calculate_work_experience_and_amount':'custom_reports.gratuity.calculate_work_experience_and_amount',
+	'erpnext.hr.doctype.leave_application.leave_application.get_leave_balance_on':'custom_reports.leave.get_leave_balance_on',
+	'erpnext.hr.doctype.leave_application.leave_application.get_leave_details':'custom_reports.leave.get_leave_details'
  }
+ 
 # before_tests = "custom_reports.install.before_tests"
 
 # Overriding Methods
