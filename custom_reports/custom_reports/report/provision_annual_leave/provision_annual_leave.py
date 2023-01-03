@@ -197,13 +197,13 @@ def get_data(conditions,filters):
 							accru=emp.opening_leaves_accrued
 						else:
 							#accru=round((actualworked/365)*emp.leaves_per_year,4)
-							accru=round(emp.leaves_per_year/365,4)*actualworked
+							accru=round(round(emp.leaves_per_year/365,4)*actualworked,4)
 
 						accrued+=accru
 						leave_code=str(emp.leaves_per_year)+'D'
 						usedleaves=float(emp.opening_used_leaves)
 						usedleave+=usedleaves
-						bala=accru-float(emp.opening_used_leaves)
+						bala=round(accru-float(emp.opening_used_leaves),4)
 						balance+=bala
 						basic_salary=sal
 						opening_balance_amount=emp.opening_balance_amount
@@ -225,11 +225,12 @@ def get_data(conditions,filters):
 
 						amountaccrued=round(ondaydalary*accru,2)
 						amount_accrued+=amountaccrued
+						#frappe.msgprint(str(amountaccrued))
 
 						if emp.opening_balance_amount > 0:
 							amount_balance+=emp.opening_balance_amount
 						else:
-							amount_balance+=amountaccrued-amountused
+							amount_balance+=round(amountaccrued-amountused,2)
 
 					elif getdate(processing_month) > emp.openning_entry_date and getdate(rul.date_from) <= getdate(processing_month):
 						
@@ -253,15 +254,15 @@ def get_data(conditions,filters):
 						actualworked=totaldays-absent
 						actual_worked+=actualworked
 						#accru=round((actualworked/365)*float(totleave),4)
-						accru=round(float(totleave)/365,4)*actualworked										
+						accru=round(round(float(totleave)/365,4)*actualworked,4)										
 						accrued+=accru
-						bala=accru-usedleaves
+						bala=round(accru-usedleaves,4)
 						balance+=bala
 						amountaccrued=round(((gross_salary*12)/365)*accru,2)
 						amount_accrued+=amountaccrued
 						amountused=round(((gross_salary*12)/365)*usedleaves,2)
 						amount_used+=amountused
-						amount_balance+=amountaccrued-amountused
+						amount_balance+=round(amountaccrued-amountused,2)
 						#frappe.msgprint(str(amountaccrued))
 						#amountbalance=round(((gross_salary*12)/365)*balance,2)
 						#amount_balance+=amountbalance
@@ -288,11 +289,12 @@ def get_data(conditions,filters):
 			leave_code=str(leaves_per_year)+'D'
 			actual_worked=total_days-absents
 			#accrued=round((actual_worked/365)*leaves_per_year,4)
-			accrued=round(leaves_per_year/365,4)*actual_worked			
-			balance=accrued-usedleave
+			accrued=round(round(leaves_per_year/365,4)*actual_worked,4)			
+			balance=round(accrued-usedleave,4)
 			amount_accrued=round(((gross_salary*12)/365)*accrued,2)
+			#frappe.msgprint(str(amount_accrued))
 			amount_used=round(((gross_salary*12)/365)*usedleave,2)
-			amount_balance=amount_accrued-amount_used
+			amount_balance=round(amount_accrued-amount_used,2)
 			
 			
 
