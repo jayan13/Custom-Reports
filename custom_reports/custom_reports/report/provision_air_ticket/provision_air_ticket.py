@@ -195,11 +195,11 @@ def get_data(conditions,filters):
 					usedno=used.ticket_no or 0
 					usedpri=used.total_air_fare or 0
 			
-			opn_acc=float(emp.opening_ticket_balance)+float(emp.used_tickets)			
+			opn_acc=round(float(emp.opening_ticket_balance)+float(emp.used_tickets),2)			
 			balance=round((accrued+float(emp.opening_ticket_balance))-float(usedno),3)	
 			amount_accrued=round(accrued*emp.ticket_price,2)
-			accrued+=opn_acc			
-			amount_accrued+=emp.opening_ticket_amount_used+emp.opening_ticket_balance_amount
+			accrued+=round(opn_acc,3)			
+			amount_accrued+=round(emp.opening_ticket_amount_used+emp.opening_ticket_balance_amount,2)
 			amount_used=usedpri
 			amount_used+=float(emp.opening_ticket_amount_used)
 			if total_days > 0:
