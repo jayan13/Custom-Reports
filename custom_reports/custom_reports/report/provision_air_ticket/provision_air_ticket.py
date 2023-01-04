@@ -197,7 +197,7 @@ def get_data(conditions,filters):
 			
 			opn_acc=float(emp.opening_ticket_balance)+float(emp.used_tickets)			
 			balance=round((accrued+float(emp.opening_ticket_balance))-float(usedno),3)	
-			amount_accrued=accrued*emp.ticket_price
+			amount_accrued=round(accrued*emp.ticket_price,2)
 			accrued+=opn_acc			
 			amount_accrued+=emp.opening_ticket_amount_used+emp.opening_ticket_balance_amount
 			amount_used=usedpri
