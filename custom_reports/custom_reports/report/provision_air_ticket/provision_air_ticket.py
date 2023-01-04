@@ -190,6 +190,7 @@ def get_data(conditions,filters):
 				actual_worked=total_days-absents
 				years=round(actual_worked/365,3)
 				accrued=round(years/float(emp.ticket_period),3)*emp.no_of_tickets_eligible
+				accrued=round(accrued,3)
 				used=get_ticket_issued(emp.name,start_date)
 				if used:
 					usedno=used.ticket_no or 0
@@ -198,7 +199,8 @@ def get_data(conditions,filters):
 			opn_acc=round(float(emp.opening_ticket_balance)+float(emp.used_tickets),2)			
 			balance=round((accrued+float(emp.opening_ticket_balance))-float(usedno),3)	
 			amount_accrued=round(accrued*emp.ticket_price,2)
-			accrued+=round(opn_acc,3)			
+			accrued+=round(opn_acc,3)
+			accrued=round(accrued,3)			
 			amount_accrued+=round(emp.opening_ticket_amount_used+emp.opening_ticket_balance_amount,2)
 			amount_used=usedpri
 			amount_used+=float(emp.opening_ticket_amount_used)
@@ -210,12 +212,12 @@ def get_data(conditions,filters):
 			absents+=float(emp.opening_absent)
 			working_before_opn=frappe.utils.date_diff(emp.openning_entry_date,emp.date_of_joining)+1
 			total_days+=working_before_opn
-			actual_worked+=working_before_opn-float(emp.opening_absent)
-			years+=round(actual_worked/365,3)
+			actual_worked+=working_before_opn-float(emp.opening_absent)			
+			years+=round((actual_worked/365),3)
 			if float(emp.ticket_period) > 0:
 				eligible=(years//float(emp.ticket_period))*emp.no_of_tickets_eligible
 
-		
+		years=round(years,3)
 		parent_department_tot+=amount_balance
 		department_name_tot+=amount_balance
 		parent_department_emp_tot+=1
