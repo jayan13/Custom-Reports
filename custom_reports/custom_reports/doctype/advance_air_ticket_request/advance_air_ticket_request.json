@@ -1,0 +1,188 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-01-02 21:23:17.688475",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "leave_application",
+  "employee",
+  "employee_name",
+  "parent_department",
+  "department",
+  "designation",
+  "grade",
+  "nationality",
+  "date_of_joining",
+  "point_of_start",
+  "point_of_hit",
+  "class",
+  "column_break_11",
+  "ticket_period",
+  "traval_date",
+  "ticket_type",
+  "to_and_from",
+  "no_of_ticket_given",
+  "total_air_fare",
+  "request_date",
+  "remark",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "leave_application",
+   "fieldtype": "Link",
+   "label": "Leave Application",
+   "options": "Leave Application"
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "label": "Employee Name"
+  },
+  {
+   "fetch_from": "department.parent_department",
+   "fieldname": "parent_department",
+   "fieldtype": "Link",
+   "label": "Department",
+   "options": "Department"
+  },
+  {
+   "fieldname": "department",
+   "fieldtype": "Link",
+   "label": "Sub Department",
+   "options": "Department"
+  },
+  {
+   "fetch_from": "employee.designation",
+   "fieldname": "designation",
+   "fieldtype": "Link",
+   "label": "Designation",
+   "options": "Designation"
+  },
+  {
+   "fetch_from": "employee.grade",
+   "fieldname": "grade",
+   "fieldtype": "Link",
+   "label": "Grade",
+   "options": "Employee Grade"
+  },
+  {
+   "fetch_from": "employee.nationality",
+   "fieldname": "nationality",
+   "fieldtype": "Data",
+   "label": "Nationality"
+  },
+  {
+   "fetch_from": "employee.date_of_joining",
+   "fieldname": "date_of_joining",
+   "fieldtype": "Date",
+   "label": "Date of Joining"
+  },
+  {
+   "fieldname": "point_of_start",
+   "fieldtype": "Data",
+   "label": "Point Of Start"
+  },
+  {
+   "fieldname": "column_break_11",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "point_of_hit",
+   "fieldtype": "Data",
+   "label": "Point Of Hit"
+  },
+  {
+   "fieldname": "class",
+   "fieldtype": "Data",
+   "label": "Class"
+  },
+  {
+   "fetch_from": "employee.ticket_period",
+   "fieldname": "ticket_period",
+   "fieldtype": "Data",
+   "label": "Provision Type"
+  },
+  {
+   "fieldname": "ticket_type",
+   "fieldtype": "Select",
+   "label": "Ticket Type",
+   "options": "Company\nSelf Fare"
+  },
+  {
+   "fieldname": "to_and_from",
+   "fieldtype": "Select",
+   "label": "To and From",
+   "options": "Return\nOne Side"
+  },
+  {
+   "fieldname": "no_of_ticket_given",
+   "fieldtype": "Float",
+   "label": "No Of ticket Given"
+  },
+  {
+   "fetch_from": "employee.ticket_price",
+   "fieldname": "total_air_fare",
+   "fieldtype": "Currency",
+   "label": "Total Air Fare"
+  },
+  {
+   "default": "Today",
+   "fieldname": "request_date",
+   "fieldtype": "Date",
+   "label": "Request Date"
+  },
+  {
+   "fieldname": "remark",
+   "fieldtype": "Text",
+   "label": "Remark"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Advance Air Ticket Request",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "traval_date",
+   "fieldtype": "Date",
+   "label": "Traval Date"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2023-01-03 11:06:18.742673",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "Advance Air Ticket Request",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
