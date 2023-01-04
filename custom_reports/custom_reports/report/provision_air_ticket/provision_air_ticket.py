@@ -202,6 +202,7 @@ def get_data(conditions,filters):
 			accrued+=round(opn_acc,3)
 			accrued=round(accrued,3)			
 			amount_accrued+=round(emp.opening_ticket_amount_used+emp.opening_ticket_balance_amount,2)
+			amount_accrued=round(amount_accrued,2)
 			amount_used=usedpri
 			amount_used+=float(emp.opening_ticket_amount_used)
 			if total_days > 0:
@@ -209,6 +210,7 @@ def get_data(conditions,filters):
 			else:
 				amount_balance=float(emp.opening_ticket_balance_amount)
 			
+			amount_balance=round(amount_balance,2)
 			absents+=float(emp.opening_absent)
 			working_before_opn=frappe.utils.date_diff(emp.openning_entry_date,emp.date_of_joining)+1
 			total_days+=working_before_opn
