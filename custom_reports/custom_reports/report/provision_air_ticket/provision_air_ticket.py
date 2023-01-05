@@ -97,7 +97,7 @@ def get_columns():
 		{
 		"fieldname": "eligible",
 		"fieldtype": "Data",
-		"label": "Eligible ",	
+		"label": "No Of Ticket Eligible ",	
 		"width": 80
 		},
 		{
@@ -176,49 +176,75 @@ def get_data(conditions,filters):
 		actual_worked=0
 		total_days=0
 		absents=0
+		used=0
+		ticket_price=0
 		perodical=str(emp.no_of_tickets_eligible)+"'s in a "+emp.ticket_period+' Years'
+		eligible=emp.no_of_tickets_eligible
 
 		if emp.openning_entry_date:
-			openabs=0
-			if getdate(processing_month)>emp.openning_entry_date:
-				total_days=frappe.utils.date_diff(processing_month,emp.openning_entry_date)
+			openabs=0			
+			total_days=frappe.utils.date_diff(emp.openning_entry_date,emp.date_of_joining)+1
 			
-			if total_days > 0 and float(emp.ticket_period) > 0:
-				day = getdate(emp.openning_entry_date)
-				start_date = add_days(day, 1)
-				absents=getabsents(emp.name,openabs,start_date,processing_month)
-				actual_worked=total_days-absents
-				years=round(actual_worked/365,3)
-				accrued=round(years/float(emp.ticket_period),3)*emp.no_of_tickets_eligible
-				accrued=round(accrued,3)
-				used=get_ticket_issued(emp.name,start_date)
-				if used:
-					usedno=used.ticket_no or 0
-					usedpri=used.total_air_fare or 0
-			
-			opn_acc=round(float(emp.opening_ticket_balance)+float(emp.used_tickets),2)			
-			balance=round((accrued+float(emp.opening_ticket_balance))-float(usedno),3)	
-			amount_accrued=round(accrued*emp.ticket_price,2)
-			accrued+=round(opn_acc,3)
-			accrued=round(accrued,3)			
-			amount_accrued+=round(emp.opening_ticket_amount_used+emp.opening_ticket_balance_amount,2)
-			amount_accrued=round(amount_accrued,2)
-			amount_used=usedpri
-			amount_used+=float(emp.opening_ticket_amount_used)
 			if total_days > 0:
-				amount_balance=round(emp.ticket_price*balance,2)
-			else:
-				amount_balance=float(emp.opening_ticket_balance_amount)
-			
-			amount_balance=round(amount_balance,2)
-			absents+=float(emp.opening_absent)
-			working_before_opn=frappe.utils.date_diff(emp.openning_entry_date,emp.date_of_joining)+1
-			total_days+=working_before_opn
-			actual_worked+=working_before_opn-float(emp.opening_absent)			
-			years+=round((actual_worked/365),3)
-			eligible=emp.no_of_tickets_eligible
+				absents+=float(emp.opening_absent)
+				actual_worked+=total_days-absents
+				balance+=float(emp.opening_ticket_balance)
+				amount_balance+=float(emp.opening_ticket_balance_amount)
+				accrued+=round(float(emp.opening_ticket_balance)+float(emp.used_tickets),3)
+				amount_accrued+=round(emp.opening_ticket_amount_used+emp.opening_ticket_balance_amount,2)
+				used+=float(emp.used_tickets)
+				amount_used+=float(emp.opening_ticket_amount_used)
+				ticket_price=emp.ticket_price
+		tickets=get_tickect_setting(emp.name)
+		if tickets:
+			for ticket in tickets:
+				totaldays=0				
+				if ticket.from_date and ticket.to_date and getdate(processing_month) >= ticket.to_date:
+					totaldays=frappe.utils.date_diff(ticket.to_date,ticket.from_date)+1					
+					total_days+=totaldays
+					date_from=ticket.from_date
+					date_to=ticket.to_date
+				elif ticket.from_date and ticket.to_date==None and getdate(processing_month) >= ticket.from_date:
+					totaldays=frappe.utils.date_diff(processing_month,ticket.from_date)+1					
+					total_days+=totaldays
+					date_from=ticket.from_date
+					date_to=processing_month
+				if totaldays:
+					openabs=0
+					absent=getabsents(emp.name,openabs,date_from,date_to)
+					absents+=absent
+					usedtickt=get_ticket_issued(emp.name,date_from,date_to)
+					usedno=0					
+					if usedtickt:
+						usedno=usedtickt.ticket_no or 0
+					
+					actualworked=totaldays-absent
+					actual_worked+=actualworked
+					year=actualworked/365
+					years+=year
+					accru=0
+					if float(ticket.periodical) > 0 and ticket.no_of_ticket_eligible:
+						accru=(year/float(ticket.periodical))*float(ticket.no_of_ticket_eligible)
 
+					bal=round(accru-float(usedno),3)
+					accrued+=accru 
+					balance+=bal
+					used+=usedno
+					ticket_price=ticket.ticket_fare
+					amount_accrued+=accru*ticket.ticket_fare
+					amount_used+=float(usedno)*ticket.ticket_fare
+					amount_balance+=bal*ticket.ticket_fare
+					
+						
+		accrued=round(accrued,3)
+		balance=round(balance,3)
+		amount_accrued=round(amount_accrued,2)
+		amount_used=round(amount_used,2)
+		amount_balance=round(amount_balance,2)
+
+		years+=round((actual_worked/365),3)
 		years=round(years,3)
+
 		parent_department_tot+=amount_balance
 		department_name_tot+=amount_balance
 		parent_department_emp_tot+=1
@@ -227,13 +253,15 @@ def get_data(conditions,filters):
 		emp.update({'department_name_tot':department_name_tot})
 		emp.update({'parent_department_emp_tot':parent_department_emp_tot})
 		emp.update({'department_name_emp_tot':department_name_emp_tot})		
-		emp.update({'perodical':perodical})		
+		emp.update({'perodical':perodical})	
+		emp.update({'ticket_price':ticket_price})	
 		emp.update({'total_days':total_days})
 		emp.update({'absent':absents})
 		emp.update({'actual_worked':actual_worked})
 		emp.update({'years':years})
 		emp.update({'eligible':eligible})
-		emp.update({'accrued':accrued})		
+		emp.update({'accrued':accrued})
+		emp.update({'used_tickets':used})		
 		emp.update({'balance':balance})
 		emp.update({'amount_accrued':amount_accrued})
 		emp.update({'amount_used':amount_used})
@@ -264,6 +292,12 @@ def get_gross_salary(emp,processing_month):
 		gsal=sal[0].gross_salary
 	return gsal
 
+def get_tickect_setting(emp):
+	sal=frappe.db.sql(""" select * from `tabEmployee Ticket Settings` where employee='%s' and docstatus='1'  order by from_date"""% (emp),as_dict=1,debug=0)
+	if sal:
+		return sal
+	return
+	
 def getabsents(emp,opn,start_date,end_date):
 	absent=float(opn)
 	sal=frappe.db.sql(""" select sum(l.total_leave_days) as absent from `tabLeave Application` l 
@@ -306,12 +340,11 @@ def getabsents(emp,opn,start_date,end_date):
 	
 	return absent
 
-def get_ticket_issued(emp,from_date):
-	ticket_no=0
-	sal7=frappe.db.sql(""" select sum(no_of_ticket_given) as ticket_no,sum(total_air_fare) as total_air_fare FROM `tabAdvance Air Ticket Request` where  employee='{0}' 
-	and request_date >='{1}' and  docstatus=1 and ticket_type='Company' group by employee""".format(emp,from_date),as_dict=1,debug=0)
+def get_ticket_issued(emp,from_date,to_date):
+	sal7=frappe.db.sql(""" select sum(no_of_ticket_given) as ticket_no FROM `tabAdvance Air Ticket Request` where  employee='{0}' 
+	and request_date between '{1}' and '{2}' and  docstatus=1 and ticket_type='Company' group by employee""".format(emp,from_date,to_date),as_dict=1,debug=0)
 	if sal7:
-		return sal7
-	return
+		return sal7[0].ticket_no
+	return 0
 	
 
