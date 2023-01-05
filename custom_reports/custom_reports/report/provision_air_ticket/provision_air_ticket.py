@@ -239,8 +239,8 @@ def get_data(conditions,filters):
 			totaldays=0
 			totaldays=frappe.utils.date_diff(processing_month,emp.openning_entry_date)+1					
 			total_days+=totaldays
-			date_from=ticket.from_date
-			date_to=ticket.to_date
+			date_from=emp.openning_entry_date
+			date_to=getdate(processing_month)
 			if totaldays:
 				openabs=0
 				absent=getabsents(emp.name,openabs,date_from,date_to)
