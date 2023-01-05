@@ -216,8 +216,7 @@ def get_data(conditions,filters):
 			total_days+=working_before_opn
 			actual_worked+=working_before_opn-float(emp.opening_absent)			
 			years+=round((actual_worked/365),3)
-			if float(emp.ticket_period) > 0:
-				eligible=(years//float(emp.ticket_period))*emp.no_of_tickets_eligible
+			eligible=emp.no_of_tickets_eligible
 
 		years=round(years,3)
 		parent_department_tot+=amount_balance
