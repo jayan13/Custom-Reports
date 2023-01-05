@@ -234,7 +234,39 @@ def get_data(conditions,filters):
 					amount_accrued+=accru*ticket.ticket_fare
 					amount_used+=float(usedno)*ticket.ticket_fare
 					amount_balance+=bal*ticket.ticket_fare
+
+		elif(getdate(processing_month)>emp.openning_entry_date):
+			totaldays=0
+			totaldays=frappe.utils.date_diff(processing_month,emp.openning_entry_date)+1					
+			total_days+=totaldays
+			date_from=ticket.from_date
+			date_to=ticket.to_date
+			if totaldays:
+				openabs=0
+				absent=getabsents(emp.name,openabs,date_from,date_to)
+				absents+=absent
+				usedtickt=get_ticket_issued(emp.name,date_from,date_to)
+				usedno=0					
+				if usedtickt:
+					usedno=usedtickt.ticket_no or 0
 					
+				actualworked=totaldays-absent
+				actual_worked+=actualworked
+				year=actualworked/365
+				years+=year
+				accru=0
+				if float(emp.ticket_period) > 0 and emp.no_of_tickets_eligible:
+					accru=(year/float(emp.ticket_period))*float(emp.no_of_tickets_eligible)
+
+				bal=round(accru-float(usedno),3)
+				accrued+=accru 
+				balance+=bal
+				used+=usedno
+				ticket_price=emp.ticket_price
+				amount_accrued+=accru*emp.ticket_price
+				amount_used+=float(usedno)*emp.ticket_price
+				amount_balance+=bal*emp.ticket_price
+
 						
 		accrued=round(accrued,3)
 		balance=round(balance,3)
