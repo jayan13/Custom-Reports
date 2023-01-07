@@ -67,6 +67,8 @@ def get_data(conditions,filters):
 	parent_department_tot=0
 	parent_department=''
 	department_name=''
+	parent_department_rev_tot=0
+	parent_department_ded_tot=0
 	for dept in conc:
 		
 		earnings=[]
@@ -77,6 +79,8 @@ def get_data(conditions,filters):
 		if dept.parent_department != parent_department:
 			parent_department=dept.parent_department
 			parent_department_tot=0
+			parent_department_rev_tot=0
+			parent_department_ded_tot=0
 			
 
 		slip=frappe.db.sql(""" select name,gross_pay from `tabSalary Slip` where company='{0}' and department='{1}' and posting_date between '{2}' and '{3}' """.format(company,dept.name,date_from,date_to),as_dict=1,debug=0)
@@ -89,7 +93,8 @@ def get_data(conditions,filters):
 				tot_ern+=float(slp.gross_pay or 0)+float(slp.total_deduction or 0)
 			if len(slipname):
 				slips="','".join([str(elem) for elem in slipname])
-
+			parent_department_rev_tot+=tot_ern
+			parent_department_ded_tot+=total_deduction
 			earnings=frappe.db.sql(""" select salary_component,sum(amount) as amount from `tabSalary Detail` where parentfield='earnings' and parent in ('{0}')  group by salary_component""".format(slips),as_dict=1,debug=0)
 			deductions=frappe.db.sql(""" select salary_component,sum(amount) as amount from `tabSalary Detail` where parentfield='deductions' and parent in ('{0}') group by salary_component""".format(slips),as_dict=1,debug=0)
 		parent_department_tot+=float(gross_pay)
@@ -107,8 +112,10 @@ def get_data(conditions,filters):
 				dt.update({'balance':0})
 				dt.update({'department_tot':gross_pay})
 				dt.update({'parent_department_tot':parent_department_tot})
+				dt.update({'parent_department_rev_tot':parent_department_rev_tot})
+				dt.update({'parent_department_ded_tot':parent_department_ded_tot})
 				data.append(dt)
-			
+
 		if len(deductions):	
 			for de in deductions:
 				dt={}
@@ -123,6 +130,8 @@ def get_data(conditions,filters):
 				dt.update({'balance':0})
 				dt.update({'department_tot':gross_pay})
 				dt.update({'parent_department_tot':parent_department_tot})
+				dt.update({'parent_department_rev_tot':parent_department_rev_tot})
+				dt.update({'parent_department_ded_tot':parent_department_ded_tot})
 				data.append(dt)		
 		
 	return data
