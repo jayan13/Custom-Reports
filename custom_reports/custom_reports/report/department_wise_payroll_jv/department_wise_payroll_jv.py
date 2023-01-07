@@ -57,6 +57,9 @@ def get_data(conditions,filters):
 	date_to=filters.get("date_to")
 	company=filters.get("company")
 	conc=frappe.db.sql(""" select * from `tabDepartment` where %s  order by name"""% (conditions),as_dict=1,debug=0)
+	parent_department_tot=0
+	parent_department=''
+	department_name=''
 	for dept in conc:
 		
 		earnings=[]
@@ -64,6 +67,11 @@ def get_data(conditions,filters):
 		gross_pay=0
 		total_deduction=0
 		tot_ern=0
+		if dept.parent_department != parent_department:
+			parent_department=dept.parent_department
+			parent_department_tot=0
+			
+
 		slip=frappe.db.sql(""" select name,gross_pay from `tabSalary Slip` where company='{0}' and department='{1}' and posting_date between '{2}' and '{3}' """.format(company,dept.name,date_from,date_to),as_dict=1,debug=0)
 		if slip:
 			slipname=[]
@@ -85,7 +93,7 @@ def get_data(conditions,filters):
 				dt.update({'dr':er.amount})
 				dt.update({'cr':'0'})
 				dt.update({'department':dept.name})
-				dt.update({'parent':dept.parent_department})
+				dt.update({'parent_department':dept.parent_department})
 				dt.update({'gross_pay':0})
 				dt.update({'tot_ern':0})
 				dt.update({'balance':0})
@@ -98,7 +106,7 @@ def get_data(conditions,filters):
 				dt.update({'dr':'0'})
 				dt.update({'cr':de.amount})
 				dt.update({'department':dept.name})
-				dt.update({'parent':dept.parent_department})
+				dt.update({'parent_department':dept.parent_department})
 				dt.update({'gross_pay':0})
 				dt.update({'tot_ern':0})
 				dt.update({'balance':0})
@@ -108,10 +116,12 @@ def get_data(conditions,filters):
 		dt.update({'dr':'0'})
 		dt.update({'cr':'0'})
 		dt.update({'department':dept.name})
-		dt.update({'parent':dept.parent_department})
+		dt.update({'parent_department':dept.parent_department})
 		dt.update({'gross_pay':gross_pay})
 		dt.update({'tot_ern':tot_ern})
 		dt.update({'balance':gross_pay})
+		parent_department_tot+=float(gross_pay)
+		dt.update({'parent_department_tot':parent_department_tot})
 		data.append(dt)	
 		
 	
