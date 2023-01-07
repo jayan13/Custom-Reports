@@ -75,8 +75,8 @@ def get_data(conditions,filters):
 			if len(slipname):
 				slips="','".join([str(elem) for elem in slipname])
 
-			earnings=frappe.db.sql(""" select salary_component,sum(amount) as amount from `tabSalary Detail` where parentfield='earnings' and parent in '{0}'  group by salary_component""".format(slips),as_dict=1,debug=0)
-			deductions=frappe.db.sql(""" select salary_component,sum(amount) as amount from `tabSalary Detail` where parentfield='deductions' and parent in '{0}' group by salary_component""".format(slips),as_dict=1,debug=0)
+			earnings=frappe.db.sql(""" select salary_component,sum(amount) as amount from `tabSalary Detail` where parentfield='earnings' and parent in ('{0}')  group by salary_component""".format(slips),as_dict=1,debug=0)
+			deductions=frappe.db.sql(""" select salary_component,sum(amount) as amount from `tabSalary Detail` where parentfield='deductions' and parent in ('{0}') group by salary_component""".format(slips),as_dict=1,debug=0)
 		
 		if len(earnings):
 			for er in earnings:
