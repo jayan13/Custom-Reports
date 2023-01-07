@@ -92,7 +92,7 @@ def get_data(conditions,filters):
 
 			earnings=frappe.db.sql(""" select salary_component,sum(amount) as amount from `tabSalary Detail` where parentfield='earnings' and parent in ('{0}')  group by salary_component""".format(slips),as_dict=1,debug=0)
 			deductions=frappe.db.sql(""" select salary_component,sum(amount) as amount from `tabSalary Detail` where parentfield='deductions' and parent in ('{0}') group by salary_component""".format(slips),as_dict=1,debug=0)
-		
+		parent_department_tot+=float(gross_pay)
 		if len(earnings):
 			for er in earnings:
 				dt={}
@@ -104,6 +104,7 @@ def get_data(conditions,filters):
 				dt.update({'gross_pay':0})
 				dt.update({'tot_ern':0})
 				dt.update({'balance':0})
+				dt.update({'parent_department_tot':parent_department_tot})
 				data.append(dt)
 			
 		if len(deductions):	
@@ -117,19 +118,8 @@ def get_data(conditions,filters):
 				dt.update({'gross_pay':0})
 				dt.update({'tot_ern':0})
 				dt.update({'balance':0})
+				dt.update({'parent_department_tot':parent_department_tot})
 				data.append(dt)		
-		dt={}
-		dt.update({'particular':''})
-		dt.update({'dr':'0'})
-		dt.update({'cr':'0'})
-		dt.update({'department':dept.name})
-		dt.update({'parent_department':dept.parent_department})
-		dt.update({'gross_pay':gross_pay})
-		dt.update({'tot_ern':tot_ern})
-		dt.update({'balance':gross_pay})
-		parent_department_tot+=float(gross_pay)
-		dt.update({'parent_department_tot':parent_department_tot})
-		data.append(dt)	
 		
 	
 	return data
