@@ -63,7 +63,7 @@ def get_data(conditions,filters):
 	date_from=filters.get("date_from")
 	date_to=filters.get("date_to")
 	company=filters.get("company")
-	conc=frappe.db.sql(""" select * from `tabDepartment` where %s  order by name"""% (conditions),as_dict=1,debug=0)
+	conc=frappe.db.sql(""" select * from `tabDepartment` where %s  order by parent_department,name"""% (conditions),as_dict=1,debug=0)
 	parent_department_tot=0
 	parent_department=''
 	department_name=''
