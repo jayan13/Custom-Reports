@@ -69,9 +69,9 @@ def get_data(conditions,filters):
 			slipname=[]
 			for slp in slip:
 				slipname.append(slp.name)
-				gross_pay+=slp.gross_pay
-				total_deduction+=slp.total_deduction
-				tot_ern+=slp.gross_pay+slp.total_deduction
+				gross_pay+=float(slp.gross_pay)
+				total_deduction+=float(slp.total_deduction)
+				tot_ern+=float(slp.gross_pay)+float(slp.total_deduction)
 			if len(slipname):
 				slips=','.join([str(elem) for elem in slipname])
 
