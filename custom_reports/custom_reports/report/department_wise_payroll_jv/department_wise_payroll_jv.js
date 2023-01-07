@@ -31,11 +31,6 @@ frappe.query_reports["Department Wise Payroll Jv"] = {
 			"label": __("Department"),
 			"fieldtype": "Link",
 			"options":"Department",
-			get_data: function(txt) {
-				return frappe.db.get_link_options('Department', txt, {
-					company: frappe.query_report.get_filter_value("company")
-				});
-			},
 		}
 	]
 };
