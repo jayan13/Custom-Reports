@@ -47,7 +47,7 @@
 			
 			{% } else if (i >1){  
 				if(data[i].department!=data[i+1].department){ %} 
-				<tr><td></td><td colspan="3" style="text-align: right"><b>Department Total :</b></td> <td style="text-align: right"><b>{%=format_currency(data[i].balance)%}</b></td></tr>
+				<tr><td></td><td colspan="3" style="text-align: right"><b>Department Total :</b></td> <td style="text-align: right"><b>{%=format_currency(data[i].department_tot)%}</b></td></tr>
 				{% }
 				if(data[i].parent_department!=data[i+1].parent_department){ %}
 			<tr><td></td><td colspan="3" style="text-align: right"><b>Main Department Total :</b></td> <td style="text-align: right"><b>{%=format_currency(data[i].parent_department_tot)%}</b></td></tr>

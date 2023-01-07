@@ -104,6 +104,7 @@ def get_data(conditions,filters):
 				dt.update({'gross_pay':0})
 				dt.update({'tot_ern':0})
 				dt.update({'balance':0})
+				dt.update({'department_tot':gross_pay})
 				dt.update({'parent_department_tot':parent_department_tot})
 				data.append(dt)
 			
@@ -118,10 +119,10 @@ def get_data(conditions,filters):
 				dt.update({'gross_pay':0})
 				dt.update({'tot_ern':0})
 				dt.update({'balance':0})
+				dt.update({'department_tot':gross_pay})
 				dt.update({'parent_department_tot':parent_department_tot})
 				data.append(dt)		
 		
-	
 	return data
 
 def get_conditions(filters):
