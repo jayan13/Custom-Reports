@@ -14,6 +14,13 @@ def get_columns():
 	
 	columns = [
 		{
+		"fieldname": "parent_department",
+		"fieldtype": "Link",
+		"label": "Main Department",
+		"options": "Department",			
+		"width": 200
+		},
+		{
 		"fieldname": "department",
 		"fieldtype": "Link",
 		"label": "Department",
