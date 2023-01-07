@@ -104,7 +104,7 @@ def get_data(conditions,filters):
 				data.append(dt)		
 			
 		
-
+	frappe.msgprint(str(data))
 	return data
 
 def get_conditions(filters):
