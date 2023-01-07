@@ -86,9 +86,9 @@ def get_data(conditions,filters):
 				dt.update({'cr':'0'})
 				dt.update({'department':dept.name})
 				dt.update({'parent':dept.parent_department})
-				dt.update({'gross_pay':'0'})
-				dt.update({'tot_ern':'0'})
-				dt.update({'balance':'0'})
+				dt.update({'gross_pay':0})
+				dt.update({'tot_ern':0})
+				dt.update({'balance':0})
 				data.append(dt)
 			
 		if len(deductions):	
@@ -99,9 +99,9 @@ def get_data(conditions,filters):
 				dt.update({'cr':de.amount})
 				dt.update({'department':dept.name})
 				dt.update({'parent':dept.parent_department})
-				dt.update({'gross_pay':'0'})
-				dt.update({'tot_ern':'0'})
-				dt.update({'balance':'0'})
+				dt.update({'gross_pay':0})
+				dt.update({'tot_ern':0})
+				dt.update({'balance':0})
 				data.append(dt)		
 		dt={}
 		dt.update({'particular':''})
