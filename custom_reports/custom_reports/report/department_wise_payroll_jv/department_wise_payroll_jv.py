@@ -22,7 +22,7 @@ def get_columns():
 		},
 		{
 		"fieldname": "particular",
-		"fieldtype": "Link",
+		"fieldtype": "Data",
 		"label": "Particulars",	
 		"width": 200
 		},
@@ -104,7 +104,7 @@ def get_data(conditions,filters):
 				data.append(dt)		
 			
 		
-	frappe.msgprint(str(data))
+	
 	return data
 
 def get_conditions(filters):
