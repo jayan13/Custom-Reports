@@ -163,7 +163,7 @@ def get_data(conditions,filters):
 			department_name=emp.department_name
 			department_name_tot=0
 			department_name_emp_tot=0		
-		
+		#leave_provision_date
 		start_date=emp.date_of_joining
 		openabs=0
 		opnused=0
@@ -180,13 +180,14 @@ def get_data(conditions,filters):
 		actual_worked=0
 		amount_accrued=0
 		amount_used=0
+		
+
 		if alrules:
 			for rul in alrules:
-				
 				if emp.openning_entry_date:
 					if (rul.date_from==None or (rul.date_from!=None and getdate(rul.date_from) <= emp.openning_entry_date)) and rul.date_to!=None and getdate(rul.date_to)>=emp.openning_entry_date:
-						
-						totaldays=date_diff(emp.openning_entry_date,emp.date_of_joining)+1
+						leave_provision_date=emp.leave_provision_date or emp.date_of_joining
+						totaldays=date_diff(emp.openning_entry_date,leave_provision_date)+1
 						total_days+=totaldays
 						applicable_earnings_component=get_applicable_components(rul.name)
 						sal=get_total_applicable_component_amount(emp.name, applicable_earnings_component, emp.openning_entry_date)
@@ -266,22 +267,60 @@ def get_data(conditions,filters):
 						#frappe.msgprint(str(amountaccrued))
 						#amountbalance=round(((gross_salary*12)/365)*balance,2)
 						#amount_balance+=amountbalance
+				else:
+					leave_provision_date=emp.leave_provision_date or emp.date_of_joining
+					applicable_earnings_component=get_applicable_components(rul.name)
+					if rul.date_from==None and rul.date_to!=None and getdate(leave_provision_date)<=getdate(rul.date_to):
+						start_date=leave_provision_date
+						if getdate(rul.date_to) < getdate(processing_month):
+							end_date=rul.date_to
+						else:
+							end_date=processing_month
+					if rul.date_from!=None and rul.date_to==None:
+						if getdate(rul.date_from) > getdate(leave_provision_date):
+							start_date=rul.date_from
+						else:
+							start_date=leave_provision_date
+
+						end_date=processing_month
+					#-----------------------------------------
+
+					totaldays=date_diff(end_date,start_date)+1
+					total_days+=totaldays
+					totleave=get_leave_no(emp.name,processing_month)
+					leaves_per_year=emp.leaves_per_year
+					if totleave:
+						leaves_per_year=totleave	
+					sal=get_total_applicable_component_amount(emp.name, applicable_earnings_component, end_date)
+					absent=getabsents(emp.name,openabs,start_date,end_date)
+					absents+=absent
+					usedleaves=getused(emp.name,opnused,start_date,end_date)
+					usedleave+=usedleaves
+					leave_code=str(leaves_per_year)+'D'
+					actualworked=totaldays-absent
+					actual_worked+=actualworked
+					accru=round(round(float(leaves_per_year)/365,4)*actualworked,4)										
+					accrued+=accru
+					bala=round(accru-usedleaves,4)
+					balance+=bala
+					amountaccrued=round(((sal*12)/365)*accru,2)
+					amount_accrued+=amountaccrued
+					amountused=round(((sal*12)/365)*usedleaves,2)
+					amount_used+=amountused
+					amount_balance+=round(amountaccrued-amountused,2)	
+
 		else:
-			if emp.openning_entry_date:
-				day = getdate(emp.openning_entry_date)
-				start_date = add_days(day, 1)
-				openabs=float(emp.opening_absent)
-				opnused=float(emp.opening_used_leaves)
-				totleave=get_leave_no(emp.name,processing_month)
-				leaves_per_year=emp.leaves_per_year
-				if totleave:
-					leaves_per_year=totleave
+			totleave=get_leave_no(emp.name,processing_month)
+			leaves_per_year=emp.leaves_per_year
+			if totleave:
+				leaves_per_year=totleave
 
 			day = getdate(emp.openning_entry_date)
 			start_date = add_days(day, 1)
 			openabs=emp.opening_absent
 			opnused=emp.opening_used_leaves
-			total_days=date_diff(processing_month,emp.date_of_joining)+1
+			leave_provision_date=emp.leave_provision_date or emp.date_of_joining
+			total_days=date_diff(processing_month,leave_provision_date)+1
 			applicable_earnings_component=[]
 			gross_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
 			absents=getabsents(emp.name,openabs,start_date,processing_month)
@@ -332,6 +371,7 @@ def get_conditions(filters):
 	if filters.get("company"):
 		company=filters.get("company")
 		conditions += " and e.company= '{0}' ".format(company)
+		conditions += " and d.company= '{0}' ".format(company)
 	if filters.get("processing_month"):
 		processing_month=filters.get("processing_month")
 		#conditions += " and DATE(s.posting_date) >= '{0}' ".format(date_from)

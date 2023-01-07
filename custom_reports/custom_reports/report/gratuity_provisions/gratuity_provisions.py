@@ -59,7 +59,7 @@ def get_columns():
 		{
 		"fieldname": "gross_salary",
 		"fieldtype": "Data",
-		"label": "Gross Salary ",	
+		"label": "Base Amount",	
 		"width": 100
 		},
 		{
@@ -137,8 +137,12 @@ def get_data(conditions,filters):
 			department_name_tot=0
 			department_name_emp_tot=0
 		total_days=date_diff(processing_month,emp.date_of_joining)+1
-		gross_salary=get_gross_salary(emp.name,processing_month)
-		
+		#gross_salary=get_gross_salary(emp.name,processing_month)
+		applicable_earnings_component = get_applicable_components(gratuity_rule)
+		total_applicable_components_amount = get_total_applicable_component_amount(
+		emp.name, applicable_earnings_component, gratuity_rule,processing_month
+		)
+		gross_salary=total_applicable_components_amount
 		start_date=emp.date_of_joining
 		openabs=0
 		if emp.openning_entry_date:
@@ -149,7 +153,9 @@ def get_data(conditions,filters):
 		actual_worked=total_days-absents
 		accrued=calculate_work_experience_and_amount(emp.name,gratuity_rule,processing_month)['amount']
 		paid=0
+		accrued=round(accrued,2)		
 		balance=accrued-paid
+		balance=round(balance,2)
 		parent_department_tot+=balance
 		department_name_tot+=balance
 		parent_department_emp_tot+=1
@@ -175,6 +181,7 @@ def get_conditions(filters):
 	if filters.get("company"):
 		company=filters.get("company")
 		conditions += " and e.company= '{0}' ".format(company)
+		conditions += " and d.company= '{0}' ".format(company)
 	if filters.get("processing_month"):
 		processing_month=filters.get("processing_month")
 		#conditions += " and DATE(s.posting_date) >= '{0}' ".format(date_from)
@@ -261,7 +268,7 @@ def calculate_work_experience(employee, gratuity_rule,processing_month):
 	employee_total_workings_days = calculate_employee_total_workings_days(
 		employee, date_of_joining, relieving_date
 	)
-
+	
 	current_work_experience = employee_total_workings_days / total_working_days_per_year or 1
 	current_work_experience = get_work_experience_using_method(
 		method, current_work_experience, minimum_year_for_gratuity, employee
@@ -289,7 +296,8 @@ def get_work_experience_using_method(
 	if method == "Round off Work Experience":
 		current_work_experience = round(current_work_experience)
 	else:
-		current_work_experience = floor(current_work_experience)
+		#current_work_experience = floor(current_work_experience)
+		current_work_experience = round(current_work_experience,3)
 
 	#if current_work_experience < minimum_year_for_gratuity:
 	#	frappe.throw(
@@ -323,10 +331,12 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 	total_applicable_components_amount = get_total_applicable_component_amount(
 		employee, applicable_earnings_component, gratuity_rule,processing_month
 	)
-
+	
 	calculate_gratuity_amount_based_on = frappe.db.get_value(
 		"Gratuity Rule", gratuity_rule, "calculate_gratuity_amount_based_on"
 	)
+	#frappe.msgprint(str(total_applicable_components_amount))
+	#frappe.msgprint(str(calculate_gratuity_amount_based_on))
 	gratuity_amount = 0
 	slabs = get_gratuity_rule_slabs(gratuity_rule)
 	slab_found = False
@@ -360,11 +370,13 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 				)
 				year_left -= slab.to_year - slab.from_year
 				slab_found = True
+				#frappe.msgprint(str(experience)+'-('+str(slab.from_year)+'-'+str(slab.to_year)+')-'+str(slab.fraction_of_applicable_earnings)+'*'+str(slab.to_year - slab.from_year)+'*'+str(total_applicable_components_amount))
 			elif slab.from_year <= experience and (experience < slab.to_year or slab.to_year == 0):
 				gratuity_amount += (
 					year_left * total_applicable_components_amount * slab.fraction_of_applicable_earnings
 				)
 				slab_found = True
+				#frappe.msgprint(str(experience)+'-('+str(slab.from_year)+'-'+str(slab.to_year)+')-'+str(slab.fraction_of_applicable_earnings)+'*'+str(year_left)+'*'+str(total_applicable_components_amount))
 
 	#if not slab_found:
 	#	frappe.throw(

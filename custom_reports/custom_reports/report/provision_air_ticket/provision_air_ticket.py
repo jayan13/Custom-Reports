@@ -180,10 +180,11 @@ def get_data(conditions,filters):
 		ticket_price=0
 		perodical=str(emp.no_of_tickets_eligible)+"'s in a "+emp.ticket_period+' Years'
 		eligible=emp.no_of_tickets_eligible
-
+		#ticket_provision_date
 		if emp.openning_entry_date:
-			openabs=0			
-			total_days=frappe.utils.date_diff(emp.openning_entry_date,emp.date_of_joining)+1
+			openabs=0
+			ticket_provision_date=emp.ticket_provision_date or emp.date_of_joining			
+			total_days=frappe.utils.date_diff(emp.openning_entry_date,ticket_provision_date)+1
 			
 			if total_days > 0:
 				absents+=float(emp.opening_absent)
@@ -195,16 +196,17 @@ def get_data(conditions,filters):
 				used+=float(emp.used_tickets)
 				amount_used+=float(emp.opening_ticket_amount_used)
 				ticket_price=emp.ticket_price
+				frappe.msgprint('t='+str(emp.used_tickets))
 		tickets=get_tickect_setting(emp.name)
 		if tickets:
 			for ticket in tickets:
 				totaldays=0				
-				if ticket.from_date and ticket.to_date and getdate(processing_month) >= ticket.to_date:
+				if ticket.from_date!=None and ticket.to_date!=None and getdate(processing_month) >= ticket.to_date:
 					totaldays=frappe.utils.date_diff(ticket.to_date,ticket.from_date)+1					
 					total_days+=totaldays
 					date_from=ticket.from_date
 					date_to=ticket.to_date
-				elif ticket.from_date and ticket.to_date==None and getdate(processing_month) >= ticket.from_date:
+				elif ticket.from_date!=None and ticket.to_date==None and getdate(processing_month) >= ticket.from_date:
 					totaldays=frappe.utils.date_diff(processing_month,ticket.from_date)+1					
 					total_days+=totaldays
 					date_from=ticket.from_date
@@ -237,10 +239,12 @@ def get_data(conditions,filters):
 
 		elif(getdate(processing_month)>emp.openning_entry_date):
 			totaldays=0
+			
 			totaldays=frappe.utils.date_diff(processing_month,emp.openning_entry_date)+1					
 			total_days+=totaldays
 			date_from=emp.openning_entry_date
 			date_to=getdate(processing_month)
+			
 			if totaldays:
 				openabs=0
 				absent=getabsents(emp.name,openabs,date_from,date_to)
@@ -307,6 +311,7 @@ def get_conditions(filters):
 	if filters.get("company"):
 		company=filters.get("company")
 		conditions += " and e.company= '{0}' ".format(company)
+		conditions += " and d.company= '{0}' ".format(company)
 	if filters.get("processing_month"):
 		processing_month=filters.get("processing_month")
 		#conditions += " and DATE(s.posting_date) >= '{0}' ".format(date_from)
