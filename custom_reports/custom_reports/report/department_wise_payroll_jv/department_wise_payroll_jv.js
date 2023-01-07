@@ -9,8 +9,7 @@ frappe.query_reports["Department Wise Payroll Jv"] = {
 			"label": __("Company"),
 			"fieldtype": "Link",
 			"options":"Company",
-			"reqd": 1 ,
-			"default":'GRAND CONTINENTAL FLAMINGO HOTEL'
+			"reqd": 1 ,			
 		},
 		{
 			"fieldname": "date_from",
