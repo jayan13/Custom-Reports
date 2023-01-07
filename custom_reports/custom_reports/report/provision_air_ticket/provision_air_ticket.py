@@ -196,7 +196,7 @@ def get_data(conditions,filters):
 				used+=float(emp.used_tickets)
 				amount_used+=float(emp.opening_ticket_amount_used)
 				ticket_price=emp.ticket_price
-				frappe.msgprint('t='+str(emp.used_tickets))
+				#frappe.msgprint('t='+str(emp.used_tickets))
 		tickets=get_tickect_setting(emp.name)
 		if tickets:
 			for ticket in tickets:
