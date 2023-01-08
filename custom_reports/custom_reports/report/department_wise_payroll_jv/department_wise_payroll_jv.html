@@ -17,11 +17,11 @@
 		
 		{% for(var i=0, j=-1, l=data.length; i<l; i++,j++) { 
 			 if(i==0 && data[i].department){ %}
-		<tr><td colspan="6"><b>{%=data[i].parent_department%}</b></td></tr>
+		<tr><td colspan="6" style="font-size:14px;"><b>{%=data[i].parent_department%}</b></td></tr>
 		<tr><td colspan="6"><b>{%=data[i].department%}</b></td></tr>
 		{% } else if (i >1 && data[i].department){  
 			if(data[j].parent_department!=data[i].parent_department){ %} 
-			<tr><td colspan="6"><b>{%=data[i].parent_department%}</b></td></tr>
+			<tr><td colspan="6" style="font-size:14px;"><b>{%=data[i].parent_department%}</b></td></tr>
 			{% }
 			if(data[j].department!=data[i].department){ %}
 		<tr><td colspan="6"><b>{%=data[i].department%}</b></td></tr>

@@ -1,4 +1,6 @@
-<h2 class="text-center">{%= __("Provision Air Ticket") %}</h2>
+<h1 class="text-center">{%= filters.company %}</h1>
+<h2 class="text-center">{%= __("Provisions For Air Ticket Fare") %}</h2>
+<h3 class="text-center"> Provision As On : {%= frappe.format(filters.processing_month, {fieldtype: "Date"})%}</h3>
 <hr>
 <table class="table table-bordered">
 	<thead>
@@ -25,11 +27,11 @@
 		
 		{% for(var i=0, j=-1, l=data.length; i<l; i++,j++) { 
 			 if(i==0 && data[i].department){ %}
-		<tr><td colspan="16"><b>{%=data[i].parent_department%}</b></td></tr>
+		<tr><td colspan="16" style="font-size:14px;"><b>{%=data[i].parent_department%}</b></td></tr>
 		<tr><td colspan="16"><b>{%=data[i].department_name%}</b></td></tr>
 		{% } else if (i >1 && data[i].department){  
 			if(data[j].parent_department!=data[i].parent_department){ %} 
-			<tr><td colspan="16"><b>{%=data[i].parent_department%}</b></td></tr>
+			<tr><td colspan="16" style="font-size:14px;"><b>{%=data[i].parent_department%}</b></td></tr>
 			{% }
 			if(data[j].department_name!=data[i].department_name){ %}
 		<tr><td colspan="16"><b>{%=data[i].department_name%}</b></td></tr>

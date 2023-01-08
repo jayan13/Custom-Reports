@@ -157,8 +157,13 @@ def get_data(conditions,filters):
 	department_name_tot=0
 	parent_department_emp_tot=0
 	department_name_emp_tot=0
+	departmentname=''
 	for emp in conc:
-		
+		if emp.parent_department=='All Departments':
+			emp.parent_department=emp.department_name.split('-')[0]
+
+		departmentname=emp.department_name.split('-')[0]
+
 		if emp.parent_department != parent_department:
 			parent_department=emp.parent_department
 			parent_department_tot=0
@@ -294,7 +299,8 @@ def get_data(conditions,filters):
 		emp.update({'parent_department_tot':parent_department_tot})
 		emp.update({'department_name_tot':department_name_tot})
 		emp.update({'parent_department_emp_tot':parent_department_emp_tot})
-		emp.update({'department_name_emp_tot':department_name_emp_tot})		
+		emp.update({'department_name_emp_tot':department_name_emp_tot})
+		emp.update({'department_name':departmentname})		
 		emp.update({'perodical':perodical})	
 		emp.update({'ticket_price':ticket_price})	
 		emp.update({'total_days':total_days})
