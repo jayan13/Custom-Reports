@@ -927,7 +927,8 @@ def get_remaining_leaves(
 		
 		totalday=date_diff(nowdate(),getdate(allocation.from_date))+1
 		if totalday:
-			absent=getabsents(allocation.employee,allocation.from_date,allocation.to_date)
+			opabs=0
+			absent=getabsents(allocation.employee,opabs,allocation.from_date,allocation.to_date)
 			actualworked=totalday-absent
 			new_leaves_allocated=round(allocation.new_leaves_allocated/365,4)*actualworked
 			
@@ -949,8 +950,8 @@ def get_remaining_leaves(
 	remaining_leaves = _get_remaining_leaves(leave_balance_for_consumption, allocation.to_date)
 	return frappe._dict(leave_balance=leave_balance, leave_balance_for_consumption=remaining_leaves)
 
-def getabsents(emp,start_date,end_date):
-	absent=0
+def getabsents(emp,opabs,start_date,end_date):
+	absent=opabs
 	sal=frappe.db.sql(""" select sum(l.total_leave_days) as absent from `tabLeave Application` l 
 	left join `tabLeave Type` p on l.leave_type=p.name where l.employee='{0}' and p.is_lwp='1' 
 	and l.status='Approved' and l.from_date >= '{1}' and l.to_date <= '{2}' group by l.employee""".format(emp,start_date,end_date),as_dict=1,debug=0)
@@ -1300,3 +1301,75 @@ def get_leave_approver(employee):
 
 	return leave_approver
 		
+@frappe.whitelist()
+def get_ticket_issued(emp):
+	used=0
+	used_tickets=frappe.db.get_value('Employee',emp,'used_tickets')
+	used+=float(used_tickets)
+	sal7=frappe.db.sql(""" select sum(no_of_ticket_given) as ticket_no FROM `tabAdvance Air Ticket Request` where  employee='{0}' 
+	and  docstatus=1 and ticket_type='Company' group by employee""".format(emp),as_dict=1,debug=0)
+	if sal7:
+		used+=float(sal7[0].ticket_no)
+	return used
+	
+@frappe.whitelist()
+def get_ticket_blance(emp):
+	bal=0
+	bal_tickets=frappe.db.get_value('Employee',emp,'opening_ticket_balance')
+	issed=get_ticket_issued(emp)
+	acc=get_ticket_accrued(emp)
+	bal=float(acc)-float(issed)
+	return bal
+
+@frappe.whitelist()
+def get_ticket_accrued(emp):
+	accrued=0
+	used_tickets=frappe.db.get_value('Employee',emp,'used_tickets')
+	bal_tickets=frappe.db.get_value('Employee',emp,'opening_ticket_balance')
+	openning_entry_date=frappe.db.get_value('Employee',emp,'openning_entry_date')
+	accrued+=float(used_tickets)+float(bal_tickets)
+	tickets=get_tickect_setting(emp)
+	processing_month=nowdate()
+	if tickets:
+		for ticket in tickets:
+			totaldays=0
+			if ticket.from_date and ticket.to_date and getdate(processing_month) >= ticket.to_date:
+				totaldays=frappe.utils.date_diff(ticket.to_date,ticket.from_date)+1
+				date_from=ticket.from_date
+				date_to=ticket.to_date
+			elif ticket.from_date and ticket.to_date==None and getdate(processing_month) >= ticket.from_date:
+				totaldays=frappe.utils.date_diff(processing_month,ticket.from_date)+1
+				date_from=ticket.from_date
+				date_to=ticket.to_date
+			if totaldays:
+				openabs=0
+				absent=getabsents(emp,openabs,date_from,date_to)
+				actualworked=totaldays-absent
+				year=actualworked/365
+				accru=0
+				if float(ticket.periodical) > 0 and ticket.no_of_ticket_eligible:
+					accru=(year/float(ticket.periodical))*float(ticket.no_of_ticket_eligible)
+				accrued+=float(accru)
+	elif(getdate(processing_month)>getdate(openning_entry_date)):
+		totaldays=0
+		totaldays=frappe.utils.date_diff(processing_month,openning_entry_date)+1
+		date_from=openning_entry_date
+		date_to=processing_month
+		opabs=0		
+		absents=getabsents(emp,opabs,date_from,date_to)
+		actualworked=totaldays-absents
+		year=actualworked/365
+		no_of_tickets_eligible=frappe.db.get_value('Employee',emp,'no_of_tickets_eligible')
+		ticket_period=frappe.db.get_value('Employee',emp,'ticket_period')
+		if float(ticket.periodical) > 0 and no_of_tickets_eligible:
+			accru=(year/float(ticket_period))*float(no_of_tickets_eligible)
+		accrued+=float(accru)
+
+	return accrued
+
+def get_tickect_setting(emp):
+	sal=frappe.db.sql(""" select * from `tabEmployee Ticket Settings` where employee='%s' and docstatus='1'  order by from_date"""% (emp),as_dict=1,debug=0)
+	if sal:
+		return sal
+	return
+
