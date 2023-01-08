@@ -71,7 +71,7 @@ def get_data(conditions,filters):
 	parent_department_ded_tot=0
 	for dept in conc:
 		if dept.parent_department=='All Departments':
-			dept.parent_department=dept.name
+			dept.parent_department=dept.name.split('-')[0]
 
 		department_name=dept.name.split('-')[0]
 		earnings=[]
