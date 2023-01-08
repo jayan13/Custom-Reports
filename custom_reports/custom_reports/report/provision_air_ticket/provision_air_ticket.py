@@ -71,6 +71,12 @@ def get_columns():
 		"width":100
 		},
 		{
+		"fieldname": "ticket_provision_date",
+		"fieldtype": "Data",
+		"label": "Provision Date ",	
+		"width": 80
+		},
+		{
 		"fieldname": "total_days",
 		"fieldtype": "Data",
 		"label": "Total Days ",	

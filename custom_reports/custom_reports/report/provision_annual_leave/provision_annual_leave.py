@@ -75,6 +75,12 @@ def get_columns():
 		"width":100
 		},
 		{
+		"fieldname": "leave_provision_date",
+		"fieldtype": "Data",
+		"label": "Provision Date ",	
+		"width": 80
+		},
+		{
 		"fieldname": "opening_balance_amount",
 		"fieldtype": "Data",
 		"label": "Opening Bal Amt ",	
