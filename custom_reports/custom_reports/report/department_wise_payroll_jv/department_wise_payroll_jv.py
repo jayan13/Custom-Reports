@@ -35,13 +35,13 @@ def get_columns():
 		},
 		{
 		"fieldname": "dr",
-		"fieldtype": "Data",
+		"fieldtype": "Currency",
 		"label": "Dr.",	
 		"width": 150
 		},
 		{
 		"fieldname": "cr",
-		"fieldtype": "Data",
+		"fieldtype": "Currency",
 		"label": "Cr.",	
 		"width": 150
 		},
