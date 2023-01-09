@@ -155,9 +155,9 @@ def get_data(conditions,filters):
 			day = getdate(emp.openning_entry_date)
 			start_date = add_days(day, 1)
 			openabs=emp.opening_absent
-		absents=getabsents(emp.name,openabs,start_date,processing_month)
+		absents=get_nonworking_days(emp.name,openabs,start_date,processing_month)
 		actual_worked=total_days-absents
-		accrued=calculate_work_experience_and_amount(emp.name,gratuity_rule,processing_month)['amount']
+		accrued=calculate_work_experience_and_amount(emp.name,gratuity_rule,processing_month,openabs)['amount']
 		paid=0
 		accrued=round(accrued,2)		
 		balance=accrued-paid
@@ -250,14 +250,15 @@ def getabsents(emp,opn,start_date,end_date):
 
 
 @frappe.whitelist()
-def calculate_work_experience_and_amount(employee, gratuity_rule,processing_month):
-	current_work_experience = calculate_work_experience(employee, gratuity_rule,processing_month) or 0
+def calculate_work_experience_and_amount(employee, gratuity_rule,processing_month,openabs):
+	current_work_experience = calculate_work_experience(employee, gratuity_rule,processing_month,openabs) or 0
+	#frappe.msgprint(str(current_work_experience))
 	gratuity_amount = calculate_gratuity_amount(employee, gratuity_rule, current_work_experience,processing_month) or 0
 
 	return {"current_work_experience": current_work_experience, "amount": gratuity_amount}
 
 
-def calculate_work_experience(employee, gratuity_rule,processing_month):
+def calculate_work_experience(employee, gratuity_rule,processing_month,openabs):
 
 	total_working_days_per_year, minimum_year_for_gratuity = frappe.db.get_value(
 		"Gratuity Rule", gratuity_rule, ["total_working_days_per_year", "minimum_year_for_gratuity"]
@@ -272,9 +273,15 @@ def calculate_work_experience(employee, gratuity_rule,processing_month):
 	method = frappe.db.get_value(
 		"Gratuity Rule", gratuity_rule, "work_experience_calculation_function"
 	)
-	employee_total_workings_days = calculate_employee_total_workings_days(
-		employee, date_of_joining, relieving_date
+	#employee_total_workings_days = calculate_employee_total_workings_days(
+	#	employee, date_of_joining, relieving_date
+	#)
+	total_workings_days = (get_datetime(relieving_date) - get_datetime(date_of_joining)).days+1
+	employee_total_workings_days = get_nonworking_days(
+		employee,openabs,date_of_joining, relieving_date
 	)
+	employee_total_workings_days=total_workings_days-employee_total_workings_days
+	#frappe.msgprint(str(employee_total_workings_days))
 	
 	current_work_experience = employee_total_workings_days / total_working_days_per_year or 1
 	current_work_experience = get_work_experience_using_method(
@@ -293,7 +300,7 @@ def calculate_employee_total_workings_days(employee, date_of_joining, relieving_
 	elif payroll_based_on == "Attendance":
 		total_absents = get_non_working_days(employee, relieving_date, "Absent")
 		employee_total_workings_days -= total_absents
-
+	
 	return employee_total_workings_days
 
 
@@ -472,7 +479,8 @@ def calculate_amount_based_on_current_slab(
 		day=fraction_of_applicable_earnings*30
 		day=round(day)		
 		gratuity_amount =(experience*day)*((total_applicable_components_amount*12)/365)
-		#frappe.msgprint(str(day)+'-'+str(experience)+'-'+str(total_applicable_components_amount)+'-'+str(gratuity_amount))
+		#frappe.msgprint()
+		#frappe.msgprint(str(day)+'*'+str(experience)+'*(('+str(total_applicable_components_amount)+'*12)/365)'+str(gratuity_amount)+')')
 		if fraction_of_applicable_earnings:
 			slab_found = True
 
@@ -501,3 +509,34 @@ def get_last_salary_slip(employee):
 	if not salary_slips:
 		return
 	return salary_slips[0].name
+
+
+
+def get_nonworking_days(emp,opn,start_date,end_date):
+	nwdays=float(opn)
+	filters = {
+		"docstatus": 1,
+		"status": 'On Leave',
+		"employee": emp,
+		"attendance_date": ("between", [get_datetime(start_date),get_datetime(end_date)]),
+	}
+	
+	lwp_leave_types = frappe.get_list("Leave Type", filters={"is_lwp": 1})
+	lwp_leave_types = [leave_type.name for leave_type in lwp_leave_types]
+	filters["leave_type"] = ("IN", lwp_leave_types)
+	record = frappe.get_all("Attendance", filters=filters, fields=["COUNT(name) as total_lwp"],debug=0)
+	if record:
+		nwdays += record[0].total_lwp if len(record) else 0
+
+	filters = {
+		"docstatus": 1,
+		"status": 'Absent',
+		"employee": emp,
+		"attendance_date": ("between", [get_datetime(start_date),get_datetime(end_date)]),
+	}
+	record = frappe.get_all("Attendance", filters=filters, fields=["COUNT(name) as total_lwp"],debug=0)
+	if record:
+		nwdays += record[0].total_lwp if len(record) else 0
+	
+	return nwdays
+
