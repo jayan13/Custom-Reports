@@ -114,7 +114,7 @@ def get_columns():
 		},
 		{
 		"fieldname": "used_tickets",
-		"fieldtype": "Data",
+		"fieldtype": "Currency",
 		"label": "Used ",	
 		"width": 80
 		},
