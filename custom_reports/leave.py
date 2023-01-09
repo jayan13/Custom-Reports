@@ -1361,7 +1361,7 @@ def get_ticket_accrued(emp):
 		year=actualworked/365
 		no_of_tickets_eligible=frappe.db.get_value('Employee',emp,'no_of_tickets_eligible')
 		ticket_period=frappe.db.get_value('Employee',emp,'ticket_period')
-		if float(ticket.periodical) > 0 and no_of_tickets_eligible:
+		if float(ticket_period) > 0 and no_of_tickets_eligible:
 			accru=(year/float(ticket_period))*float(no_of_tickets_eligible)
 		accrued+=float(accru)
 
