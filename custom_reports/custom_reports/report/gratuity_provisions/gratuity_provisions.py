@@ -306,12 +306,9 @@ def get_work_experience_using_method(
 		#current_work_experience = floor(current_work_experience)
 		current_work_experience = round(current_work_experience,3)
 
-	#if current_work_experience < minimum_year_for_gratuity:
-	#	frappe.throw(
-	#		_("Employee: {0} have to complete minimum {1} years for gratuity").format(
-	#			bold(employee), minimum_year_for_gratuity
-	#		)
-	#	)
+	if current_work_experience < minimum_year_for_gratuity:
+		current_work_experience=0
+		
 	return current_work_experience
 
 
@@ -348,9 +345,12 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 	slabs = get_gratuity_rule_slabs(gratuity_rule)
 	slab_found = False
 	year_left = experience
-
+	based_on=calculate_gratuity_amount_based_on
+	if experience > 5:
+		based_on="Current Slab"
+	
 	for slab in slabs:
-		if calculate_gratuity_amount_based_on == "Current Slab":
+		if based_on == "Current Slab":
 			slab_found, gratuity_amount = calculate_amount_based_on_current_slab(
 				slab.from_year,
 				slab.to_year,
@@ -361,27 +361,39 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 			if slab_found:
 				break
 
-		elif calculate_gratuity_amount_based_on == "Sum of all previous slabs":
+		elif based_on == "Sum of all previous slabs":
 			if slab.to_year == 0 and slab.from_year == 0:
-				gratuity_amount += (
-					year_left * total_applicable_components_amount * slab.fraction_of_applicable_earnings
-				)
+				#gratuity_amount += (
+				#	year_left * total_applicable_components_amount * slab.fraction_of_applicable_earnings
+				#)
+				day=slab.fraction_of_applicable_earnings*30
+				day=round(day)					
+				gratuity_amount += (year_left*day)*((total_applicable_components_amount*12)/365)
+
 				slab_found = True
 				break
 
 			if experience > slab.to_year and experience > slab.from_year and slab.to_year != 0:
-				gratuity_amount += (
-					(slab.to_year - slab.from_year)
-					* total_applicable_components_amount
-					* slab.fraction_of_applicable_earnings
-				)
+				#gratuity_amount += (
+				#	(slab.to_year - slab.from_year)
+				#	* total_applicable_components_amount
+				#	* slab.fraction_of_applicable_earnings
+				#)
+				day=slab.fraction_of_applicable_earnings*30
+				day=round(day)
+				yer=slab.to_year - slab.from_year		
+				gratuity_amount += (yer*day)*((total_applicable_components_amount*12)/365)
+
 				year_left -= slab.to_year - slab.from_year
 				slab_found = True
 				#frappe.msgprint(str(experience)+'-('+str(slab.from_year)+'-'+str(slab.to_year)+')-'+str(slab.fraction_of_applicable_earnings)+'*'+str(slab.to_year - slab.from_year)+'*'+str(total_applicable_components_amount))
 			elif slab.from_year <= experience and (experience < slab.to_year or slab.to_year == 0):
-				gratuity_amount += (
-					year_left * total_applicable_components_amount * slab.fraction_of_applicable_earnings
-				)
+				#gratuity_amount += (
+				#	year_left * total_applicable_components_amount * slab.fraction_of_applicable_earnings
+				#)
+				day=slab.fraction_of_applicable_earnings*30
+				day=round(day)		
+				gratuity_amount += (year_left*day)*((total_applicable_components_amount*12)/365)
 				slab_found = True
 				#frappe.msgprint(str(experience)+'-('+str(slab.from_year)+'-'+str(slab.to_year)+')-'+str(slab.fraction_of_applicable_earnings)+'*'+str(year_left)+'*'+str(total_applicable_components_amount))
 
@@ -454,9 +466,13 @@ def calculate_amount_based_on_current_slab(
 	slab_found = False
 	gratuity_amount = 0
 	if experience >= from_year and (to_year == 0 or experience < to_year):
-		gratuity_amount = (
-			total_applicable_components_amount * experience * fraction_of_applicable_earnings
-		)
+		#gratuity_amount = (
+		#	total_applicable_components_amount * experience * fraction_of_applicable_earnings
+		#)
+		day=fraction_of_applicable_earnings*30
+		day=round(day)		
+		gratuity_amount =(experience*day)*((total_applicable_components_amount*12)/365)
+		#frappe.msgprint(str(day)+'-'+str(experience)+'-'+str(total_applicable_components_amount)+'-'+str(gratuity_amount))
 		if fraction_of_applicable_earnings:
 			slab_found = True
 
