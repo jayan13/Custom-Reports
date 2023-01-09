@@ -21,17 +21,29 @@
 	</thead>
 	<tbody>
 		
-		{% for(var i=0, j=-1, l=data.length; i<l; i++,j++) { 
+		{% for(var i=0,l=data.length; i<l; i++) { 
 			 if(i==0 && data[i].department){ %}
 		<tr><td colspan="12" style="font-size:14px;"><b>{%=data[i].parent_department%}</b></td></tr>
 		<tr><td colspan="12"><b>{%=data[i].department_name%}</b></td></tr>
 		{% } else if (i >1 && data[i].department){  
-			if(data[j].parent_department!=data[i].parent_department){ %} 
+			if(data[i-1].parent_department!=data[i].parent_department){ %} 
 			<tr><td colspan="12" style="font-size:14px;"><b>{%=data[i].parent_department%}</b></td></tr>
 			{% }
-			if(data[j].department_name!=data[i].department_name){ %}
+			if(data[i-1].department_name!=data[i].department_name){ %}
 		<tr><td colspan="12"><b>{%=data[i].department_name%}</b></td></tr>
 		{% } } %}
+		{% if(i+1==l) { %}
+		<tr>			
+			<td colspan="11" style="text-align: right;font-size:14px;">
+				<b>Grand Total : </b>
+			</td>
+
+			<td style="text-align: right;font-size:14px;">
+				<b>{%=format_currency(data[i].balance) %}</b>
+			</td>
+
+		</tr>
+		{% } else { %}
 			<tr>
 			
 				<td style="text-align: right">
@@ -71,6 +83,7 @@
 					{%=format_currency(data[i].balance) %}
 				</td>
 			</tr>
+			{% } %}
 			{% if(i==(l-1)) { %}
 
 			{% } else if (i >1){  
