@@ -304,7 +304,7 @@ def get_work_experience_using_method(
 		current_work_experience = round(current_work_experience)
 	else:
 		#current_work_experience = floor(current_work_experience)
-		current_work_experience = round(current_work_experience,3)
+		current_work_experience = current_work_experience
 
 	if current_work_experience < minimum_year_for_gratuity:
 		current_work_experience=0
