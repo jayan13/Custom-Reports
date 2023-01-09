@@ -1352,6 +1352,7 @@ def get_ticket_accrued(emp):
 				accrued+=float(accru)
 	elif(getdate(processing_month)>getdate(openning_entry_date)):
 		totaldays=0
+		accru=0
 		totaldays=frappe.utils.date_diff(processing_month,openning_entry_date)+1
 		date_from=openning_entry_date
 		date_to=processing_month
