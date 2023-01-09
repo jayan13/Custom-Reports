@@ -58,7 +58,7 @@ def get_columns():
 		},		
 		{
 		"fieldname": "gross_salary",
-		"fieldtype": "Data",
+		"fieldtype": "Currency",
 		"label": "Base Amount",	
 		"width": 100
 		},
@@ -70,19 +70,19 @@ def get_columns():
 		},
 		{
 		"fieldname": "total_days",
-		"fieldtype": "Data",
+		"fieldtype": "Currency",
 		"label": "Total Days ",	
 		"width": 80
 		},
 		{
 		"fieldname": "absent",
-		"fieldtype": "Data",
+		"fieldtype": "Currency",
 		"label": "Absent ",	
 		"width": 80
 		},
 		{
 		"fieldname": "actual_worked",
-		"fieldtype": "Data",
+		"fieldtype": "Currency",
 		"label": "Actual Worked ",	
 		"width": 80
 		},
@@ -94,13 +94,13 @@ def get_columns():
 		},
 		{
 		"fieldname": "accrued",
-		"fieldtype": "Data",
+		"fieldtype": "Currency",
 		"label": "Accrued ",	
 		"width": 80
 		},
 		{
 		"fieldname": "paid",
-		"fieldtype": "Data",
+		"fieldtype": "Currency",
 		"label": "Paid ",	
 		"width": 80
 		},

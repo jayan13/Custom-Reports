@@ -102,13 +102,13 @@ def get_columns():
 		},
 		{
 		"fieldname": "eligible",
-		"fieldtype": "Data",
+		"fieldtype": "Currency",
 		"label": "No Of Ticket Eligible ",	
 		"width": 80
 		},
 		{
 		"fieldname": "accrued",
-		"fieldtype": "Data",
+		"fieldtype": "Currency",
 		"label": "Accrued ",	
 		"width": 80
 		},
@@ -120,19 +120,19 @@ def get_columns():
 		},
 		{
 		"fieldname": "balance",
-		"fieldtype": "Data",
+		"fieldtype": "Currency",
 		"label": "Balance ",	
 		"width": 80
 		},
 		{
 		"fieldname": "amount_accrued",
-		"fieldtype": "Data",
+		"fieldtype": "Currency",
 		"label": "Amount Accrued",	
 		"width": 100
 		},
 		{
 		"fieldname": "amount_used",
-		"fieldtype": "Data",
+		"fieldtype": "Currency",
 		"label": "Amount Used",	
 		"width": 100
 		},

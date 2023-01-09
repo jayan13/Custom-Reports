@@ -88,49 +88,49 @@ def get_columns():
 		},
 		{
 		"fieldname": "total_days",
-		"fieldtype": "Data",
+		"fieldtype": "Currency",
 		"label": "Total Days ",	
 		"width": 80
 		},
 		{
 		"fieldname": "absent",
-		"fieldtype": "Data",
+		"fieldtype": "Currency",
 		"label": "Absent ",	
 		"width": 80
 		},
 		{
 		"fieldname": "actual_worked",
-		"fieldtype": "Data",
+		"fieldtype": "Currency",
 		"label": "Actual Worked ",	
 		"width": 80
 		},
 		{
 		"fieldname": "accrued",
-		"fieldtype": "Data",
+		"fieldtype": "Currency",
 		"label": "Accrued ",	
 		"width": 80
 		},
 		{
 		"fieldname": "used",
-		"fieldtype": "Data",
+		"fieldtype": "Currency",
 		"label": "Used ",	
 		"width": 80
 		},
 		{
 		"fieldname": "balance",
-		"fieldtype": "Data",
+		"fieldtype": "Currency",
 		"label": "Balance ",	
 		"width": 80
 		},
 		{
 		"fieldname": "amount_accrued",
-		"fieldtype": "Data",
+		"fieldtype": "Currency",
 		"label": "Amount Accrued",	
 		"width": 100
 		},
 		{
 		"fieldname": "amount_used",
-		"fieldtype": "Data",
+		"fieldtype": "Currency",
 		"label": "Amount Used",	
 		"width": 100
 		},

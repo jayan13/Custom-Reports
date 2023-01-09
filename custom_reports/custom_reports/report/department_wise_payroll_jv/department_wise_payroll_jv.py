@@ -106,7 +106,7 @@ def get_data(conditions,filters):
 				dt={}
 				dt.update({'particular':er.salary_component})
 				dt.update({'dr':er.amount})
-				dt.update({'cr':'0'})
+				dt.update({'cr':0})
 				dt.update({'department':department_name})
 				dt.update({'parent_department':dept.parent_department})
 				dt.update({'gross_pay':0})
@@ -123,7 +123,7 @@ def get_data(conditions,filters):
 			for de in deductions:
 				dt={}
 				dt.update({'particular':de.salary_component})
-				dt.update({'dr':'0'})
+				dt.update({'dr':0})
 				dt.update({'cr':de.amount})
 				dt.update({'department':department_name})
 				dt.update({'parent_department':dept.parent_department})
