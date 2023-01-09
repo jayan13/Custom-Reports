@@ -106,7 +106,7 @@ def get_columns():
 		},
 		{
 		"fieldname": "balance",
-		"fieldtype": "Data",
+		"fieldtype": "Currency",
 		"label": "Balance",	
 		"width": 100
 		},
