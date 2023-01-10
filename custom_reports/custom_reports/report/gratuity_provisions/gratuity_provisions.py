@@ -368,7 +368,7 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 		employee, applicable_earnings_component, gratuity_rule,processing_month
 	)
 	
-	if experience > 5:
+	if experience > 5 and gratuity_rule=='Rule Under Unlimited Contract on resignation (UAE)':
 		gratuity_rule = 'Rule Under Limited Contract (UAE)'
 
 	calculate_gratuity_amount_based_on = frappe.db.get_value(
