@@ -66,7 +66,7 @@ def getorderdetails(payment):
 					if workflow:
 						user,name=frappe.db.get_value('User', {'name':workflow[0].modified_by}, ['name','full_name'])
 						status=workflow[0].content
-						data=status
+						#data=status
 					data.append({'order':purchase_order.purchase_order,'name':name,'user_name':user,'status':status,'amount':amount})
 			else:
 				name=''
@@ -77,7 +77,7 @@ def getorderdetails(payment):
 				if workflow:
 					user,name=frappe.db.get_value('User', {'name':workflow[0].modified_by}, ['name','full_name'])
 					status=workflow[0].content
-					data=status
+					#data=status
 				data.append({'order':refe.reference_name,'name':name,'user_name':user,'status':status,'amount':amount})
 
 	return data
