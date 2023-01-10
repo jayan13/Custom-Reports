@@ -28,10 +28,16 @@
 		{% } } %}
 		{% if(i+1==l) { %}
 		<tr>			
-			<td colspan="4" style="text-align: right;font-size:14px;">
+			<td colspan="2" style="text-align: right;font-size:14px;">
 				<b>Grand Total : </b>
 			</td>
+			<td style="text-align: right;font-size:14px;">
+				<b>{%=format_currency(data[i].dr) %}</b>
+			</td>
 
+			<td style="text-align: right;font-size:14px;">
+				<b>{%=format_currency(data[i].cr) %}</b>
+			</td>
 			<td style="text-align: right;font-size:14px;">
 				<b>{%=format_currency(data[i].balance) %}</b>
 			</td>
