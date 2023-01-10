@@ -381,9 +381,7 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 	slab_found = False
 	year_left = experience
 	
-	
-	
-	
+
 	for slab in slabs:
 		if calculate_gratuity_amount_based_on == "Current Slab":
 			slab_found, gratuity_amount = calculate_amount_based_on_current_slab(
@@ -398,38 +396,47 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 
 		elif calculate_gratuity_amount_based_on == "Sum of all previous slabs":
 			if slab.to_year == 0 and slab.from_year == 0:
-				#gratuity_amount += (
-				#	year_left * total_applicable_components_amount * slab.fraction_of_applicable_earnings
-				#)
 				day=slab.fraction_of_applicable_earnings*30
-				day=round(day)									
-				gratuity_amount += (year_left*day)*((total_applicable_components_amount*12)/365)
+				day=round(day)
+				if gratuity_rule=='Rule Under Limited Contract (UAE)-GRAND':
+					gratuity_amount += (
+						year_left * total_applicable_components_amount * slab.fraction_of_applicable_earnings
+					)
+				else:									
+					gratuity_amount += (year_left*day)*((total_applicable_components_amount*12)/365)
+
 				accured_days+=(year_left*day)
 				slab_found = True
 				break
 
 			if experience > slab.to_year and experience > slab.from_year and slab.to_year != 0:
-				#gratuity_amount += (
-				#	(slab.to_year - slab.from_year)
-				#	* total_applicable_components_amount
-				#	* slab.fraction_of_applicable_earnings
-				#)
 				day=slab.fraction_of_applicable_earnings*30
 				day=round(day)
-				yer=slab.to_year - slab.from_year		
-				gratuity_amount += (yer*day)*((total_applicable_components_amount*12)/365)
+				yer=slab.to_year - slab.from_year
+				if gratuity_rule=='Rule Under Limited Contract (UAE)-GRAND':
+					gratuity_amount += (
+					(slab.to_year - slab.from_year)
+					* total_applicable_components_amount
+					* slab.fraction_of_applicable_earnings
+					)
+				else:
+					gratuity_amount += (yer*day)*((total_applicable_components_amount*12)/365)
+
 				accured_days+=(yer*day)
 				year_left -= slab.to_year - slab.from_year
 				slab_found = True
 				#frappe.msgprint(str(experience)+'-('+str(slab.from_year)+'-'+str(slab.to_year)+')-'+str(slab.fraction_of_applicable_earnings)+'*'+str(slab.to_year - slab.from_year)+'*'+str(total_applicable_components_amount))
 			elif slab.from_year <= experience and (experience < slab.to_year or slab.to_year == 0):
-				#gratuity_amount += (
-				#	year_left * total_applicable_components_amount * slab.fraction_of_applicable_earnings
-				#)
 				day=slab.fraction_of_applicable_earnings*30
 				day=round(day)
-				accured_days+=(year_left*day)		
-				gratuity_amount += (year_left*day)*((total_applicable_components_amount*12)/365)
+				if gratuity_rule=='Rule Under Limited Contract (UAE)-GRAND':
+					gratuity_amount += (
+					year_left * total_applicable_components_amount * slab.fraction_of_applicable_earnings
+					)
+				else:
+					gratuity_amount += (year_left*day)*((total_applicable_components_amount*12)/365)
+
+				accured_days+=(year_left*day)
 				slab_found = True
 				#frappe.msgprint(str(experience)+'-('+str(slab.from_year)+'-'+str(slab.to_year)+')-'+str(slab.fraction_of_applicable_earnings)+'*'+str(year_left)+'*'+str(total_applicable_components_amount))
 
