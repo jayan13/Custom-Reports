@@ -89,7 +89,7 @@ def get_columns():
 		{
 		"fieldname": "accr_d",
 		"fieldtype": "Data",
-		"label": "Accr'd ",	
+		"label": "Accrued Days ",	
 		"width": 80
 		},
 		{
@@ -110,16 +110,28 @@ def get_columns():
 		"label": "Balance",	
 		"width": 100
 		},
+		{
+		"fieldname": "in_limit",
+		"fieldtype": "data",
+		"label": "Days Accrued Within Limit",	
+		"width": 100
+		},
+		{
+		"fieldname": "after_limit",
+		"fieldtype": "data",
+		"label": "Days Accrued After Limit",	
+		"width": 100
+		},
  	 ]	
 	    
 	return columns
-
+accured_days=0  #global variable
 def get_data(conditions,filters):
 	processing_month=filters.get("processing_month")
 	gratuity_rule=filters.get("gratuity_rule")
 	#nationality
 	conc=frappe.db.sql(""" select e.*,d.parent_department,d.department_name from `tabEmployee` e left join `tabDepartment` d on e.department=d.name where  %s  order by d.parent_department,d.name"""% (conditions),as_dict=1,debug=0)
-
+	global accured_days
 	data=[]
 	parent_department=''
 	department_name=''
@@ -162,10 +174,18 @@ def get_data(conditions,filters):
 		accrued=round(accrued,2)		
 		balance=accrued-paid
 		balance=round(balance,2)
+		accr_d=round(accured_days,4)
 		parent_department_tot+=balance
 		department_name_tot+=balance
 		parent_department_emp_tot+=1
 		department_name_emp_tot+=1
+		in_limit=accr_d
+		after_limit=0
+		if float(in_limit) > 105:
+			in_limit=105
+			after_limit=float(accr_d)-105
+			after_limit=round(after_limit,4)
+
 		emp.update({'parent_department_tot':parent_department_tot})
 		emp.update({'department_name_tot':department_name_tot})
 		emp.update({'parent_department_emp_tot':parent_department_emp_tot})
@@ -175,10 +195,12 @@ def get_data(conditions,filters):
 		emp.update({'gross_salary':gross_salary})
 		emp.update({'absent':absents})
 		emp.update({'actual_worked':actual_worked})
-		emp.update({'accr_d':'0'})
+		emp.update({'accr_d':accr_d})
 		emp.update({'accrued':accrued})		
 		emp.update({'paid':paid})
 		emp.update({'balance':balance})
+		emp.update({'in_limit':in_limit})
+		emp.update({'after_limit':after_limit})
 		data.append(emp)
 	return data
 
@@ -251,10 +273,12 @@ def getabsents(emp,opn,start_date,end_date):
 
 @frappe.whitelist()
 def calculate_work_experience_and_amount(employee, gratuity_rule,processing_month,openabs):
+	global accured_days
+	accured_days=0
 	current_work_experience = calculate_work_experience(employee, gratuity_rule,processing_month,openabs) or 0
-	#frappe.msgprint(str(current_work_experience))
+	
 	gratuity_amount = calculate_gratuity_amount(employee, gratuity_rule, current_work_experience,processing_month) or 0
-
+	#frappe.msgprint('days='+str(accured_days))
 	return {"current_work_experience": current_work_experience, "amount": gratuity_amount}
 
 
@@ -338,6 +362,7 @@ def get_non_working_days(employee, relieving_date, status):
 
 
 def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_month):
+	global accured_days
 	applicable_earnings_component = get_applicable_components(gratuity_rule)
 	total_applicable_components_amount = get_total_applicable_component_amount(
 		employee, applicable_earnings_component, gratuity_rule,processing_month
@@ -374,9 +399,9 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 				#	year_left * total_applicable_components_amount * slab.fraction_of_applicable_earnings
 				#)
 				day=slab.fraction_of_applicable_earnings*30
-				day=round(day)					
+				day=round(day)									
 				gratuity_amount += (year_left*day)*((total_applicable_components_amount*12)/365)
-
+				accured_days+=(year_left*day)
 				slab_found = True
 				break
 
@@ -390,7 +415,7 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 				day=round(day)
 				yer=slab.to_year - slab.from_year		
 				gratuity_amount += (yer*day)*((total_applicable_components_amount*12)/365)
-
+				accured_days+=(yer*day)
 				year_left -= slab.to_year - slab.from_year
 				slab_found = True
 				#frappe.msgprint(str(experience)+'-('+str(slab.from_year)+'-'+str(slab.to_year)+')-'+str(slab.fraction_of_applicable_earnings)+'*'+str(slab.to_year - slab.from_year)+'*'+str(total_applicable_components_amount))
@@ -399,7 +424,8 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 				#	year_left * total_applicable_components_amount * slab.fraction_of_applicable_earnings
 				#)
 				day=slab.fraction_of_applicable_earnings*30
-				day=round(day)		
+				day=round(day)
+				accured_days+=(year_left*day)		
 				gratuity_amount += (year_left*day)*((total_applicable_components_amount*12)/365)
 				slab_found = True
 				#frappe.msgprint(str(experience)+'-('+str(slab.from_year)+'-'+str(slab.to_year)+')-'+str(slab.fraction_of_applicable_earnings)+'*'+str(year_left)+'*'+str(total_applicable_components_amount))
@@ -471,13 +497,15 @@ def calculate_amount_based_on_current_slab(
 	fraction_of_applicable_earnings,
 ):
 	slab_found = False
+	global accured_days
 	gratuity_amount = 0
 	if experience >= from_year and (to_year == 0 or experience < to_year):
 		#gratuity_amount = (
 		#	total_applicable_components_amount * experience * fraction_of_applicable_earnings
 		#)
 		day=fraction_of_applicable_earnings*30
-		day=round(day)		
+		day=round(day)
+		accured_days+=(experience*day)		
 		gratuity_amount =(experience*day)*((total_applicable_components_amount*12)/365)
 		#frappe.msgprint()
 		#frappe.msgprint(str(day)+'*'+str(experience)+'*(('+str(total_applicable_components_amount)+'*12)/365)'+str(gratuity_amount)+')')
