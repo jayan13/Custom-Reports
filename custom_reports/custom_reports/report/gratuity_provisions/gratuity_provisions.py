@@ -379,7 +379,8 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 	year_left = experience
 	based_on=calculate_gratuity_amount_based_on
 	if experience > 5:
-		based_on="Current Slab"
+		slabs = get_gratuity_rule_slabs('Rule Under Limited Contract (UAE)')
+	#	based_on="Current Slab" Rule Under Limited Contract (UAE)
 	
 	for slab in slabs:
 		if based_on == "Current Slab":
