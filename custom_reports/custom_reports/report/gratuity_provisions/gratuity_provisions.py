@@ -368,6 +368,9 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 		employee, applicable_earnings_component, gratuity_rule,processing_month
 	)
 	
+	if experience > 5:
+		gratuity_rule = 'Rule Under Limited Contract (UAE)'
+
 	calculate_gratuity_amount_based_on = frappe.db.get_value(
 		"Gratuity Rule", gratuity_rule, "calculate_gratuity_amount_based_on"
 	)
@@ -377,13 +380,12 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 	slabs = get_gratuity_rule_slabs(gratuity_rule)
 	slab_found = False
 	year_left = experience
-	based_on=calculate_gratuity_amount_based_on
-	if experience > 5:
-		slabs = get_gratuity_rule_slabs('Rule Under Limited Contract (UAE)')
-	#	based_on="Current Slab" Rule Under Limited Contract (UAE)
+	
+	
+	
 	
 	for slab in slabs:
-		if based_on == "Current Slab":
+		if calculate_gratuity_amount_based_on == "Current Slab":
 			slab_found, gratuity_amount = calculate_amount_based_on_current_slab(
 				slab.from_year,
 				slab.to_year,
@@ -394,7 +396,7 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 			if slab_found:
 				break
 
-		elif based_on == "Sum of all previous slabs":
+		elif calculate_gratuity_amount_based_on == "Sum of all previous slabs":
 			if slab.to_year == 0 and slab.from_year == 0:
 				#gratuity_amount += (
 				#	year_left * total_applicable_components_amount * slab.fraction_of_applicable_earnings
