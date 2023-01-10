@@ -64,7 +64,7 @@ def getorderdetails(payment):
 					amount =frappe.db.get_value('Purchase Order', purchase_order.purchase_order, 'total')	
 					workflow=frappe.db.sql(""" select content,modified_by from `tabComment` where reference_doctype='Purchase Order' and comment_type='Workflow' and reference_name='{0}' order by creation desc limit 0,1""".format(purchase_order.purchase_order),as_dict=1,debug=0)
 					if workflow:
-						user,name=frappe.db.get_value('User', {'user':workflow[0].modified_by}, ['name','full_name'])
+						user,name=frappe.db.get_value('User', {'name':workflow[0].modified_by}, ['name','full_name'])
 						status=workflow[0].content
 						data=status
 					data.append({'order':purchase_order.purchase_order,'name':name,'user_name':user,'status':status,'amount':amount})
@@ -75,7 +75,7 @@ def getorderdetails(payment):
 				amount =frappe.db.get_value('Purchase Order', refe.reference_name, 'total')	
 				workflow=frappe.db.sql(""" select content,modified_by from `tabComment` where reference_doctype='Purchase Order' and comment_type='Workflow' and reference_name='{0}' order by creation desc limit 0,1""".format(refe.reference_name),as_dict=1,debug=0)
 				if workflow:
-					user,name=frappe.db.get_value('User', {'user':workflow[0].modified_by}, ['name','full_name'])
+					user,name=frappe.db.get_value('User', {'name':workflow[0].modified_by}, ['name','full_name'])
 					status=workflow[0].content
 					data=status
 				data.append({'order':refe.reference_name,'name':name,'user_name':user,'status':status,'amount':amount})
