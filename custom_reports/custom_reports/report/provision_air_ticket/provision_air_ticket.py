@@ -248,7 +248,7 @@ def get_data(conditions,filters):
 					amount_used+=float(usedno)*ticket.ticket_fare
 					amount_balance+=bal*ticket.ticket_fare
 
-		elif(getdate(processing_month)>emp.openning_entry_date):
+		elif(emp.openning_entry_date!=None and getdate(processing_month)>emp.openning_entry_date):
 			totaldays=0
 			
 			totaldays=frappe.utils.date_diff(processing_month,emp.openning_entry_date)+1					
