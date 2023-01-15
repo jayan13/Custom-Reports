@@ -409,7 +409,7 @@ def employee_list(department,date_from,date_to):
 				d=add_days(getdate(dayarray[x]),1).weekday()
 				cwday=str(wekkday[d])
 				rosshift=empshift
-				rosdays=''
+				rosdays='P'
 				weekf=''
 				if(daylist):
 					for dayl in daylist:
@@ -446,6 +446,8 @@ def employee_list(department,date_from,date_to):
 						
 					elif(attant[0].status=='Absent'):
 						rosdays='A'
+					elif(attant[0].status=='Present'):
+						rosdays='P'
 
 				ids=str(em.name)+'_'+str(dayarray[x])
 				body+='<select name="shift[]" id="'+ids+'_s" class="chkcng" style="margin-bottom:6px;"><option value=""></option>'
