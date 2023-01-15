@@ -92,7 +92,8 @@ app_license = "MIT"
 # }
 override_doctype_class = {
 	'Leave Application':'custom_reports.leave.LeaveApplicationCustom',
-	'Payroll Entry':'custom_reports.override.PayrollEntryCustom',	
+	'Payroll Entry':'custom_reports.override.PayrollEntryCustom',
+	'Compensatory Leave Request':'custom_reports.compensatory_leave.CompensatoryLeaveRequestCustom'	
  }
 # Document Events
 # ---------------
@@ -114,7 +115,7 @@ doc_events = {
     },
 	"Delivery Note" : {        
         "before_insert": "custom_reports.api.update_cost_acc",
-    },
+    },	
 }
 # Scheduled Tasks
 # ---------------
