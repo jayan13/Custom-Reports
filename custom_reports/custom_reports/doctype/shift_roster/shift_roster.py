@@ -359,8 +359,8 @@ def employee_list(department,date_from,date_to):
 	if emp:
 		com_holyday=frappe.db.get_value('Company',emp[0].company,'default_holiday_list')
 		head+='<tr>'
-		head+='<th style="width: 90px;border: 1px solid #d3c2c2;padding: 2px;text-align: center;">Employee</th>'
-		head+='<th style="width: 200px;border: 1px solid #d3c2c2;padding: 2px;text-align: center;">Name</th>'
+		head+='<th style="height: 45px;width: 200px;border: 1px solid #d3c2c2;padding: 2px;text-align: center;position: absolute; left: 0;  top: auto;">Name</th>'
+		head+='<th style="width: 90px;border: 1px solid #d3c2c2;padding: 2px;text-align: center;position:">Employee</th>'		
 		head+='<th style="width: 100px;border: 1px solid #d3c2c2;padding: 2px;text-align: center;">Default Shift <br> Weekly Off</th>'
 		date_from=add_days(getdate(date_from),-1)
 		daycount=date_diff(getdate(date_to),getdate(date_from))
@@ -400,8 +400,8 @@ def employee_list(department,date_from,date_to):
 			rostdays=get_roster_days(em.name,date_from,date_to)
 			#frappe.msgprint(str(rostdays))
 			body+='<tr>'
-			body+='<td style="width: 90px;border: 1px solid #d3c2c2;padding:4px;"><input type="text" style="width:120px;" name="employee[]" value="'+str(em.name)+'" readonly class="emp" /></td>'
-			body+='<td style="width: 90px;border: 1px solid #d3c2c2;padding:4px;">'+str(em.employee_name)+'</td>'
+			body+='<td style="height: 56px;width: 200px;border: 1px solid #d3c2c2;padding:4px;position: absolute; left: 0;  top: auto;">'+str(em.employee_name)+'</td>'
+			body+='<td style="width: 90px;border: 1px solid #d3c2c2;padding:4px;position: "><input type="text" style="width:120px;" name="employee[]" value="'+str(em.name)+'" readonly class="emp" /></td>'
 			body+='<td style="width: 90px;border: 1px solid #d3c2c2;padding:4px;">'+str(em.default_shift)+'<br>'+str(em.weekly_off)+','+str(em.weekly_off_2)+'</td>'
 			for x in range(daycount):
 				#dayarray[x]
@@ -472,7 +472,7 @@ def employee_list(department,date_from,date_to):
 				body+='</select></td>'
 
 			body+='</tr>'
-	html='<div style="overflow: scroll;"><table style="width: max-content;">'+head+body+'</table></div>'
+	html='<div style="overflow: scroll;margin-left:200px;"><table style="width: max-content;">'+head+body+'</table></div>'
 	return html
 
 def employee_shift(emp,date_from,date_to,def_holy=''):
