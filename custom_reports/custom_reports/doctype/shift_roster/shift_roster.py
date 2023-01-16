@@ -344,7 +344,7 @@ def mark_attendance(shift_roster):
 
 @frappe.whitelist()
 def employee_list(department,date_from,date_to):
-	emp=frappe.db.get_all('Employee',filters={'department': department},fields=['name','employee_name','default_shift','weekly_off','weekly_off_2','holiday_list'],order_by='date_of_joining')
+	emp=frappe.db.get_all('Employee',filters={'department': department},fields=['name','employee_name','default_shift','weekly_off','weekly_off_2','holiday_list'],order_by='name')
 	html='Employee Not Found'
 	head=''
 	body=''		
