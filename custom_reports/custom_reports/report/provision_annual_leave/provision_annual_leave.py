@@ -565,7 +565,7 @@ def get_provision_rule(company,processing_month='',all=1):
 def get_leave_no(emp,processing_month):
 	
 	set = frappe.db.sql(""" select new_leaves_allocated,unused_leaves from `tabLeave Allocation` where employee='{0}' 
-	and '{1}' between from_date and to_date """.format(emp,processing_month),as_dict=1,debug=0)
+	and '{1}' between from_date and to_date and leave_type='Annual Leave' """.format(emp,processing_month),as_dict=1,debug=0)
 	if not set:
 		return
 	return set[0].new_leaves_allocated
