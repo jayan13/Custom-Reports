@@ -430,7 +430,7 @@ def employee_list(department,date_from,date_to):
 
 
 				attant=frappe.db.sql(""" select status,leave_type from `tabAttendance` where docstatus=1 and 
-					attendance_date='{1}' and status in ('On Leave','Absent') and employee='{1}' order by creation desc""".format(dayarray[x],em.name), as_dict=1,debug=0)
+					attendance_date='{0}' and status in ('On Leave','Absent') and employee='{1}' order by creation desc""".format(dayarray[x],em.name), as_dict=1,debug=0)
 				if attant:
 					if attant[0].status=='On Leave':
 						if attant[0].leave_type=='Compassionate leave':
