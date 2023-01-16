@@ -503,7 +503,7 @@ def get_holydays(holy_day):
 	return
 def get_roster_days(emp,date_from,date_to):
 
-	ros=frappe.db.sql(""" SELECT e.day,e.day_type,e.shift_type from `tabEmployee Shift Roster` e left join `tabShift Roster` s on s.docstatus=1 and s.name=e.shift_roster where e.employee='{0}' and (('{1}' between date_from and date_to) or ('{2}' between date_from and date_to)) """.format(emp,date_from,date_to), as_dict=1,debug=0)
+	ros=frappe.db.sql(""" SELECT day,day_type,shift_type from `tabEmployee Shift Roster`  where employee='{0}' and day between '{1}' and '{2}' """.format(emp,date_from,date_to), as_dict=1,debug=0)
 	if ros:
 		for rs in ros:
 			rs.day=str(rs.day)
