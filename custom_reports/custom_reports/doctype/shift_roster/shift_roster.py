@@ -220,7 +220,7 @@ def mark_attendance(shift_roster):
 							'work_from_date':rsday.day,
 							'work_end_date':rsday.day,
 							'employee':rsday.employee,
-							'reason':'Compensatory Off',
+							'reason':'Off day or holiday Working',
 							'shift_roster':rsday.shift_roster,
 							})
 					doc.insert()
@@ -318,7 +318,7 @@ def mark_attendance(shift_roster):
 							'employee':rsday.employee,
 							'status':'On Leave',
 							'leave_type':'Compassionate leave',
-							'description':'Compassionate leavef',
+							'description':'Compassionate leave',
 							'department':emp.department,
 							'company':emp.company,						
 							'shift_roster':rsday.shift_roster,
@@ -338,7 +338,7 @@ def mark_attendance(shift_roster):
 					doc.insert()
 					doc.submit()
 		frappe.db.commit()
-
+	frappe.db.set_value('Shift Roster',shift_roster,'attendance_marked',1)
 	return "marked"		
 
 

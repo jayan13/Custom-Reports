@@ -130,8 +130,9 @@ frappe.ui.form.on('Shift Roster', {
 			},
 			callback: function(p) {
 				if(p.message) {					
-
-				frappe.msgprint("Attendance marked ");
+				frm.doc.attendance_marked='1';
+				frm.refresh_field('attendance_marked');
+				frappe.msgprint("Attendance marked");
 					
 				}
 			}
