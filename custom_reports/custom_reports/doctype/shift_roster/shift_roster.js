@@ -50,7 +50,18 @@ frappe.ui.form.on('Shift Roster', {
 	},
 	get_employees:function(frm)
 	{
-		
+		if(frm.doc.department=='')
+		{
+			frappe.throw(" Please select department")
+		}
+		if(frm.doc.date_from=='')
+		{
+			frappe.throw(" Please select date from")
+		}
+		if(frm.doc.date_to=='')
+		{
+			frappe.throw(" Please select date to")
+		}
 		frappe.call({
 			method: "custom_reports.custom_reports.doctype.shift_roster.shift_roster.employee_list",
 			args: {					

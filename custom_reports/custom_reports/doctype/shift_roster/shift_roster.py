@@ -359,9 +359,9 @@ def employee_list(department,date_from,date_to):
 	if emp:
 		com_holyday=frappe.db.get_value('Company',emp[0].company,'default_holiday_list')
 		head+='<tr>'
-		head+='<th style="height: 45px;width: 200px;border: 1px solid #d3c2c2;padding: 2px;text-align: center;position: absolute; left: 0;  top: auto;">Name</th>'
-		head+='<th style="width: 90px;border: 1px solid #d3c2c2;padding: 2px;text-align: center;position:">Employee</th>'		
-		head+='<th style="width: 100px;border: 1px solid #d3c2c2;padding: 2px;text-align: center;">Default Shift <br> Weekly Off</th>'
+		head+='<th style="width: 200px;border: 1px solid #d3c2c2;padding: 2px;text-align: center;position: sticky;top: 0;left: 0;  z-index: 2;background: white;">Name</th>'
+		head+='<th style="width: 90px;border: 1px solid #d3c2c2;padding: 2px;text-align: center;position: sticky;top: 0;  z-index: 1;background: white;">Employee</th>'		
+		head+='<th style="width: 100px;border: 1px solid #d3c2c2;padding: 2px;text-align: center;position: sticky;top: 0;  z-index: 1;background: white;">Default Shift <br> Weekly Off</th>'
 		date_from=add_days(getdate(date_from),-1)
 		daycount=date_diff(getdate(date_to),getdate(date_from))
 		
@@ -370,7 +370,7 @@ def employee_list(department,date_from,date_to):
 			date_from=add_days(getdate(date_from),1)
 			dayarray.append(str(date_from))
 			d=add_days(getdate(date_from),1).weekday()			
-			head+='<th style="width: 90px;border: 1px solid #d3c2c2;padding: 2px;text-align: center;"><input type="hidden" name="dat[]" value="'+str(date_from)+'" class="dat"/>'+str(formatdate(date_from))+'<br>'+str(wekkday[d])+'</th>'
+			head+='<th style="width: 90px;border: 1px solid #d3c2c2;padding: 2px;text-align: center;position: sticky;top: 0;  z-index: 1;background: white;"><input type="hidden" name="dat[]" value="'+str(date_from)+'" class="dat"/>'+str(formatdate(date_from))+'<br>'+str(wekkday[d])+'</th>'
 		head+='</tr>'
 		
 		for em in emp:
@@ -400,8 +400,8 @@ def employee_list(department,date_from,date_to):
 			rostdays=get_roster_days(em.name,date_from,date_to)
 			#frappe.msgprint(str(rostdays))
 			body+='<tr>'
-			body+='<td style="height: 56px;width: 200px;border: 1px solid #d3c2c2;padding:4px;position: absolute; left: 0;  top: auto;">'+str(em.employee_name)+'</td>'
-			body+='<td style="width: 90px;border: 1px solid #d3c2c2;padding:4px;position: "><input type="text" style="width:120px;" name="employee[]" value="'+str(em.name)+'" readonly class="emp" /></td>'
+			body+='<td style="width: 200px;border: 1px solid #d3c2c2;padding:4px;position: sticky;  left: 0;  background: white;  z-index: 1;">'+str(em.employee_name)+'</td>'
+			body+='<td style="width: 90px;border: 1px solid #d3c2c2;padding:4px;"><input type="text" style="width:120px;" name="employee[]" value="'+str(em.name)+'" readonly class="emp" /></td>'
 			body+='<td style="width: 90px;border: 1px solid #d3c2c2;padding:4px;">'+str(em.default_shift)+'<br>'+str(em.weekly_off)+','+str(em.weekly_off_2)+'</td>'
 			for x in range(daycount):
 				#dayarray[x]
@@ -428,21 +428,26 @@ def employee_list(department,date_from,date_to):
 							rosshift=rst.shift_type
 							rosdays=rst.day_type
 
-				
+
 				attant=frappe.db.sql(""" select status,leave_type from `tabAttendance` where docstatus=1 and 
 					attendance_date='{1}' and status in ('On Leave','Absent') and employee='{1}' order by creation desc""".format(dayarray[x],em.name), as_dict=1,debug=0)
 				if attant:
 					if attant[0].status=='On Leave':
 						if attant[0].leave_type=='Compassionate leave':
 							rosdays='CO.L'
+							rosshift='OFF'
 						if attant[0].leave_type=='Compensatory Off':
 							rosdays='RO'
+							rosshift='OFF'
 						if attant[0].leave_type=='Annual Leave':
 							rosdays='AL'
+							rosshift='OFF'
 						if attant[0].leave_type=='Sick Leave':
 							rosdays='SL'
+							rosshift='OFF'
 						if attant[0].leave_type=='Leave Without Pay':
 							rosdays='UL'
+							rosshift='OFF'
 						
 					elif(attant[0].status=='Absent'):
 						rosdays='A'
@@ -472,7 +477,7 @@ def employee_list(department,date_from,date_to):
 				body+='</select></td>'
 
 			body+='</tr>'
-	html='<div style="overflow: scroll;margin-left:200px;"><table style="width: max-content;">'+head+body+'</table></div>'
+	html='<div style="overflow: scroll;"><table style="width: max-content;table-layout: fixed;">'+head+body+'</table></div>'
 	return html
 
 def employee_shift(emp,date_from,date_to,def_holy=''):
