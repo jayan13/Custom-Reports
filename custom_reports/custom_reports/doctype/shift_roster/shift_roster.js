@@ -134,20 +134,27 @@ frappe.ui.form.on('Shift Roster', {
 	},
 	mark_attendance:function(frm)
 	{
-		frappe.call({
-			method: "custom_reports.custom_reports.doctype.shift_roster.shift_roster.mark_attendance",
-			args: {					
-				shift_roster: frm.doc.name		
-			},
-			callback: function(p) {
-				if(p.message) {					
-				frm.doc.attendance_marked='1';
-				frm.refresh_field('attendance_marked');
-				frappe.msgprint("Attendance marked");
-					
-				}
-			}
-		})
+
+		frappe.confirm('Are you sure you want to mark Attendance?',
+			() => {
+				frappe.call({
+					method: "custom_reports.custom_reports.doctype.shift_roster.shift_roster.mark_attendance",
+					args: {					
+						shift_roster: frm.doc.name		
+					},
+					callback: function(p) {
+						if(p.message) {					
+						frm.doc.attendance_marked='1';
+						frm.refresh_field('attendance_marked');
+						frappe.msgprint("Attendance marked");
+							
+						}
+					}
+				})
+			}, () => {
+				// action to perform if No is selected
+			})
+		
 	},
 	
 });
