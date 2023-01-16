@@ -189,11 +189,15 @@ def mark_attendance(shift_roster):
 	if ros_days:
 		for rsday in ros_days:
 			
-			if rsday.day_type in ['OW','AL','UL','A','P','SL','RO','CO.L']:
-				Attendance=frappe.db.get_value('Attendance',{'employee':rsday.employee,'attendance_date':rsday.day,'docstatus':'1'},'name')
-				if Attendance:
-					doc = frappe.get_doc('Attendance', Attendance)
-					doc.cancel() 
+			if rsday.day_type in ['OW','UL','A','P','SL','RO','CO.L','AL']:
+				attendance=frappe.db.get_value('Attendance',{'employee':rsday.employee,'attendance_date':rsday.day,'docstatus':'1'},['name','status'],as_dict=1)
+				if attendance:
+					if attendance.status=='On Leave' and rsday.day_type in ['SL','RO','CO.L','AL']:
+						continue
+					else:
+						doc = frappe.get_doc('Attendance', attendance.name)
+						doc.cancel()
+						 
 
 			emp=frappe.db.get_value('Employee',{'name':rsday.employee},['department','company'],as_dict=1)
 			#Attendance shift attendance_date status leave_type description employee company shift_roster department				
