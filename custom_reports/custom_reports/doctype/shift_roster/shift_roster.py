@@ -477,7 +477,7 @@ def employee_list(department,date_from,date_to):
 				body+='</select></td>'
 
 			body+='</tr>'
-	html='<div style="overflow: scroll;height:500px;"><table style="width: max-content;table-layout: fixed;">'+head+body+'</table></div>'
+	html='<div style="overflow: scroll;max-height:500px;"><table style="width: max-content;table-layout: fixed;">'+head+body+'</table></div>'
 	return html
 
 def employee_shift(emp,date_from,date_to,def_holy=''):
