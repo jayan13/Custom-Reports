@@ -93,7 +93,7 @@ def get_data(conditions,filters):
 				slipname.append(slp.name)
 				gross_pay+=float(slp.gross_pay or 0)
 				total_deduction+=float(slp.total_deduction or 0)
-				tot_ern+=float(slp.gross_pay or 0)+float(slp.total_deduction or 0)
+				tot_ern+=float(slp.net_pay or 0)
 			if len(slipname):
 				slips="','".join([str(elem) for elem in slipname])
 			parent_department_rev_tot+=tot_ern
