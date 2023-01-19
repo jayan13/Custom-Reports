@@ -407,7 +407,7 @@ def employee_list(department,date_from,date_to):
 			#frappe.msgprint(str(rostdays))
 			body+='<tr>'
 			body+='<td style="width: 200px;border: 1px solid #d3c2c2;padding:4px;position: sticky;  left: 0;  background: white;  z-index: 1;">'+str(em.employee_name)+'</td>'
-			body+='<td style="width: 90px;border: 1px solid #d3c2c2;padding:4px;"><input type="text" style="width:120px;" name="employee[]" value="'+str(em.name)+'" readonly class="emp" /></td>'
+			body+='<td style="width: 90px;border: 1px solid #d3c2c2;padding:4px;"><input type="text" style="width:120px;" name="employee[]" value="'+str(em.name)+'"  class="emp" /></td>'
 			body+='<td style="width: 90px;border: 1px solid #d3c2c2;padding:4px;">'+str(em.default_shift)+'<br>'+str(em.weekly_off)+','+str(em.weekly_off_2)+'</td>'
 			for x in range(daycount):
 				#dayarray[x]
