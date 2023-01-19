@@ -112,7 +112,7 @@ def get_data(conditions,filters):
 				dt.update({'gross_pay':0})
 				dt.update({'tot_ern':tot_ern})
 				dt.update({'total_deduction':total_deduction})
-				dt.update({'balance':0})
+				dt.update({'balance':er.amount})
 				dt.update({'department_tot':gross_pay})
 				dt.update({'parent_department_tot':parent_department_tot})
 				dt.update({'parent_department_rev_tot':parent_department_rev_tot})
@@ -122,6 +122,7 @@ def get_data(conditions,filters):
 		if len(deductions):	
 			for de in deductions:
 				dt={}
+				bal=float(er.amount)*-1
 				dt.update({'particular':de.salary_component})
 				dt.update({'dr':0})
 				dt.update({'cr':de.amount})
@@ -130,7 +131,7 @@ def get_data(conditions,filters):
 				dt.update({'gross_pay':0})
 				dt.update({'tot_ern':tot_ern})
 				dt.update({'total_deduction':total_deduction})
-				dt.update({'balance':0})
+				dt.update({'balance':bal})
 				dt.update({'department_tot':gross_pay})
 				dt.update({'parent_department_tot':parent_department_tot})
 				dt.update({'parent_department_rev_tot':parent_department_rev_tot})
