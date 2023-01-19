@@ -122,7 +122,7 @@ def get_data(conditions,filters):
 		if len(deductions):	
 			for de in deductions:
 				dt={}
-				bal=float(er.amount)*-1
+				bal=float(de.amount)*-1
 				dt.update({'particular':de.salary_component})
 				dt.update({'dr':0})
 				dt.update({'cr':de.amount})
