@@ -86,7 +86,7 @@ def get_data(conditions,filters):
 			parent_department_ded_tot=0
 			
 
-		slip=frappe.db.sql(""" select name,gross_pay from `tabSalary Slip` where company='{0}' and department='{1}' and posting_date between '{2}' and '{3}' """.format(company,dept.name,date_from,date_to),as_dict=1,debug=0)
+		slip=frappe.db.sql(""" select name,gross_pay,total_deduction,net_pay from `tabSalary Slip` where company='{0}' and department='{1}' and posting_date between '{2}' and '{3}' """.format(company,dept.name,date_from,date_to),as_dict=1,debug=0)
 		if slip:
 			slipname=[]
 			for slp in slip:
