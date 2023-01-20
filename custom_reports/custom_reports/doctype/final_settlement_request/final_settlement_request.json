@@ -51,8 +51,10 @@
   {
    "fieldname": "employee",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Employee",
-   "options": "Employee"
+   "options": "Employee",
+   "reqd": 1
   },
   {
    "fetch_from": "employee.employee_name",
@@ -64,14 +66,18 @@
    "default": "Today",
    "fieldname": "settlement_date",
    "fieldtype": "Date",
-   "label": "Settlement Date"
+   "in_list_view": 1,
+   "label": "Settlement Date",
+   "reqd": 1
   },
   {
    "fetch_from": "employee.relieving_date",
    "fetch_if_empty": 1,
    "fieldname": "relieving_date",
    "fieldtype": "Date",
-   "label": "Relieving Date"
+   "in_list_view": 1,
+   "label": "Relieving Date",
+   "reqd": 1
   },
   {
    "fieldname": "period_worked",
@@ -87,7 +93,9 @@
    "fetch_from": "employee.date_of_joining",
    "fieldname": "date_of_joining",
    "fieldtype": "Date",
-   "label": "Date of Joining"
+   "in_list_view": 1,
+   "label": "Date of Joining",
+   "reqd": 1
   },
   {
    "fieldname": "eligible_for_rehire",
@@ -274,7 +282,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-01-20 14:40:04.390940",
+ "modified": "2023-01-20 15:20:19.996205",
  "modified_by": "Administrator",
  "module": "custom reports",
  "name": "Final Settlement Request",
