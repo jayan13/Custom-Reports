@@ -1,0 +1,298 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:SETL-{employee}-{#####}",
+ "creation": "2023-01-16 10:48:11.417892",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "employee",
+  "employee_name",
+  "settlement_date",
+  "relieving_date",
+  "period_worked",
+  "action_taken",
+  "date_of_joining",
+  "eligible_for_rehire",
+  "annual_leave",
+  "balance_extra_hours",
+  "day_off_compensatory",
+  "offshore_compensatory",
+  "column_break_9",
+  "ticket_balance",
+  "ticket_given",
+  "ticket_type",
+  "gratuity_rule",
+  "gratuity_amount",
+  "accured_days",
+  "reason",
+  "remarks",
+  "section_break_21",
+  "allowance_and_deducts",
+  "section_break_23",
+  "settlement_details",
+  "department",
+  "nationality",
+  "designation",
+  "grade",
+  "gross_salary",
+  "company",
+  "ticket_period",
+  "used_leaves",
+  "base_salary",
+  "leave_entitled",
+  "salary_structure",
+  "ticket_used",
+  "ticket_eligible",
+  "total_amount"
+ ],
+ "fields": [
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "label": "Employee Name"
+  },
+  {
+   "default": "Today",
+   "fieldname": "settlement_date",
+   "fieldtype": "Date",
+   "label": "Settlement Date"
+  },
+  {
+   "fetch_from": "employee.relieving_date",
+   "fetch_if_empty": 1,
+   "fieldname": "relieving_date",
+   "fieldtype": "Date",
+   "label": "Relieving Date"
+  },
+  {
+   "fieldname": "period_worked",
+   "fieldtype": "Data",
+   "label": "Period Worked"
+  },
+  {
+   "fieldname": "action_taken",
+   "fieldtype": "Data",
+   "label": "Action Taken"
+  },
+  {
+   "fetch_from": "employee.date_of_joining",
+   "fieldname": "date_of_joining",
+   "fieldtype": "Date",
+   "label": "Date of Joining"
+  },
+  {
+   "fieldname": "eligible_for_rehire",
+   "fieldtype": "Select",
+   "label": "Eligible For Rehire",
+   "options": "Yes\nNo"
+  },
+  {
+   "fieldname": "annual_leave",
+   "fieldtype": "Data",
+   "label": "Annual Leave"
+  },
+  {
+   "fieldname": "balance_extra_hours",
+   "fieldtype": "Data",
+   "label": "Balance Extra Hours"
+  },
+  {
+   "fieldname": "day_off_compensatory",
+   "fieldtype": "Data",
+   "label": "Day Off Compensatory"
+  },
+  {
+   "fieldname": "offshore_compensatory",
+   "fieldtype": "Data",
+   "label": "Offshore Compensatory"
+  },
+  {
+   "fieldname": "reason",
+   "fieldtype": "Data",
+   "label": "Reason"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Text",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "ticket_balance",
+   "fieldtype": "Float",
+   "label": "Ticket Balance"
+  },
+  {
+   "fieldname": "ticket_given",
+   "fieldtype": "Float",
+   "label": "Ticket given"
+  },
+  {
+   "fieldname": "ticket_type",
+   "fieldtype": "Data",
+   "label": "Ticket Type"
+  },
+  {
+   "fieldname": "column_break_9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "gratuity_rule",
+   "fieldtype": "Link",
+   "label": "Gratuity Rule",
+   "options": "Gratuity Rule"
+  },
+  {
+   "fieldname": "gratuity_amount",
+   "fieldtype": "Currency",
+   "label": "Gratuity Amount"
+  },
+  {
+   "fieldname": "section_break_21",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "allowance_and_deducts",
+   "fieldtype": "Table",
+   "label": "Allowance And Deducts",
+   "options": "Allowance And Deducts"
+  },
+  {
+   "fieldname": "section_break_23",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "settlement_details",
+   "fieldtype": "Table",
+   "label": "Settlement Details",
+   "options": "Settlement Details"
+  },
+  {
+   "fieldname": "accured_days",
+   "fieldtype": "Float",
+   "label": "Accured Days"
+  },
+  {
+   "fetch_from": "employee.department",
+   "fieldname": "department",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Department",
+   "options": "Department"
+  },
+  {
+   "fetch_from": "employee.nationality",
+   "fieldname": "nationality",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Nationality"
+  },
+  {
+   "fetch_from": "employee.designation",
+   "fieldname": "designation",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Designation"
+  },
+  {
+   "fetch_from": "employee.grade",
+   "fieldname": "grade",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Grade"
+  },
+  {
+   "fieldname": "gross_salary",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "label": "Gross Salary"
+  },
+  {
+   "fetch_from": "employee.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "ticket_period",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Ticket Period"
+  },
+  {
+   "fieldname": "used_leaves",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Used leaves"
+  },
+  {
+   "fieldname": "base_salary",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Base Salary"
+  },
+  {
+   "fieldname": "leave_entitled",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Leave Entitled"
+  },
+  {
+   "fieldname": "salary_structure",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Salary Structure"
+  },
+  {
+   "fieldname": "ticket_used",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Ticket Used"
+  },
+  {
+   "fieldname": "ticket_eligible",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Ticket Eligible"
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "label": "Total Amount"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2023-01-20 14:40:04.390940",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "Final Settlement Request",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

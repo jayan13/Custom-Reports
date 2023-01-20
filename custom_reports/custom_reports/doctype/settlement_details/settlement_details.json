@@ -1,0 +1,74 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-01-18 15:11:31.039337",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "settlement",
+  "eligible",
+  "applied",
+  "days",
+  "paid_amt",
+  "gen_amt",
+  "narration"
+ ],
+ "fields": [
+  {
+   "fieldname": "settlement",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Settlement"
+  },
+  {
+   "fieldname": "eligible",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Eligible",
+   "options": "Yes\nNo"
+  },
+  {
+   "fieldname": "applied",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Applied",
+   "options": "Yes\nNo"
+  },
+  {
+   "fieldname": "days",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Days"
+  },
+  {
+   "fieldname": "paid_amt",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Paid Amt"
+  },
+  {
+   "fieldname": "gen_amt",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Gen Amt"
+  },
+  {
+   "fieldname": "narration",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Narration"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-01-18 15:11:31.039337",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "Settlement Details",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
