@@ -1,0 +1,98 @@
+# Copyright (c) 2022, alantech and contributors
+# For license information, please see license.txt
+
+import frappe
+from frappe.utils import (
+	add_days,
+	cint,
+	cstr,
+	date_diff,
+	flt,
+	formatdate,
+	get_link_to_form,
+	get_datetime,
+	get_first_day,
+	getdate,
+	money_in_words,
+	rounded,cstr
+)
+from erpnext.hr.utils import get_holiday_dates_for_employee
+
+def execute(filters=None):
+	if not filters:
+		filters = {}
+	conditions=get_conditions(filters)
+	return get_columns(filters), get_data(conditions,filters)
+
+def get_columns(filters):
+	date_from=filters.get("date_from")
+	date_to=filters.get("date_to")
+	daycount=date_diff(getdate(date_to),getdate(date_from))
+	columns = [
+		{
+		"fieldname": "employee",
+		"fieldtype": "Link",
+		"label": "Employee",
+		"options": "Employee",	
+		"width": 200
+		},			
+		{
+		"fieldname": "department",
+		"fieldtype": "Link",
+		"label": "Department",
+		"options": "Department",	
+		"width": 150
+		}
+ 	 ]
+	date_from=add_days(getdate(date_from),-1)
+	for x in range(daycount):			
+		date_from=add_days(getdate(date_from),1)
+		label=str(date_from).replace('-','_')		
+		columns.extend([
+				{
+				"label": cstr(formatdate(date_from)),
+				"fieldname": label,
+				"fieldtype": "Data",
+				"width": 60
+				}
+				])
+
+	return columns
+
+def get_data(conditions,filters):
+	employee=frappe.db.sql(""" select r.employee,s.department,e.employee_name from `tabEmployee Shift Roster` r left join `tabShift Roster` s on r.shift_roster=s.name left join `tabEmployee` e on e.name=r.employee where  %s group by r.employee order by r.employee"""% (conditions),as_dict=1,debug=0)
+	
+	for emp in employee:
+
+		cond=conditions+" and r.employee= '{0}' ".format(emp.employee)
+		attn=frappe.db.sql(""" select r.day,r.day_type from `tabEmployee Shift Roster` r left join `tabShift Roster` s on r.shift_roster=s.name where  %s  order by r.day"""% (cond),as_dict=1,debug=0)
+		for at in attn:
+			label=str(at.day).replace('-','_')
+			emp.update({label:at.day_type})
+
+	return employee
+
+def get_conditions(filters):
+	
+	conditions =" 1=1 "
+	if filters.get("company"):
+		company=filters.get("company")
+		conditions += " and s.company= '{0}' ".format(company)
+	if filters.get("department"):
+		department=filters.get("department")
+		conditions += " and s.department= '{0}' ".format(department)			
+	if filters.get("date_from"):
+		date_from=filters.get("date_from")
+		conditions += "  and r.day >= '{0}'".format(date_from)
+	if filters.get("date_to"):
+		date_to=filters.get("date_to")
+		conditions += "  and r.day <= '{0}'".format(date_to)
+	if filters.get("employee"):
+		employee=filters.get("employee")
+		conditions += "  and r.employee = '{0}'".format(employee)
+
+	return conditions
+
+
+	
+
