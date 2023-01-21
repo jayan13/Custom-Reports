@@ -11,11 +11,13 @@ frappe.ui.form.on('Final Settlement Request', {
 				
 			}
 		});
-		frm.doc.allowance_and_deducts.forEach(function(d) { 
-			
-				tot+=Math.round(d.currency_amt,2);
-			
-		});
+		if(frm.doc.allowance_and_deducts){
+			frm.doc.allowance_and_deducts.forEach(function(d) { 
+				
+					tot+=Math.round(d.currency_amt,2);
+				
+			});
+		}
 		frm.doc.total_amount=tot;
 	}, 
 	employee:function(frm)
@@ -207,8 +209,8 @@ frappe.ui.form.on('Final Settlement Request', {
 				method: "custom_reports.api.get_year_month_day",
 				args: {
 					emp:frm.doc.employee,					
-					date_from: frm.doc.relieving_date,
-					date_to: frm.doc.date_of_joining,					
+					date_from: frm.doc.date_of_joining,
+					date_to:frm.doc.relieving_date,					
 				},
 				callback: function (r) {
 					if (r.message) {						

@@ -124,7 +124,7 @@ def get_ticket_issued(emp,from_date,to_date):
 
 @frappe.whitelist()
 def get_ticket_given(emp,from_date,to_date):
-	empy=frappe.db.get_value('Employee',{'name':emp},['openning_entry_date','ticket_period','ticket_price','opening_ticket_balance','opening_ticket_balance_amount','used_tickets','opening_ticket_amount_used','no_of_tickets_eligible','ticket_provision_date','opening_absent'],as_dict=1,debug=0)
+	empy=frappe.db.get_value('Employee',{'name':emp},['openning_entry_date','date_of_joining','ticket_period','ticket_price','opening_ticket_balance','opening_ticket_balance_amount','used_tickets','opening_ticket_amount_used','no_of_tickets_eligible','ticket_provision_date','opening_absent'],as_dict=1,debug=0)
 	ticket_per_month=0
 	amount_balance=0
 	usedno=0
@@ -149,11 +149,12 @@ def get_ticket_given(emp,from_date,to_date):
 			actual_worked+=total_days-absents
 			balance+=float(empy.opening_ticket_balance)
 			amount_balance+=float(empy.opening_ticket_balance_amount)
-			accrued+=round(float(empy.opening_ticket_balance)+float(emp.used_tickets),3)
-			amount_accrued+=round(empy.opening_ticket_amount_used+emp.opening_ticket_balance_amount,2)
+			accrued+=round(float(empy.opening_ticket_balance)+float(empy.used_tickets),3)
+			amount_accrued+=round(empy.opening_ticket_amount_used+empy.opening_ticket_balance_amount,2)
 			used+=float(empy.used_tickets)
 			amount_used+=float(empy.opening_ticket_amount_used)
 			ticket_price=empy.ticket_price
+			#frappe.msgprint(str(accrued))
 	tickets=get_tickect_setting(emp)
 	if tickets:
 		for ticket in tickets:
@@ -273,8 +274,8 @@ def get_year_month_day(emp,date_from,date_to):
 	
 	from dateutil import relativedelta
 
-	date1 = getdate(date_to)
-	date2 = getdate(date_from)
+	date1 = getdate(date_from)
+	date2 = getdate(date_to)
 
 	diff = relativedelta.relativedelta(date2, date1)
 
@@ -295,6 +296,7 @@ def get_annual_leaveamount(emp,reval_date):
 		provrule=rule.name
 	applicable_earnings_component=get_applicable_components_annual(provrule)
 	sal=get_total_applicable_component_amount(emp, applicable_earnings_component, reval_date)
+
 	gross_salary=get_gross_salary(emp,reval_date)
 	tick=frappe.db.sql(""" select periodical,no_of_ticket_eligible from `tabEmployee Ticket Settings` where employee='%s' and docstatus='1'  order by from_date desc"""% (emp),as_dict=1,debug=0)
 	if tick:

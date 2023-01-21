@@ -925,7 +925,7 @@ def get_remaining_leaves(
 	
 	if allocation.leave_type=='Annual Leave':
 		
-		totalday=date_diff(nowdate(),getdate(allocation.from_date))+1
+		totalday=date_diff(getdate(date),getdate(allocation.from_date))+1
 		if totalday:
 			opabs=0
 			absent=getabsents(allocation.employee,opabs,allocation.from_date,allocation.to_date)
