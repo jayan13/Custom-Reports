@@ -44,19 +44,24 @@ def get_columns(filters):
 		"width": 150
 		}
  	 ]
+	wekkday=['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
 	date_from=add_days(getdate(date_from),-1)
-	for x in range(daycount):			
+	for x in range(daycount):
+					
 		date_from=add_days(getdate(date_from),1)
+		d=add_days(getdate(date_from),1).weekday()
+		cwday=cstr(formatdate(date_from))+'<br>'+str(wekkday[d])
 		label=str(date_from).replace('-','_')		
 		columns.extend([
 				{
-				"label": cstr(formatdate(date_from)),
+				"label": cwday,
 				"fieldname": label,
 				"fieldtype": "Data",
 				"width": 60
 				}
 				])
 
+	
 	return columns
 
 def get_data(conditions,filters):
