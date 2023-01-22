@@ -27,6 +27,7 @@ def execute(filters=None):
 def get_columns(filters):
 	date_from=filters.get("date_from")
 	date_to=filters.get("date_to")
+	date_from=add_days(getdate(date_from),-1)
 	daycount=date_diff(getdate(date_to),getdate(date_from))
 	columns = [
 		{
@@ -35,17 +36,10 @@ def get_columns(filters):
 		"label": "Employee",
 		"options": "Employee",	
 		"width": 200
-		},			
-		{
-		"fieldname": "department",
-		"fieldtype": "Link",
-		"label": "Department",
-		"options": "Department",	
-		"width": 150
 		}
  	 ]
 	wekkday=['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
-	date_from=add_days(getdate(date_from),-1)
+	
 	for x in range(daycount):
 					
 		date_from=add_days(getdate(date_from),1)
@@ -65,7 +59,7 @@ def get_columns(filters):
 	return columns
 
 def get_data(conditions,filters):
-	employee=frappe.db.sql(""" select r.employee,s.department,e.employee_name from `tabEmployee Shift Roster` r left join `tabShift Roster` s on r.shift_roster=s.name left join `tabEmployee` e on e.name=r.employee where  %s group by r.employee order by r.employee"""% (conditions),as_dict=1,debug=0)
+	employee=frappe.db.sql(""" select r.employee,e.employee_name from `tabEmployee Shift Roster` r left join `tabShift Roster` s on r.shift_roster=s.name left join `tabEmployee` e on e.name=r.employee where  %s group by r.employee order by r.employee"""% (conditions),as_dict=1,debug=0)
 	
 	for emp in employee:
 
