@@ -337,6 +337,12 @@ class SalarySlipCustom(SalarySlip):
 		self.leave_without_pay = lwp
 		self.total_working_days = working_days
 
+		annual_days = self.get_annual_days(
+			joining_date, relieving_date, include_holidays_in_total_working_days
+		)
+		
+		self.annual_leave = annual_days
+
 		payment_days = self.get_payment_days(
 			joining_date, relieving_date, include_holidays_in_total_working_days
 		)
@@ -358,11 +364,7 @@ class SalarySlipCustom(SalarySlip):
 		else:
 			self.payment_days = 0
 
-		annual_days = self.get_annual_days(
-			joining_date, relieving_date, include_holidays_in_total_working_days
-		)
-
-		self.annual_leave = annual_days
+		
 
 	def get_unmarked_days(self, include_holidays_in_total_working_days):
 		unmarked_days = self.total_working_days
@@ -453,7 +455,7 @@ class SalarySlipCustom(SalarySlip):
 		annualday=frappe.db.sql(""" select from_date,to_date,total_leave_days,half_day_date,half_day from `tabLeave Application` 
 		where docstatus=1 and leave_type='Annual Leave' and salary_paid_in_advance=1 
 		and employee='{0}' and to_date >= '{1}' and from_date <= '{2}' """.format(self.employee,start_date, end_date),as_dict=1)
-
+		annual_leave_advanced_paid=0
 		if annualday:
 			for annual in annualday:
 				pdays=0
@@ -476,7 +478,9 @@ class SalarySlipCustom(SalarySlip):
 					pdays=date_diff(end, start) + 1
 				
 				payment_days-=pdays
-		# custom end 
+				annual_leave_advanced_paid+=pdays
+		# custom end
+		self.annual_leave_advanced_paid=annual_leave_advanced_paid 
 		return payment_days
 	# custom start
 	def get_annual_days(self, joining_date, relieving_date, include_holidays_in_total_working_days):
@@ -1268,14 +1272,28 @@ class SalarySlipCustom(SalarySlip):
 				(flt(row.additional_amount) * flt(self.payment_days) / cint(self.total_working_days)),
 				row.precision("additional_amount"),
 			)
-			amount = (
-				flt(
-					(flt(row.default_amount) * flt(self.payment_days) / cint(self.total_working_days)),
-					row.precision("amount"),
-				)
-				+ additional_amount
-			)
+			#custom
+			pay_days=self.payment_days
+			if row.salary_component in ['House rent allowance']:
+				pay_days=self.payment_days+self.leave_without_pay
+			
+			if row.salary_component in ['Leave Salary']:
+				if self.annual_leave > 0:				
+					pay_days=self.annual_leave
+				else:
+					pay_days=0
 
+			if pay_days > 0:	
+				amount = (
+					flt(
+						(flt(row.default_amount) * flt(pay_days) / cint(self.total_working_days)),
+						row.precision("amount"),
+					)
+					+ additional_amount
+				)
+			else:
+				amount=flt(additional_amount)
+				#------ custom end --------
 		elif (
 			not self.payment_days
 			and row.salary_component != timesheet_component
