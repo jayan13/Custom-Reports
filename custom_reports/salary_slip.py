@@ -504,7 +504,7 @@ class SalarySlipCustom(SalarySlip):
 				frappe.throw(_("Employee relieved on {0} must be set as 'Left'").format(relieving_date))
 
 		annualday=frappe.db.sql(""" select from_date,to_date,total_leave_days,half_day_date,half_day from `tabLeave Application` 
-		where docstatus=1 and leave_type='Annual Leave' and salary_paid_in_advance!=1  and employee='{0}' and to_date >= '{1}' and from_date <= '{2}' """.format(self.employee,start_date, end_date),as_dict=1)
+		where docstatus=1 and leave_type='Annual Leave' and salary_paid_in_advance!=1  and employee='{0}' and to_date >= '{1}' and from_date <= '{2}' """.format(self.employee,start_date, end_date),as_dict=1,debug=1)
 
 		total_annual_leave=0
 		if annualday:			
