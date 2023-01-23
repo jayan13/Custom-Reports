@@ -1272,19 +1272,22 @@ class SalarySlipCustom(SalarySlip):
 				(flt(row.additional_amount) * flt(self.payment_days) / cint(self.total_working_days)),
 				row.precision("additional_amount"),
 			)
-			#custom
-			pay_days=self.payment_days
-			if row.salary_component in ['House rent allowance','Housing Advance(A)','Housing Advance(S)']:
-				pay_days=self.payment_days+self.leave_without_pay
-
-			if row.salary_component in ['Basic','Basic(S)','Basic(A)'] and self.annual_leave > 0:
-				pay_days=self.payment_days-self.annual_leave
+			#custom 
+			provcompo=self.get_provision_components(self.company,self.start_date)
 			
-			if row.salary_component in ['Leave Salary','Leave Salary(S)','Leave Salary(A)']:
-				if self.annual_leave > 0:				
-					pay_days=self.annual_leave
-				else:
-					pay_days=0
+			pay_days=self.payment_days
+
+			if row.salary_component in provcompo and self.annual_leave > 0:
+				pay_days=pay_days-self.annual_leave
+
+			if row.salary_component in ['House rent allowance','Housing Advance(A)','Housing Advance(S)']:
+				pay_days=pay_days+self.leave_without_pay			
+			
+			#if row.salary_component in ['Leave Salary','Leave Salary(S)','Leave Salary(A)']:
+			#	if self.annual_leave > 0:				
+			#		pay_days=self.annual_leave
+			#	else:
+			#		pay_days=0
 
 			if pay_days > 0:	
 				amount = (
@@ -1313,6 +1316,28 @@ class SalarySlipCustom(SalarySlip):
 			amount, additional_amount = rounded(amount or 0), rounded(additional_amount or 0)
 
 		return amount, additional_amount
+
+	def get_provision_components(self,company,processing_month=''):
+		if processing_month=='':
+			set = frappe.db.sql(""" select name,date_from,date_to from `tabProvision Annual Leave Setting` where company='{0}'  order by creation """.format(company,processing_month),as_dict=1,debug=0)
+			if not set:
+				set = frappe.db.sql(""" select name,date_from,date_to from `tabProvision Annual Leave Setting` where company=''  order by creation """.format(processing_month),as_dict=1,debug=0)
+		else:
+			set = frappe.db.sql(""" select name,date_from,date_to from `tabProvision Annual Leave Setting` where company='{0}' and 
+		((date_to is null and date_from is not null and date_from <= '{1}') 
+		or (date_from is null and date_to is not null and date_to >= '{1}')
+		or (date_from is not null and date_to is not null and '{1}' between date_from and date_to)) order by creation """.format(company,processing_month),as_dict=1,debug=0)
+			if not set:
+				set = frappe.db.sql(""" select name,date_from,date_to from `tabProvision Annual Leave Setting` where company='' and 
+		((date_to is null and date_from is not null and date_from <= '{0}') 
+		or (date_from is null and date_to is not null and date_to >= '{0}') 	or (date_from is not null and date_to is not null and '{0}' between date_from and date_to) ) order by creation """.format(processing_month),as_dict=1,debug=0)
+		
+		if not set:
+			return []
+		
+		if set[0].name:
+			return frappe.db.get_all("Provision Applicable Component",filters={'parent':set[0].name},fields=['salary_component'],pluck='salary_component')
+
 
 	def calculate_unclaimed_taxable_benefits(self, payroll_period):
 		# get total sum of benefits paid
