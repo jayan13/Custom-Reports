@@ -1274,10 +1274,13 @@ class SalarySlipCustom(SalarySlip):
 			)
 			#custom
 			pay_days=self.payment_days
-			if row.salary_component in ['House rent allowance']:
+			if row.salary_component in ['House rent allowance','Housing Advance(A)','Housing Advance(S)']:
 				pay_days=self.payment_days+self.leave_without_pay
+
+			if row.salary_component in ['Basic','Basic(S)','Basic(A)'] and self.annual_leave > 0:
+				pay_days=self.payment_days-self.annual_leave
 			
-			if row.salary_component in ['Leave Salary']:
+			if row.salary_component in ['Leave Salary','Leave Salary(S)','Leave Salary(A)']:
 				if self.annual_leave > 0:				
 					pay_days=self.annual_leave
 				else:
