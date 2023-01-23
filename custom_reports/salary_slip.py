@@ -503,34 +503,17 @@ class SalarySlipCustom(SalarySlip):
 			elif relieving_date < getdate(self.start_date):
 				frappe.throw(_("Employee relieved on {0} must be set as 'Left'").format(relieving_date))
 
-		annualday=frappe.db.sql(""" select from_date,to_date,total_leave_days,half_day_date,half_day from `tabLeave Application` 
-		where docstatus=1 and leave_type='Annual Leave' and salary_paid_in_advance!=1  and employee='{0}' and to_date >= '{1}' and from_date <= '{2}' """.format(self.employee,start_date, end_date),as_dict=1,debug=1)
-
 		total_annual_leave=0
-		if annualday:			
-			for annual in annualday:
-				pdays=0
-				if getdate(annual.from_date)< getdate(start_date):
-					start=getdate(start_date)
-				else:
-					start=getdate(annual.from_date)
-
-				if getdate(annual.to_date) > getdate(end_date):
-					end=getdate(end_date)
-				else:
-					end=getdate(annual.to_date)
-
-				if annual.half_day:
-					if getdate(annual.half_day_date) < start or getdate(annual.half_day_date) > end:
-						pdays=date_diff(end, start) + 1
-					else:
-						pdays=date_diff(end, start) + .5
-				else:
-					pdays=date_diff(end, start) + 1
-				
-				total_annual_leave+=pdays
-				
-		 
+		half=frappe.db.sql(""" select count(*) as lvcnt FROM `tabAttendance` a left join `tabLeave Application` l on l.name=a.leave_application 
+	where a.docstatus=1 and a.leave_type='Annual Leave' and l.salary_paid_in_advance!=1 and a.status='Half Day' and a.employee='{0}' and a.attendance_date between '{1}' and  '{2}'  """.format(self.employee,start_date, end_date),as_dict=1)
+		if half:
+			total_annual_leave+=float(half[0].lvcnt) *.5
+		
+		full=frappe.db.sql(""" select count(*) as lvcnt FROM `tabAttendance` a left join `tabLeave Application` l on l.name=a.leave_application 
+	where a.docstatus=1 and a.leave_type='Annual Leave' and l.salary_paid_in_advance!=1 and a.status='On Leave' and a.employee='{0}' and a.attendance_date between '{1}' and  '{2}'  """.format(self.employee,start_date, end_date),as_dict=1)
+		if full:
+			total_annual_leave+=float(full[0].lvcnt)
+		
 		return total_annual_leave
 		# custom end
 	def get_holidays_for_employee(self, start_date, end_date):
