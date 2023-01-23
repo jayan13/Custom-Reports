@@ -61,6 +61,34 @@ def customer_credit(company,customer):
 	return overdue or 0
 
 @frappe.whitelist()
+def update_additional_sal_narration_sb(doc,event):	
+	comp=frappe.db.get_all('Salary Detail',filters={'parent':doc.name,'additional_salary':["is", "set"]},fields=['name','additional_salary','narration'])
+	if comp:
+		for co in comp:
+			if not co.narration:
+				narration=frappe.db.get_value('Additional Salary',{'name':co.additional_salary},'narration')
+				if not co.narration and narration:
+					ndoc = frappe.get_doc('Salary Detail', co.name)
+					ndoc.narration = narration
+					ndoc.save()
+
+
+@frappe.whitelist()
+def update_additional_sal_narration(doc,event):
+	for ern in doc.earnings:
+		if ern.additional_salary:
+			narration=frappe.db.get_value('Additional Salary',{'name':ern.additional_salary},'narration')
+			if narration:
+				ern.narration=narration
+
+	for ded in doc.deductions:
+		if ded.additional_salary:
+			narration=frappe.db.get_value('Additional Salary',{'name':ded.additional_salary},'narration')
+			if narration:
+				ded.narration=narration
+
+
+@frappe.whitelist()
 def update_cost_acc(doc,event):
 	
 	item=['TELWA-330ML - 12 PACK','TELWA-330ML - 16 PACK','TELWA-600ML - 12 PACK','TELWA-600ML - 20 PACK','TELWA-600ML - 20 PCS - CTN','TELWA-1.5 L - 6 PACK','TELWA-1.5 L - 6 PCS - CTN','TELWA-NEW GALLON','TELWA-RE-FILLING GALLON']

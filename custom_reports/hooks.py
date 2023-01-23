@@ -116,7 +116,11 @@ doc_events = {
     },
 	"Delivery Note" : {        
         "before_insert": "custom_reports.api.update_cost_acc",
-    },	
+    },
+	"Salary Slip":{		
+		"on_submit": "custom_reports.api.update_additional_sal_narration_sb",
+		"before_insert": "custom_reports.api.update_additional_sal_narration",
+	}	
 }
 # Scheduled Tasks
 # ---------------
