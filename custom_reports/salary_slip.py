@@ -1266,7 +1266,7 @@ class SalarySlipCustom(SalarySlip):
 			if row.salary_component in ['House rent allowance','Housing Advance(A)','Housing Advance(S)']:
 				pay_days=pay_days+self.leave_without_pay			
 			
-			frappe.msgprint(str(row.salary_component)+' - '+str(pay_days))
+			#frappe.msgprint(str(row.salary_component)+' - '+str(pay_days))
 			#if row.salary_component in ['Leave Salary','Leave Salary(S)','Leave Salary(A)']:
 			#	if self.annual_leave > 0:				
 			#		pay_days=self.annual_leave
