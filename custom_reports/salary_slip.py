@@ -1261,7 +1261,7 @@ class SalarySlipCustom(SalarySlip):
 			pay_days=self.payment_days
 
 			if row.salary_component in provcompo and self.annual_leave > 0:
-				pay_days=pay_days-self.annual_leave
+				pay_days=self.payment_days-self.annual_leave
 
 			if row.salary_component in ['House rent allowance','Housing Advance(A)','Housing Advance(S)']:
 				pay_days=pay_days+self.leave_without_pay			
