@@ -71,7 +71,7 @@ def update_additional_sal_narration_sb(doc,event):
 					ndoc = frappe.get_doc('Salary Detail', co.name)
 					ndoc.narration = narration
 					ndoc.save()
-
+	#frappe.msgprint('insert')
 
 @frappe.whitelist()
 def update_additional_sal_narration(doc,event):

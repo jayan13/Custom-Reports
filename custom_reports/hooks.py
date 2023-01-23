@@ -119,6 +119,7 @@ doc_events = {
     },
 	"Salary Slip":{		
 		"on_submit": "custom_reports.api.update_additional_sal_narration_sb",
+		"after_insert": "custom_reports.api.update_additional_sal_narration_sb",
 		"before_insert": "custom_reports.api.update_additional_sal_narration",
 	}	
 }
