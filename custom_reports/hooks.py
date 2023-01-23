@@ -94,7 +94,8 @@ override_doctype_class = {
 	'Leave Application':'custom_reports.leave.LeaveApplicationCustom',
 	'Payroll Entry':'custom_reports.override.PayrollEntryCustom',
 	'Compensatory Leave Request':'custom_reports.compensatory_leave.CompensatoryLeaveRequestCustom',
-	'Attendance':'custom_reports.attendance.AttendanceCustom'	
+	'Attendance':'custom_reports.attendance.AttendanceCustom',
+	'Salary Slip':'custom_reports.salary_slip.SalarySlipCustom',	
  }
 # Document Events
 # ---------------
