@@ -280,12 +280,15 @@ def get_data(conditions,filters):
 				else:
 					leave_provision_date=emp.leave_provision_date or emp.date_of_joining
 					applicable_earnings_component=get_applicable_components(rul.name)
+					sal=0
 					if rul.date_from==None and rul.date_to!=None and getdate(leave_provision_date)<=getdate(rul.date_to):
 						start_date=leave_provision_date
 						if getdate(rul.date_to) < getdate(processing_month):
 							end_date=rul.date_to
 						else:
 							end_date=processing_month
+						basic_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, end_date)
+						sal=basic_salary
 					if rul.date_from!=None and rul.date_to==None:
 						if getdate(rul.date_from) > getdate(leave_provision_date):
 							start_date=rul.date_from
@@ -293,6 +296,8 @@ def get_data(conditions,filters):
 							start_date=leave_provision_date
 
 						end_date=processing_month
+						gross_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, end_date)
+						sal=gross_salary
 					#-----------------------------------------
 
 					totaldays=date_diff(end_date,start_date)+1
@@ -301,7 +306,7 @@ def get_data(conditions,filters):
 					leaves_per_year=emp.leaves_per_year
 					if totleave:
 						leaves_per_year=totleave	
-					sal=get_total_applicable_component_amount(emp.name, applicable_earnings_component, end_date)
+					
 					absent=getabsents(emp.name,openabs,start_date,end_date)
 					absents+=absent
 					usedleaves=getused(emp.name,opnused,start_date,end_date)
@@ -478,6 +483,8 @@ def get_total_applicable_component_amount(employee, applicable_earnings_componen
 
 	for data in component_and_amounts:
 		total_applicable_components_amount += data.amount
+	#if employee in ['5076','5078','5077']:
+	#	frappe.msgprint(employee+' - '+str(total_applicable_components_amount))
 	return total_applicable_components_amount
 
 def get_last_salary_slip(employee,processing_month):
