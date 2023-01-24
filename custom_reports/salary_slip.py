@@ -756,6 +756,7 @@ class SalarySlipCustom(SalarySlip):
 	def eval_condition_and_formula(self, d, data):
 		try:
 			condition = d.condition.strip().replace("\n", " ") if d.condition else None
+			#frappe.msgprint(str(d.formula)+'base='+str(data.B)+'hra='+str(data.HRA)+'oth='+str(data.OA))
 			if condition:
 				if not frappe.safe_eval(condition, self.whitelisted_globals, data):
 					return None
@@ -1259,12 +1260,12 @@ class SalarySlipCustom(SalarySlip):
 			provcompo=self.get_provision_components(self.company,self.start_date)
 			
 			pay_days=self.payment_days
-
-			if row.salary_component in provcompo and self.annual_leave > 0:
-				pay_days=self.payment_days-self.annual_leave
-
-			if row.salary_component in ['House rent allowance','Housing Advance(A)','Housing Advance(S)']:
-				pay_days=pay_days+self.leave_without_pay			
+			if self.annual_leave:
+				if row.salary_component in provcompo and self.annual_leave > 0:
+					pay_days=self.payment_days-self.annual_leave
+			if self.leave_without_pay:
+				if row.salary_component in ['House rent allowance','Housing Advance(A)','Housing Advance(S)']:
+					pay_days=pay_days+self.leave_without_pay			
 			
 			#frappe.msgprint(str(row.salary_component)+' - '+str(pay_days))
 			#if row.salary_component in ['Leave Salary','Leave Salary(S)','Leave Salary(A)']:
