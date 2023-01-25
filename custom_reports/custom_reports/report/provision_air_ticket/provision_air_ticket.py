@@ -195,7 +195,7 @@ def get_data(conditions,filters):
 		if emp.openning_entry_date:
 			openabs=0
 			ticket_provision_date=emp.ticket_provision_date or emp.date_of_joining			
-			total_days=frappe.utils.date_diff(emp.openning_entry_date,ticket_provision_date)+1
+			total_days=frappe.utils.date_diff(emp.openning_entry_date,ticket_provision_date)
 			
 			if total_days > 0:
 				absents+=float(emp.opening_absent)
