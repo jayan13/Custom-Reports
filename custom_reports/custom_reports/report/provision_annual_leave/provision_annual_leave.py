@@ -216,7 +216,8 @@ def get_data(conditions,filters):
 						usedleave+=usedleaves
 						bala=round(accru-float(emp.opening_used_leaves),4)
 						balance+=bala
-						basic_salary=sal
+						if getdate(processing_month)<=getdate('2022-12-31'):
+							basic_salary=sal
 						opening_balance_amount=emp.opening_balance_amount
 						#amountbalance=round(((sal*12)/365)*bala,2)
 						#amount_balance+=amountbalance
@@ -289,6 +290,8 @@ def get_data(conditions,filters):
 							end_date=processing_month
 						basic_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, end_date)
 						sal=basic_salary
+						if getdate(processing_month)>getdate('2022-12-31'):
+							basic_salary=0
 					if rul.date_from!=None and rul.date_to==None:
 						if getdate(rul.date_from) > getdate(leave_provision_date):
 							start_date=rul.date_from
