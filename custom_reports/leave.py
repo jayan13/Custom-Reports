@@ -950,47 +950,30 @@ def get_remaining_leaves(
 	remaining_leaves = _get_remaining_leaves(leave_balance_for_consumption, allocation.to_date)
 	return frappe._dict(leave_balance=leave_balance, leave_balance_for_consumption=remaining_leaves)
 
-def getabsents(emp,opabs,start_date,end_date):
-	absent=opabs
-	sal=frappe.db.sql(""" select sum(l.total_leave_days) as absent from `tabLeave Application` l 
-	left join `tabLeave Type` p on l.leave_type=p.name where l.employee='{0}' and p.is_lwp='1' 
-	and l.status='Approved' and l.from_date >= '{1}' and l.to_date <= '{2}' group by l.employee""".format(emp,start_date,end_date),as_dict=1,debug=0)
-	if sal:
-		absent+=sal[0].absent
-	
-	sal2=frappe.db.sql(""" select sum(l.total_leave_days) as absent from `tabLeave Application` l 
-	left join `tabLeave Type` p on l.leave_type=p.name where l.employee='{0}' and p.is_ppl='1' 
-	and l.status='Approved' and l.from_date >= '{1}' and l.to_date <= '{2}' group by l.employee""".format(emp,start_date,end_date),as_dict=1,debug=0)
-	if sal2:
-		absent+=sal2[0].absent
-
-	sal3=frappe.db.sql(""" select l.to_date as absent from `tabLeave Application` l 
-	left join `tabLeave Type` p on l.leave_type=p.name where l.employee='{0}' and p.is_lwp='1' 
-	and l.status='Approved' and  '{1}' between l.from_date and l.to_date """.format(emp,start_date),as_dict=1,debug=0)
+def getabsents(emp,opn,start_date,end_date):
+	absent=float(opn)
+	sal3=frappe.db.sql(""" select count(*) as absent FROM `tabAttendance` a left join `tabLeave Type` l on l.name=a.leave_type 
+	where a.docstatus=1 and a.status='On Leave' and a.employee='{0}' and a.attendance_date between '{1}' and  '{2}' and l.is_ppl='1' """.format(emp,start_date,end_date),as_dict=1,debug=0)
 	if sal3:
-		for s in sal3:
-			dc=date_diff(s.absent,start_date)
-			absent+=dc
-
-	sal4=frappe.db.sql(""" select l.from_date as absent from `tabLeave Application` l 
-	left join `tabLeave Type` p on l.leave_type=p.name where l.employee='{0}' and p.is_lwp='1' 
-	and l.status='Approved' and '{1}' between l.from_date and l.to_date """.format(emp,end_date),as_dict=1,debug=0)
+		absent+=float(sal3[0].absent)/2
+	
+	sal4=frappe.db.sql(""" select count(*) as absent FROM `tabAttendance` a left join `tabLeave Type` l on l.name=a.leave_type 
+	where a.docstatus=1 and a.status='On Leave' and a.employee='{0}' and a.attendance_date between '{1}' and  '{2}' and l.is_lwp='1' """.format(emp,start_date,end_date),as_dict=1,debug=0)
 	if sal4:
-		for s in sal4:
-			dc=date_diff(end_date,s.absent)
-			absent+=dc
-
-	sal5=frappe.db.sql(""" select count(*) as absent FROM `tabAttendance` where status='Absent' and employee='{0}' 
+		absent+=sal4[0].absent
+	
+	sal5=frappe.db.sql(""" select count(*) as absent FROM `tabAttendance` where docstatus=1 and status='Absent' and employee='{0}' 
 	and attendance_date between '{1}' and  '{2}'""".format(emp,start_date,end_date),as_dict=1,debug=0)
 	if sal5:
 		absent+=sal5[0].absent
 	
-	sal6=frappe.db.sql(""" select count(*) as absent FROM `tabAttendance` where status='Half Day' and employee='{0}' 
-	and attendance_date between '{1}' and  '{2}' and leave_type=''""".format(emp,start_date,end_date),as_dict=1,debug=0)
+	sal6=frappe.db.sql(""" select count(*) as absent FROM `tabAttendance` a left join `tabLeave Type` l on l.name=a.leave_type 
+	where a.docstatus=1 and a.status='Half Day' and a.employee='{0}' and a.attendance_date between '{1}' and  '{2}' and (l.is_lwp='1' or l.is_ppl='1' ) """.format(emp,start_date,end_date),as_dict=1,debug=0)
 	if sal6:
-		absent+=sal6[0].absent
+		absent+=float(sal6[0].absent)/2
 	
 	return absent
+
 def get_leaves_for_period(
 	employee: str, leave_type: str, from_date: str, to_date: str, skip_expired_leaves: bool = True
 ) -> float:

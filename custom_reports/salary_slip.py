@@ -691,11 +691,16 @@ class SalarySlipCustom(SalarySlip):
 		for struct_row in self._salary_structure_doc.get(component_type):
 			if self.salary_slip_based_on_timesheet and struct_row.salary_component == timesheet_component:
 				continue
-
-			amount = self.eval_condition_and_formula(struct_row, data)
+			#custom	
+			if 'Leave Salary' in str(struct_row.salary_component) and self.annual_leave > 0 and not struct_row.amount_based_on_formula:
+				amount=1
+			else:
+				amount = self.eval_condition_and_formula(struct_row, data)
+			
 			if (
-				amount or (struct_row.amount_based_on_formula and amount is not None)
+				amount or (struct_row.amount_based_on_formula and amount is not None) 
 			) and struct_row.statistical_component == 0:
+				
 				default_amount = self.eval_condition_and_formula(struct_row, default_data)
 				self.update_component_row(
 					struct_row, amount, component_type, data=data, default_amount=default_amount
@@ -1277,18 +1282,33 @@ class SalarySlipCustom(SalarySlip):
 			#		pay_days=self.annual_leave
 			#	else:
 			#		pay_days=0
+			
+			if 'Leave Salary' in str(row.salary_component):
+				if self.annual_leave and self.annual_leave > 0:
+					lvsalamt=0
+					erning=frappe.get_all('Salary Detail',filters={'parent':self.salary_structure,'parentfield':'earnings','amount':['>',0],'salary_component':['in',provcompo]},fields=['salary_component','amount'])
+					if erning:
+						for er in erning:
+							lvsalamt+= (flt(er.amount) * flt(self.annual_leave) / cint(self.total_working_days))							
+								
+						amount=flt(lvsalamt)+flt(additional_amount)
+					else:
+						amount=flt(additional_amount)
+				else:
+					amount=0
 
-			if pay_days > 0:	
-				amount = (
-					flt(
-						(flt(row.default_amount) * flt(pay_days) / cint(self.total_working_days)),
-						row.precision("amount"),
-					)
-					+ additional_amount
-				)
 			else:
-				amount=flt(additional_amount)
-				#------ custom end --------
+				if pay_days > 0:	
+					amount = (
+						flt(
+							(flt(row.default_amount) * flt(pay_days) / cint(self.total_working_days)),
+							row.precision("amount"),
+						)
+						+ additional_amount
+					)
+				else:
+					amount=flt(additional_amount)
+					#------ custom end --------
 		elif (
 			not self.payment_days
 			and row.salary_component != timesheet_component
