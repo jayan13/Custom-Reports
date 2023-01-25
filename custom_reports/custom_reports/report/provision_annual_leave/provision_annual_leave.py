@@ -238,7 +238,7 @@ def get_data(conditions,filters):
 						amount_accrued+=amountaccrued
 						#frappe.msgprint(str(amountaccrued))
 
-						if emp.opening_balance_amount > 0:
+						if emp.opening_balance_amount > 0 and getdate(processing_month)<=getdate('2022-12-31'):
 							amount_balance+=emp.opening_balance_amount
 						else:
 							amount_balance+=round(amountaccrued-amountused,2)
