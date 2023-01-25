@@ -200,7 +200,7 @@ def get_data(conditions,filters):
 						totaldays=date_diff(emp.openning_entry_date,leave_provision_date)+1
 						total_days+=totaldays
 						applicable_earnings_component=get_applicable_components(rul.name)
-						sal=get_total_applicable_component_amount(emp.name, applicable_earnings_component, emp.openning_entry_date)
+						sal=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
 						actualworked=totaldays-float(emp.opening_absent)
 						absents+=float(emp.opening_absent)
 						actual_worked+=actualworked
@@ -288,7 +288,7 @@ def get_data(conditions,filters):
 							end_date=rul.date_to
 						else:
 							end_date=processing_month
-						basic_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, end_date)
+						basic_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
 						sal=basic_salary
 						if getdate(processing_month)>getdate('2022-12-31'):
 							basic_salary=0
@@ -299,7 +299,7 @@ def get_data(conditions,filters):
 							start_date=leave_provision_date
 
 						end_date=processing_month
-						gross_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, end_date)
+						gross_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
 						sal=gross_salary
 					#-----------------------------------------
 
