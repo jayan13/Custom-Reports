@@ -144,14 +144,21 @@ def get_data(conditions,filters):
 			parent_department_ern_tot=0
 			parent_department_ded_tot=0			
 			emp_count_pare_dept=0
+			parent_department_basic_tot=0
+			parent_department_basic_pay_tot=0
+			parent_department_allowance_tot=0
+			
 
 		if department != department_name:
 			department_name=department
 			department_tot=0
 			department_ern_tot=0
-			department_ded_tot=0
+			department_ded_tot=0			
 			emp_count_dept=0
-
+			department_basic_tot=0
+			department_basic_pay_tot=0
+			department_allowance_tot=0
+			
 		empqry=''
 		if filters.get("employee"):
 			emps=filters.get("employee")
@@ -220,6 +227,18 @@ def get_data(conditions,filters):
 				dt.update({'basic_paid':basic_paid})
 				allowance=float(slp.gross_pay)-float(basic_paid)
 				dt.update({'allowance':allowance})
+				department_basic_tot+=base
+				department_basic_pay_tot+=basic_paid
+				department_allowance_tot+=allowance
+				parent_department_basic_tot+=base
+				parent_department_basic_pay_tot+=basic_paid
+				parent_department_allowance_tot+=allowance
+				dt.update({'department_basic_tot':department_basic_tot})
+				dt.update({'department_basic_pay_tot':department_basic_pay_tot})
+				dt.update({'department_allowance_tot':department_allowance_tot})
+				dt.update({'parent_department_basic_tot':parent_department_basic_tot})
+				dt.update({'parent_department_basic_pay_tot':parent_department_basic_pay_tot})
+				dt.update({'parent_department_allowance_tot':parent_department_allowance_tot})
 				data.append(dt)
 				
 	#frappe.msgprint(str(data))
