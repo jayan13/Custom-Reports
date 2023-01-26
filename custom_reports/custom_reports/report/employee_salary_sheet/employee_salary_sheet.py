@@ -147,9 +147,9 @@ def get_data(conditions,filters):
 
 		if department != department_name:
 			department_name=department
-			parent_department_tot=0
-			parent_department_ern_tot=0
-			parent_department_ded_tot=0
+			department_tot=0
+			department_ern_tot=0
+			department_ded_tot=0
 			emp_count_dept=0
 
 		empqry=''
@@ -183,11 +183,11 @@ def get_data(conditions,filters):
 				dt.update({'over_time':slp.over_time})
 				dt.update({'holiday_over_time':slp.holiday_over_time})
 
-				parent_department_tot+=float(slp.gross_pay or 0)
-				parent_department_ern_tot+=float(slp.net_pay or 0)
+				parent_department_tot+=float(slp.net_pay or 0)
+				parent_department_ern_tot+=float(slp.gross_pay or 0)
 				parent_department_ded_tot+=float(slp.total_deduction or 0)
-				department_tot+=float(slp.gross_pay or 0)
-				department_ern_tot+=float(slp.net_pay or 0)
+				department_tot+=float(slp.net_pay or 0)
+				department_ern_tot+=float(slp.gross_pay or 0)
 				department_ded_tot+=float(slp.total_deduction or 0)
 				dt.update({'emp_count':emp_count})
 				dt.update({'emp_count_pare_dept':emp_count_pare_dept})

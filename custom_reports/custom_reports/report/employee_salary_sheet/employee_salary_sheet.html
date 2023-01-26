@@ -59,8 +59,17 @@
 		{% } } %}
 		{% if(i+1==l) { %}
 		<tr>			
-			<td colspan="10" style="text-align: right;font-size:14px;">
+			<td colspan="7" style="text-align: right;font-size:14px;">
 				<b># Employee {%=data[i-1].emp_count%} Grand Total : </b>
+			</td>
+			<td style="text-align: right;font-size:14px;">
+				<b></b>{%=format_currency(data[i].basic) %}</b>
+			</td>
+			<td style="text-align: right;font-size:14px;">
+				<b></b>{%=format_currency(data[i].basic_paid) %}</b>
+			</td>
+			<td style="text-align: right;font-size:14px;">
+				<b></b>{%=format_currency(data[i].allowance) %}</b>
 			</td>
 			<td style="text-align: right;font-size:14px;">
 				<b>{%=format_currency(data[i].gross_pay) %}</b>
