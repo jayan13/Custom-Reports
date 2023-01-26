@@ -8,6 +8,7 @@ frappe.query_reports["Provision Air Ticket"] = {
 		"fieldtype": "Link",
 		"options":"Company",
 		"reqd": 1 ,
+		"default": frappe.defaults.get_user_default("Company"),
 	},{
 		"fieldname": "processing_month",
 		"label": __("Processing Month"),

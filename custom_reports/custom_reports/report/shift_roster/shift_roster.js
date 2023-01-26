@@ -8,6 +8,7 @@ frappe.query_reports["Shift Roster"] = {
 		"fieldtype": "Link",
 		"options":"Company",
 		"reqd": 1 ,
+		"default": frappe.defaults.get_user_default("Company"),
 	},{
 		"fieldname": "date_from",
 		"label": __("From"),
