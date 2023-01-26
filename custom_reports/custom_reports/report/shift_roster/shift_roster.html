@@ -1,0 +1,62 @@
+<div style="width:100%;">
+<div style="width:70%;float: left;">
+<h2 class="text-center">{%= filters.company %}</h2>
+<h3 class="text-center">{%= __("Shift Roster Report") %}</h3>
+<h4 class="text-center"> From : {%= frappe.format(filters.date_from, {fieldtype: "Date"})%}</h4>
+<h4 class="text-center"> To : {%= frappe.format(filters.date_to, {fieldtype: "Date"})%}</h4>
+</div>
+
+<div style="width:30%;float: right;">
+<table class="table table-bordered">
+<tr><td>OW</td><td>Offday working</td></tr>
+<tr><td>AL</td><td>Annual Leave</td></tr>
+<tr><td>UL</td><td>Unpaid Leave</td></tr>
+<tr><td>CO.L</td><td>Compassionate Leave</td></tr>
+<tr><td>RO</td><td>Replacement Off Day</td></tr>
+<tr><td>P</td><td>Present</td></tr>
+<tr><td>A</td><td>Absant</td></tr>
+<tr><td>PH</td><td>Public Holiday</td></tr>
+<tr><td>O</td><td>Day Off</td></tr>
+<tr><td>SL</td><td>Sick Leave</td></tr>
+<tr><td>BT</td><td>Business Trip</td></tr>
+</table>
+</div>
+</div>
+<hr>
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<th style="width: 1%">#</th>
+			{% for(var j=0,l=columns.length; j<l; j++) { %}				
+			<th >{%=columns[j].label%}</th>
+			{% } %}
+		</tr>
+	</thead>
+	<tbody>
+
+		{% for(var i=0,l=data.length; i<l; i++) {  %}
+		
+			<tr>			
+				<td style="text-align: right">
+					{%=i+1 %}
+				</td>
+				<td>
+					{%=data[i].employee%} - {%=data[i].employee_name%}					
+				</td>
+				{% for (key in data[i]){ %} 
+				 {% if(key!='employee')
+				 { %}  
+				 {% if(key!='employee_name')
+				 { %}	  
+				   
+	  			<td>
+					{%=data[i][key]%}					
+				</td>
+   				{% } } } %}
+				
+			</tr>
+			
+		{% } %}
+	</tbody>
+</table>
+
