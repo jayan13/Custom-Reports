@@ -691,8 +691,13 @@ class SalarySlipCustom(SalarySlip):
 		for struct_row in self._salary_structure_doc.get(component_type):
 			if self.salary_slip_based_on_timesheet and struct_row.salary_component == timesheet_component:
 				continue
-			#custom	
-			if 'Leave Salary' in str(struct_row.salary_component) and self.annual_leave > 0 and not struct_row.amount_based_on_formula:
+			#custom
+			leavesal=[]
+			leav=frappe.db.get_all("Leave Salary",fields=['salary_component'],pluck='salary_component')
+			if leav:
+				leavesal=leav
+							
+			if struct_row.salary_component in leavesal and self.annual_leave > 0 and not struct_row.amount_based_on_formula:
 				amount=1
 			else:
 				amount = self.eval_condition_and_formula(struct_row, data)
@@ -1282,8 +1287,11 @@ class SalarySlipCustom(SalarySlip):
 			#		pay_days=self.annual_leave
 			#	else:
 			#		pay_days=0
-			
-			if 'Leave Salary' in str(row.salary_component):
+			leavesal=[]
+			leav=frappe.db.get_all("Leave Salary",fields=['salary_component'],pluck='salary_component')
+			if leav:
+				leavesal=leav
+			if row.salary_component in leavesal:
 				if self.annual_leave and self.annual_leave > 0:
 					lvsalamt=0
 					erning=frappe.get_all('Salary Detail',filters={'parent':self.salary_structure,'parentfield':'earnings','amount':['>',0],'salary_component':['in',provcompo]},fields=['salary_component','amount'])
