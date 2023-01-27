@@ -222,10 +222,10 @@ def get_data(conditions,filters):
 						opening_balance_amount=emp.opening_balance_amount
 						#amountbalance=round(((sal*12)/365)*bala,2)
 						#amount_balance+=amountbalance
-						if company=='GRAND CONTINENTAL FLAMINGO HOTEL':
+						if company=='GRAND CONTINENTAL FLAMINGO HOTEL' and getdate(processing_month)<=getdate('2022-12-31'):
 							ondaydalary=round(sal/30,4)
 						else:
-							ondaydalary=round((sal*12)/365,4)
+							ondaydalary=(sal*12)/365
 						
 						
 						amountused=round(ondaydalary*usedleaves,2)
