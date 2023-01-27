@@ -30,7 +30,7 @@ def get_columns():
 		{
 		"fieldname": "employee",
 		"fieldtype": "Link",
-		"label": "Employee",
+		"label": "Employee No",
 		"options": "Employee",	
 		"width": 200
 		},

@@ -28,7 +28,7 @@ def get_columns():
 		{
 		"fieldname": "employee",
 		"fieldtype": "Link",
-		"label": "Employee",
+		"label": "Employee No",
 		"options": "Employee",	
 		"width": 200
 		},
@@ -146,6 +146,7 @@ def get_columns():
 	return columns
 
 def get_data(conditions,filters):
+	
 	processing_month=filters.get("processing_month")
 	company=filters.get("company")
 	conc=frappe.db.sql(""" select e.*,d.parent_department,d.department_name from `tabEmployee` e left join `tabDepartment` d on e.department=d.name where e.status='Active' and   %s  order by d.parent_department,d.name"""% (conditions),as_dict=1,debug=0)
