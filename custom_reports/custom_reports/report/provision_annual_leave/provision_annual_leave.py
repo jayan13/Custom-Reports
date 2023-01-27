@@ -266,8 +266,8 @@ def get_data(conditions,filters):
 						leave_code=str(totleave)+'D'
 						actualworked=totaldays-absent
 						actual_worked+=actualworked
-						accru=round((actualworked/365)*float(totleave),4)
-						#accru=round(round(float(totleave)/365,4)*actualworked,4)										
+						#accru=round((actualworked/365)*float(totleave),4)
+						accru=round(round(float(totleave)/365,4)*actualworked,4)										
 						accrued+=accru
 						bala=round(accru-usedleaves,4)
 						balance+=bala
