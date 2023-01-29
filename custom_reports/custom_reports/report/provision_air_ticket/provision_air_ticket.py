@@ -195,8 +195,7 @@ def get_data(conditions,filters):
 		if emp.openning_entry_date:
 			openabs=0
 			ticket_provision_date=emp.ticket_provision_date or emp.date_of_joining			
-			total_days=frappe.utils.date_diff(emp.openning_entry_date,ticket_provision_date)
-			
+			total_days=frappe.utils.date_diff(emp.openning_entry_date,ticket_provision_date)				
 			if total_days > 0:
 				absents+=float(emp.opening_absent)
 				actual_worked+=total_days-absents
@@ -251,9 +250,12 @@ def get_data(conditions,filters):
 		elif(emp.openning_entry_date!=None and getdate(processing_month)>emp.openning_entry_date):
 			totaldays=0
 			
-			totaldays=frappe.utils.date_diff(processing_month,emp.openning_entry_date)+1					
+			totaldays=frappe.utils.date_diff(processing_month,emp.openning_entry_date)+1	
+						
 			total_days+=totaldays
-			date_from=emp.openning_entry_date
+			#date_from=emp.openning_entry_date
+			day = getdate(emp.openning_entry_date)
+			date_from = add_days(day, 1)
 			date_to=getdate(processing_month)
 			
 			if totaldays:
@@ -281,7 +283,40 @@ def get_data(conditions,filters):
 				amount_accrued+=accru*emp.ticket_price
 				amount_used+=float(usedno)*emp.ticket_price
 				amount_balance+=bal*emp.ticket_price
+		else:
+			totaldays=0
+			ticket_provision_date=emp.ticket_provision_date or emp.date_of_joining
+			totaldays=frappe.utils.date_diff(processing_month,ticket_provision_date)+1	
+						
+			total_days+=totaldays
+			date_from=getdate(ticket_provision_date)			
+			date_to=getdate(processing_month)
+			
+			if totaldays:
+				openabs=0
+				absent=getabsents(emp.name,openabs,date_from,date_to)
+				absents+=absent
+				usedtickt=get_ticket_issued(emp.name,date_from,date_to)
+				usedno=0					
+				if usedtickt:
+					usedno=usedtickt.ticket_no or 0
+					
+				actualworked=totaldays-absent
+				actual_worked+=actualworked
+				year=actualworked/365
+				years+=year
+				accru=0
+				if float(emp.ticket_period) > 0 and emp.no_of_tickets_eligible:
+					accru=(year/float(emp.ticket_period))*float(emp.no_of_tickets_eligible)
 
+				bal=round(accru-float(usedno),3)
+				accrued+=accru 
+				balance+=bal
+				used+=usedno
+				ticket_price=emp.ticket_price
+				amount_accrued+=accru*emp.ticket_price
+				amount_used+=float(usedno)*emp.ticket_price
+				amount_balance+=bal*emp.ticket_price
 						
 		accrued=round(accrued,3)
 		balance=round(balance,3)
@@ -378,4 +413,3 @@ def get_ticket_issued(emp,from_date,to_date):
 		return sal7[0].ticket_no
 	return 0
 	
-
