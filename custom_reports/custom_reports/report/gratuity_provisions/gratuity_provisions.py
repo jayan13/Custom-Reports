@@ -270,11 +270,15 @@ def calculate_work_experience(employee, gratuity_rule,processing_month,openabs):
 		"Gratuity Rule", gratuity_rule, ["total_working_days_per_year", "minimum_year_for_gratuity"]
 	)
 
-	date_of_joining, relieving_date = frappe.db.get_value(
-		"Employee", employee, ["date_of_joining", "relieving_date"]
+	date_of_joining, relieving_date, openning_entry_date = frappe.db.get_value(
+		"Employee", employee, ["date_of_joining", "relieving_date","openning_entry_date"]
 	)
 	if not relieving_date:
 		relieving_date=processing_month
+	
+	non_from=date_of_joining
+	if openning_entry_date:
+		non_from=add_days(getdate(openning_entry_date), 1)
 
 	method = frappe.db.get_value(
 		"Gratuity Rule", gratuity_rule, "work_experience_calculation_function"
@@ -284,7 +288,7 @@ def calculate_work_experience(employee, gratuity_rule,processing_month,openabs):
 	#)
 	total_workings_days = (get_datetime(relieving_date) - get_datetime(date_of_joining)).days+1
 	employee_total_workings_days = get_nonworking_days(
-		employee,openabs,date_of_joining, relieving_date
+		employee,openabs,non_from, relieving_date
 	)
 	employee_total_workings_days=total_workings_days-employee_total_workings_days
 	#frappe.msgprint(str(employee_total_workings_days))
@@ -559,4 +563,3 @@ def get_nonworking_days(emp,opn,start_date,end_date):
 		nwdays += record[0].total_lwp if len(record) else 0
 	
 	return nwdays
-
