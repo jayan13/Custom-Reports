@@ -366,11 +366,16 @@ def get_data(conditions,filters):
 
 						
 		accrued=round(accrued,3)
-		balance=round(balance,3)
-		amount_accrued=round(amount_accrued,2)
-		amount_used=round(amount_used,2)
+		#balance=round(balance,3) 
+		balance=round(accrued-used,3)
+		#amount_accrued=round(amount_accrued,2)
+		#amount_used=round(amount_used,2)
+		amount_accrued=round(accrued*currentticketprice,2)
+		amount_used=round(used*currentticketprice,2)
 		#amount_balance=round(amount_balance,2)
-		amount_balance=round(amount_accrued-amount_used,2)
+		#amount_balance=round(amount_accrued-amount_used,2)
+		amount_balance=round(balance*currentticketprice,2)
+		#frappe.msgprint(str(accrued)+' '+str(balance)+' '+str(used))
 		#years+=round((actual_worked/365),3)
 		years=round(years,3)
 
