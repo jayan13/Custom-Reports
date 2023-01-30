@@ -216,7 +216,7 @@ def get_data(conditions,filters):
 				amount_accrued+=round(float(accrued)*float(currentticketprice),2)
 				used+=float(emp.used_tickets)
 				#amount_used+=float(emp.opening_ticket_amount_used)
-				amount_used+=float(emp.opening_ticket_amount_used)*float(currentticketprice)
+				amount_used+=float(used)*float(currentticketprice)
 				ticket_price=currentticketprice
 				
 		
