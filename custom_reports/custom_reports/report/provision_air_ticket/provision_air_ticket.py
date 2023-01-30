@@ -229,9 +229,11 @@ def get_data(conditions,filters):
 					date_from=ticket.from_date
 					date_to=ticket.to_date
 				elif ticket.from_date!=None and ticket.to_date==None and getdate(processing_month) >= ticket.from_date:
-					totaldays=frappe.utils.date_diff(processing_month,ticket.from_date)					
-					total_days+=totaldays
 					date_from=ticket.from_date
+					if getdate(emp.date_of_joining)>getdate(ticket.from_date):
+						date_from=emp.date_of_joining
+					totaldays=frappe.utils.date_diff(processing_month,date_from)+1					
+					total_days+=totaldays					
 					date_to=processing_month
 				if totaldays:
 					openabs=0
