@@ -284,7 +284,7 @@ def get_data(conditions,filters):
 				amount_accrued+=accru*emp.ticket_price
 				amount_used+=float(usedno)*emp.ticket_price
 				amount_balance+=bal*emp.ticket_price
-		else:
+		elif emp.openning_entry_date==None and not tickets:
 			totaldays=0
 			ticket_provision_date=emp.ticket_provision_date or emp.date_of_joining
 			totaldays=frappe.utils.date_diff(processing_month,ticket_provision_date)+1	
