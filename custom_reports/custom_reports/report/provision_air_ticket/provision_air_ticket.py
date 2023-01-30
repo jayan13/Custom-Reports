@@ -234,7 +234,7 @@ def get_data(conditions,filters):
 					
 					actualworked=totaldays-absent
 					actual_worked+=actualworked
-					year=actualworked/365
+					year=round(actualworked/365,3)
 					years+=year
 					accru=0
 					if float(ticket.periodical) > 0 and ticket.no_of_ticket_eligible:
@@ -271,7 +271,7 @@ def get_data(conditions,filters):
 					
 				actualworked=totaldays-absent
 				actual_worked+=actualworked
-				year=actualworked/365
+				year=round(actualworked/365,3)
 				years+=year
 				accru=0
 				if float(emp.ticket_period) > 0 and emp.no_of_tickets_eligible:
@@ -305,7 +305,7 @@ def get_data(conditions,filters):
 					
 				actualworked=totaldays-absent
 				actual_worked+=actualworked
-				year=actualworked/365
+				year=round(actualworked/365,3)
 				years+=year
 				accru=0
 				if float(emp.ticket_period) > 0 and emp.no_of_tickets_eligible:
