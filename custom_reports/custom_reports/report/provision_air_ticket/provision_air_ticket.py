@@ -102,25 +102,25 @@ def get_columns():
 		},
 		{
 		"fieldname": "eligible",
-		"fieldtype": "Currency",
+		"fieldtype": "Data",
 		"label": "No Of Ticket Eligible ",	
 		"width": 80
 		},
 		{
 		"fieldname": "accrued",
-		"fieldtype": "Currency",
+		"fieldtype": "Data",
 		"label": "Accrued ",	
 		"width": 80
 		},
 		{
 		"fieldname": "used_tickets",
-		"fieldtype": "Currency",
+		"fieldtype": "Data",
 		"label": "Used ",	
 		"width": 80
 		},
 		{
 		"fieldname": "balance",
-		"fieldtype": "Currency",
+		"fieldtype": "Data",
 		"label": "Balance ",	
 		"width": 80
 		},
@@ -223,6 +223,7 @@ def get_data(conditions,filters):
 					date_to=processing_month
 				if totaldays:
 					openabs=0
+					perodical=str(ticket.no_of_ticket_eligible)+"'s in a "+str(ticket.periodical)+' Years'
 					absent=getabsents(emp.name,openabs,date_from,date_to)
 					absents+=absent
 					usedtickt=get_ticket_issued(emp.name,date_from,date_to)
@@ -237,7 +238,7 @@ def get_data(conditions,filters):
 					accru=0
 					if float(ticket.periodical) > 0 and ticket.no_of_ticket_eligible:
 						accru=(year/float(ticket.periodical))*float(ticket.no_of_ticket_eligible)
-
+					
 					bal=round(accru-float(usedno),3)
 					accrued+=accru 
 					balance+=bal
@@ -274,7 +275,7 @@ def get_data(conditions,filters):
 				accru=0
 				if float(emp.ticket_period) > 0 and emp.no_of_tickets_eligible:
 					accru=(year/float(emp.ticket_period))*float(emp.no_of_tickets_eligible)
-
+				
 				bal=round(accru-float(usedno),3)
 				accrued+=accru 
 				balance+=bal
@@ -308,7 +309,7 @@ def get_data(conditions,filters):
 				accru=0
 				if float(emp.ticket_period) > 0 and emp.no_of_tickets_eligible:
 					accru=(year/float(emp.ticket_period))*float(emp.no_of_tickets_eligible)
-
+				
 				bal=round(accru-float(usedno),3)
 				accrued+=accru 
 				balance+=bal
@@ -323,8 +324,8 @@ def get_data(conditions,filters):
 		amount_accrued=round(amount_accrued,2)
 		amount_used=round(amount_used,2)
 		amount_balance=round(amount_balance,2)
-
-		years+=round((actual_worked/365),3)
+		#frappe.msgprint(str(accrued)+' '+str(balance)+' '+str(used))
+		#years+=round((actual_worked/365),3)
 		years=round(years,3)
 
 		parent_department_tot+=amount_balance
