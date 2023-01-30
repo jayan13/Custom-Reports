@@ -103,25 +103,25 @@ def get_columns():
 		},
 		{
 		"fieldname": "eligible",
-		"fieldtype": "Currency",
+		"fieldtype": "Data",
 		"label": "No Of Ticket Eligible ",	
 		"width": 80
 		},
 		{
 		"fieldname": "accrued",
-		"fieldtype": "Currency",
+		"fieldtype": "Data",
 		"label": "Accrued ",	
 		"width": 80
 		},
 		{
 		"fieldname": "used_tickets",
-		"fieldtype": "Currency",
+		"fieldtype": "Data",
 		"label": "Used ",	
 		"width": 80
 		},
 		{
 		"fieldname": "balance",
-		"fieldtype": "Currency",
+		"fieldtype": "Data",
 		"label": "Balance ",	
 		"width": 80
 		},
@@ -256,6 +256,7 @@ def get_data(conditions,filters):
 						date_from=ticket.from_date
 						date_to=processing_month
 					if totaldays:
+						perodical=str(ticket.no_of_ticket_eligible)+"'s in a "+str(ticket.periodical)+' Years'
 						openabs=0
 						absent=getabsents(emp.name,openabs,date_from,date_to)
 						absents+=absent
@@ -358,7 +359,7 @@ def get_data(conditions,filters):
 		amount_used=round(amount_used,2)
 		amount_balance=round(amount_balance,2)
 
-		#years+=round((actual_worked/365),3)
+		years+=round((actual_worked/365),3)
 		years=round(years,3)
 
 		parent_department_tot+=amount_balance
