@@ -192,22 +192,34 @@ def get_data(conditions,filters):
 		perodical=str(emp.no_of_tickets_eligible)+"'s in a "+emp.ticket_period+' Years'
 		eligible=emp.no_of_tickets_eligible
 		#ticket_provision_date
+		tickets=get_tickect_setting(emp.name)
+		currentticketprice=0
+		if tickets:
+			currentticketprice=tickets[0].ticket_fare
+		currentticketprice=currentticketprice or emp.ticket_price
+
 		if emp.openning_entry_date:
 			openabs=0
 			ticket_provision_date=emp.ticket_provision_date or emp.date_of_joining			
-			total_days=frappe.utils.date_diff(emp.openning_entry_date,ticket_provision_date)				
+			total_days=frappe.utils.date_diff(emp.openning_entry_date,ticket_provision_date)
+							
 			if total_days > 0:
 				absents+=float(emp.opening_absent)
 				actual_worked+=total_days-absents
+				years+=round((actual_worked/365),3)
+				years=round(years,3)
 				balance+=float(emp.opening_ticket_balance)
-				amount_balance+=float(emp.opening_ticket_balance_amount)
+				#amount_balance+=float(emp.opening_ticket_balance_amount)
+				amount_balance+=round(float(balance)*float(currentticketprice),2)
 				accrued+=round(float(emp.opening_ticket_balance)+float(emp.used_tickets),3)
-				amount_accrued+=round(emp.opening_ticket_amount_used+emp.opening_ticket_balance_amount,2)
+				#amount_accrued+=round(emp.opening_ticket_amount_used+emp.opening_ticket_balance_amount,2)
+				amount_accrued+=round(float(accrued)*float(currentticketprice),2)
 				used+=float(emp.used_tickets)
-				amount_used+=float(emp.opening_ticket_amount_used)
-				ticket_price=emp.ticket_price
-				#frappe.msgprint('t='+str(emp.used_tickets))
-		tickets=get_tickect_setting(emp.name)
+				#amount_used+=float(emp.opening_ticket_amount_used)
+				amount_used+=float(emp.opening_ticket_amount_used)*float(currentticketprice)
+				ticket_price=currentticketprice
+				
+		
 		if tickets:
 			for ticket in tickets:
 				totaldays=0				
@@ -326,7 +338,7 @@ def get_data(conditions,filters):
 		amount_used=round(amount_used,2)
 		amount_balance=round(amount_balance,2)
 		#frappe.msgprint(str(accrued)+' '+str(balance)+' '+str(used))
-		years+=round((actual_worked/365),3)
+		#years+=round((actual_worked/365),3)
 		years=round(years,3)
 
 		parent_department_tot+=amount_balance
