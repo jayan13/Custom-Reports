@@ -261,9 +261,9 @@ def get_data(conditions,filters):
 					accrued+=accru 
 					balance+=bal
 					used+=usedno
-					ticket_price=ticket.ticket_fare
-					amount_accrued+=accru*ticket.ticket_fare
-					amount_used+=float(usedno)*ticket.ticket_fare
+					ticket_price=currentticketprice
+					amount_accrued+=accru*currentticketprice
+					amount_used+=float(usedno)*currentticketprice
 					#amount_balance+=bal*ticket.ticket_fare
 
 		elif(emp.openning_entry_date!=None and getdate(processing_month)>emp.openning_entry_date):
