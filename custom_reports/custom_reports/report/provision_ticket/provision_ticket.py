@@ -257,6 +257,7 @@ def get_data(conditions,filters):
 						date_to=processing_month
 					if totaldays:
 						perodical=str(ticket.no_of_ticket_eligible)+"'s in a "+str(ticket.periodical)+' Years'
+						eligible=ticket.no_of_ticket_eligible
 						openabs=0
 						absent=getabsents(emp.name,openabs,date_from,date_to)
 						absents+=absent
