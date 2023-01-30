@@ -195,22 +195,23 @@ def get_data(conditions,filters):
 		tickets=get_tickect_setting(emp.name)
 		currentticketprice=0
 		if tickets:
-			currentticketprice=tickets[0].ticket_fare
+			for ticket in tickets:
+				currentticketprice=ticket.ticket_fare
+
 		currentticketprice=currentticketprice or emp.ticket_price
 
 		if emp.openning_entry_date:
 			openabs=0
 			ticket_provision_date=emp.ticket_provision_date or emp.date_of_joining			
-			total_days=frappe.utils.date_diff(emp.openning_entry_date,ticket_provision_date)+1
+			total_days+=frappe.utils.date_diff(emp.openning_entry_date,ticket_provision_date)+1
 							
 			if total_days > 0:
 				absents+=float(emp.opening_absent)
 				actual_worked+=total_days-absents
-				years+=round((actual_worked/365),3)
-				years=round(years,3)
+				years+=round((actual_worked/365),3)				
 				balance+=float(emp.opening_ticket_balance)
 				#amount_balance+=float(emp.opening_ticket_balance_amount)
-				amount_balance+=float(balance)*float(currentticketprice)
+				#amount_balance+=float(balance)*float(currentticketprice)
 				accrued+=round(float(emp.opening_ticket_balance)+float(emp.used_tickets),3)
 				#amount_accrued+=round(emp.opening_ticket_amount_used+emp.opening_ticket_balance_amount,2)
 				amount_accrued+=float(accrued)*float(currentticketprice)
@@ -221,6 +222,7 @@ def get_data(conditions,filters):
 				
 		
 		if tickets:
+			
 			for ticket in tickets:
 				totaldays=0				
 				if ticket.from_date!=None and ticket.to_date!=None and getdate(processing_month) >= ticket.to_date:
@@ -232,9 +234,10 @@ def get_data(conditions,filters):
 					date_from=ticket.from_date
 					if getdate(emp.date_of_joining)>getdate(ticket.from_date):
 						date_from=emp.date_of_joining
-					totaldays=frappe.utils.date_diff(processing_month,date_from)+1					
+					totaldays=frappe.utils.date_diff(processing_month,date_from)+1								
 					total_days+=totaldays					
 					date_to=processing_month
+				
 				if totaldays:
 					openabs=0
 					perodical=str(ticket.no_of_ticket_eligible)+"'s in a "+str(ticket.periodical)+' Years'
@@ -261,7 +264,7 @@ def get_data(conditions,filters):
 					ticket_price=ticket.ticket_fare
 					amount_accrued+=accru*ticket.ticket_fare
 					amount_used+=float(usedno)*ticket.ticket_fare
-					amount_balance+=bal*ticket.ticket_fare
+					#amount_balance+=bal*ticket.ticket_fare
 
 		elif(emp.openning_entry_date!=None and getdate(processing_month)>emp.openning_entry_date):
 			totaldays=0
@@ -298,8 +301,9 @@ def get_data(conditions,filters):
 				ticket_price=emp.ticket_price
 				amount_accrued+=accru*emp.ticket_price
 				amount_used+=float(usedno)*emp.ticket_price
-				amount_balance+=bal*emp.ticket_price
+				#amount_balance+=bal*emp.ticket_price
 		elif emp.openning_entry_date==None and not tickets:
+			
 			totaldays=0
 			ticket_provision_date=emp.ticket_provision_date or emp.date_of_joining
 			totaldays=frappe.utils.date_diff(processing_month,ticket_provision_date)+1	
@@ -332,13 +336,14 @@ def get_data(conditions,filters):
 				ticket_price=emp.ticket_price
 				amount_accrued+=accru*emp.ticket_price
 				amount_used+=float(usedno)*emp.ticket_price
-				amount_balance+=bal*emp.ticket_price
+				#amount_balance+=bal*emp.ticket_price
 						
 		accrued=round(accrued,3)
 		balance=round(balance,3)
 		amount_accrued=round(amount_accrued,2)
 		amount_used=round(amount_used,2)
-		amount_balance=round(amount_balance,2)
+		#amount_balance=round(amount_balance,2)
+		amount_balance=round(amount_accrued-amount_used,2)
 		#frappe.msgprint(str(accrued)+' '+str(balance)+' '+str(used))
 		#years+=round((actual_worked/365),3)
 		years=round(years,3)
