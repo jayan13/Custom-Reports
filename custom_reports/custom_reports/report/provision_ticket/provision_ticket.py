@@ -371,7 +371,7 @@ def get_data(conditions,filters):
 		amount_used=round(amount_used,2)
 		#amount_balance=round(amount_balance,2)
 		amount_balance=round(amount_accrued-amount_used,2)
-		years+=round((actual_worked/365),3)
+		#years+=round((actual_worked/365),3)
 		years=round(years,3)
 
 		parent_department_tot+=amount_balance
