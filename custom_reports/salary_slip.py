@@ -1273,13 +1273,16 @@ class SalarySlipCustom(SalarySlip):
 			if self.annual_leave:
 				if row.salary_component in provcompo and self.annual_leave > 0:
 					pay_days=self.payment_days-self.annual_leave
-			if self.leave_without_pay:
-				house=[]
-				hose=frappe.db.get_all("House Rent Allowance",fields=['salary_component'],pluck='salary_component')
-				if hose:
-					house=hose
-				if row.salary_component in house:
-					pay_days=pay_days+self.leave_without_pay			
+
+			includehra=frappe.db.get_value('Hra Deduction Unpaid Leave Settings',{'company':self.company},'include_hra')
+			if includehra:
+				if self.leave_without_pay:
+					house=[]
+					hose=frappe.db.get_all("House Rent Allowance",fields=['salary_component'],pluck='salary_component')
+					if hose:
+						house=hose
+					if row.salary_component in house:
+						pay_days=pay_days+self.leave_without_pay			
 			
 			#frappe.msgprint(str(row.salary_component)+' - '+str(pay_days))
 			#if row.salary_component in ['Leave Salary','Leave Salary(S)','Leave Salary(A)']:
