@@ -247,7 +247,7 @@ def get_data(conditions,filters):
 					usedtickt=get_ticket_issued(emp.name,date_from,date_to)
 					usedno=0					
 					if usedtickt:
-						usedno=usedtickt.ticket_no or 0
+						usedno=usedtickt or 0
 					
 					actualworked=totaldays-absent
 					actual_worked+=actualworked
@@ -284,7 +284,7 @@ def get_data(conditions,filters):
 				usedtickt=get_ticket_issued(emp.name,date_from,date_to)
 				usedno=0					
 				if usedtickt:
-					usedno=usedtickt.ticket_no or 0
+					usedno=usedtickt or 0
 					
 				actualworked=totaldays-absent
 				actual_worked+=actualworked
@@ -319,7 +319,7 @@ def get_data(conditions,filters):
 				usedtickt=get_ticket_issued(emp.name,date_from,date_to)
 				usedno=0					
 				if usedtickt:
-					usedno=usedtickt.ticket_no or 0
+					usedno=usedtickt or 0
 					
 				actualworked=totaldays-absent
 				actual_worked+=actualworked
