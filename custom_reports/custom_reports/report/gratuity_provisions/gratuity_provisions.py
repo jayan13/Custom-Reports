@@ -287,10 +287,10 @@ def calculate_work_experience(employee, gratuity_rule,processing_month,openabs):
 	#	employee, date_of_joining, relieving_date
 	#)
 	total_workings_days = (get_datetime(relieving_date) - get_datetime(date_of_joining)).days+1
-	employee_total_workings_days = get_nonworking_days(
+	employee_non_workings_days = get_nonworking_days(
 		employee,openabs,non_from, relieving_date
 	)
-	employee_total_workings_days=total_workings_days-employee_total_workings_days
+	employee_total_workings_days=total_workings_days-employee_non_workings_days
 	#frappe.msgprint(str(employee_total_workings_days))
 	
 	current_work_experience = employee_total_workings_days / total_working_days_per_year or 1
@@ -349,13 +349,22 @@ def get_non_working_days(employee, relieving_date, status):
 
 def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_month):
 	global accured_days
+	company=frappe.db.get_value('Employee',employee,'company')
+	if experience > 5 and gratuity_rule in ['Rule Under Unlimited Contract on resignation (UAE)','Rule Under Unlimited Contract on resignation (UAE)-GRAND']:
+		if company=='GRAND CONTINENTAL FLAMINGO HOTEL':
+			if frappe.db.exists("Gratuity Rule", "Rule Under Limited Contract (UAE)-GRAND", cache=True):
+				gratuity_rule = 'Rule Under Limited Contract (UAE)-GRAND'
+			else:
+				gratuity_rule = 'Rule Under Limited Contract (UAE)'
+		else:
+			gratuity_rule = 'Rule Under Limited Contract (UAE)'
+
 	applicable_earnings_component = get_applicable_components(gratuity_rule)
 	total_applicable_components_amount = get_total_applicable_component_amount(
 		employee, applicable_earnings_component, gratuity_rule,processing_month
 	)
 	
-	if experience > 5 and gratuity_rule=='Rule Under Unlimited Contract on resignation (UAE)':
-		gratuity_rule = 'Rule Under Limited Contract (UAE)'
+	
 
 	calculate_gratuity_amount_based_on = frappe.db.get_value(
 		"Gratuity Rule", gratuity_rule, "calculate_gratuity_amount_based_on"
@@ -375,7 +384,7 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 				slab.to_year,
 				experience,
 				total_applicable_components_amount,
-				slab.fraction_of_applicable_earnings,
+				slab.fraction_of_applicable_earnings,company
 			)
 			if slab_found:
 				break
@@ -384,7 +393,7 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 			if slab.to_year == 0 and slab.from_year == 0:
 				day=slab.fraction_of_applicable_earnings*30
 				day=round(day)
-				if gratuity_rule=='Rule Under Limited Contract (UAE)-GRAND':
+				if company=='GRAND CONTINENTAL FLAMINGO HOTEL':
 					gratuity_amount += (
 						year_left * total_applicable_components_amount * slab.fraction_of_applicable_earnings
 					)
@@ -399,7 +408,7 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 				day=slab.fraction_of_applicable_earnings*30
 				day=round(day)
 				yer=slab.to_year - slab.from_year
-				if gratuity_rule=='Rule Under Limited Contract (UAE)-GRAND':
+				if company=='GRAND CONTINENTAL FLAMINGO HOTEL':
 					gratuity_amount += (
 					(slab.to_year - slab.from_year)
 					* total_applicable_components_amount
@@ -415,7 +424,7 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 			elif slab.from_year <= experience and (experience < slab.to_year or slab.to_year == 0):
 				day=slab.fraction_of_applicable_earnings*30
 				day=round(day)
-				if gratuity_rule=='Rule Under Limited Contract (UAE)-GRAND':
+				if company=='GRAND CONTINENTAL FLAMINGO HOTEL':
 					gratuity_amount += (
 					year_left * total_applicable_components_amount * slab.fraction_of_applicable_earnings
 					)
@@ -490,7 +499,7 @@ def calculate_amount_based_on_current_slab(
 	to_year,
 	experience,
 	total_applicable_components_amount,
-	fraction_of_applicable_earnings,
+	fraction_of_applicable_earnings,company=''
 ):
 	slab_found = False
 	global accured_days
@@ -502,7 +511,12 @@ def calculate_amount_based_on_current_slab(
 		day=fraction_of_applicable_earnings*30
 		day=round(day)
 		accured_days+=(experience*day)		
-		gratuity_amount =(experience*day)*((total_applicable_components_amount*12)/365)
+		if company=='GRAND CONTINENTAL FLAMINGO HOTEL':
+			gratuity_amount = (
+			total_applicable_components_amount * experience * fraction_of_applicable_earnings
+			)
+		else:		
+			gratuity_amount =(experience*day)*((total_applicable_components_amount*12)/365)
 		#frappe.msgprint()
 		#frappe.msgprint(str(day)+'*'+str(experience)+'*(('+str(total_applicable_components_amount)+'*12)/365)'+str(gratuity_amount)+')')
 		if fraction_of_applicable_earnings:
@@ -551,6 +565,20 @@ def get_nonworking_days(emp,opn,start_date,end_date):
 	record = frappe.get_all("Attendance", filters=filters, fields=["COUNT(name) as total_lwp"],debug=0)
 	if record:
 		nwdays += record[0].total_lwp if len(record) else 0
+
+	filters = {
+		"docstatus": 1,
+		"status": ['in',['On Leave','Half Day']],
+		"employee": emp,
+		"attendance_date": ("between", [get_datetime(start_date),get_datetime(end_date)]),
+	}
+	
+	ppl_leave_types = frappe.get_list("Leave Type", filters={"is_ppl": 1})
+	ppl_leave_types = [leave_type.name for leave_type in ppl_leave_types]
+	filters["leave_type"] = ("IN", ppl_leave_types)
+	record = frappe.get_all("Attendance", filters=filters, fields=["COUNT(name) as total_lwp"],debug=0)
+	if record:
+		nwdays += float(record[0].total_lwp)*.5 if len(record) else 0
 
 	filters = {
 		"docstatus": 1,

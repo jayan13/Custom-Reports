@@ -1307,9 +1307,10 @@ def get_ticket_blance(emp):
 @frappe.whitelist()
 def get_ticket_accrued(emp):
 	accrued=0
-	used_tickets=frappe.db.get_value('Employee',emp,'used_tickets')
-	bal_tickets=frappe.db.get_value('Employee',emp,'opening_ticket_balance')
-	openning_entry_date=frappe.db.get_value('Employee',emp,'openning_entry_date')
+	employee=frappe.db.get_value('Employee',emp,['openning_entry_date','opening_absent','used_tickets','opening_ticket_balance','ticket_period','no_of_tickets_eligible','ticket_provision_date','date_of_joining'],as_dict=1)
+	used_tickets=employee.used_tickets
+	bal_tickets=employee.opening_ticket_balance
+	openning_entry_date=employee.openning_entry_date
 	accrued+=float(used_tickets)+float(bal_tickets)
 	tickets=get_tickect_setting(emp)
 	processing_month=nowdate()
@@ -1333,7 +1334,7 @@ def get_ticket_accrued(emp):
 				if float(ticket.periodical) > 0 and ticket.no_of_ticket_eligible:
 					accru=(year/float(ticket.periodical))*float(ticket.no_of_ticket_eligible)
 				accrued+=float(accru)
-	elif(getdate(processing_month)>getdate(openning_entry_date)):
+	elif(openning_entry_date!=None and getdate(processing_month)>getdate(openning_entry_date)):
 		totaldays=0
 		accru=0
 		totaldays=frappe.utils.date_diff(processing_month,openning_entry_date)+1
@@ -1343,12 +1344,27 @@ def get_ticket_accrued(emp):
 		absents=getabsents(emp,opabs,date_from,date_to)
 		actualworked=totaldays-absents
 		year=actualworked/365
-		no_of_tickets_eligible=frappe.db.get_value('Employee',emp,'no_of_tickets_eligible')
-		ticket_period=frappe.db.get_value('Employee',emp,'ticket_period')
+		no_of_tickets_eligible=employee.no_of_tickets_eligible
+		ticket_period=employee.ticket_period
 		if float(ticket_period) > 0 and no_of_tickets_eligible:
 			accru=(year/float(ticket_period))*float(no_of_tickets_eligible)
 		accrued+=float(accru)
-
+	elif openning_entry_date==None and not tickets:
+		totaldays=0
+		ticket_provision_date=employee.ticket_provision_date or employee.date_of_joining
+		totaldays=frappe.utils.date_diff(processing_month,ticket_provision_date)+1							
+		total_days+=totaldays
+		date_from=getdate(ticket_provision_date)			
+		date_to=getdate(processing_month)				
+		if totaldays:
+			openabs=0
+			absent=getabsents(emp,openabs,date_from,date_to)			
+			actualworked=totaldays-absent			
+			year=round(actualworked/365,3)			
+			
+			if float(employee.ticket_period) > 0 and employee.no_of_tickets_eligible:
+				accrued=(year/float(employee.ticket_period))*float(employee.no_of_tickets_eligible)
+			
 	return accrued
 
 def get_tickect_setting(emp):

@@ -6,7 +6,7 @@ from math import floor
 
 import frappe
 from frappe import _, bold
-from frappe.utils import flt, get_datetime, get_link_to_form
+from frappe.utils import flt, get_datetime, get_link_to_form, add_days, getdate, date_diff
 from frappe.model.document import Document
 from erpnext.payroll.doctype.gratuity.gratuity import Gratuity
 
@@ -24,8 +24,8 @@ def calculate_work_experience(employee, gratuity_rule):
 		"Gratuity Rule", gratuity_rule, ["total_working_days_per_year", "minimum_year_for_gratuity"]
 	)
 
-	date_of_joining, relieving_date = frappe.db.get_value(
-		"Employee", employee, ["date_of_joining", "relieving_date"]
+	date_of_joining, relieving_date, openning_entry_date, opening_absent = frappe.db.get_value(
+		"Employee", employee, ["date_of_joining", "relieving_date","openning_entry_date","opening_absent"]
 	)
 	if not relieving_date:
 		frappe.throw(
@@ -37,9 +37,19 @@ def calculate_work_experience(employee, gratuity_rule):
 	method = frappe.db.get_value(
 		"Gratuity Rule", gratuity_rule, "work_experience_calculation_function"
 	)
-	employee_total_workings_days = calculate_employee_total_workings_days(
-		employee, date_of_joining, relieving_date
+
+	non_from=date_of_joining
+	if openning_entry_date:
+		non_from=add_days(getdate(openning_entry_date), 1)
+
+	#employee_total_workings_days = calculate_employee_total_workings_days(
+	#	employee, date_of_joining, relieving_date
+	#)
+	total_workings_days = (get_datetime(relieving_date) - get_datetime(date_of_joining)).days+1
+	employee_non_workings_days = get_nonworking_days(
+		employee,opening_absent,non_from, relieving_date
 	)
+	employee_total_workings_days=total_workings_days-employee_non_workings_days
 
 	current_work_experience = employee_total_workings_days / total_working_days_per_year or 1
 	current_work_experience = get_work_experience_using_method(
@@ -101,6 +111,16 @@ def get_non_working_days(employee, relieving_date, status):
 
 
 def calculate_gratuity_amount(employee, gratuity_rule, experience):
+	company=frappe.db.get_value('Employee',employee,'company')
+	if experience > 5 and gratuity_rule in ['Rule Under Unlimited Contract on resignation (UAE)','Rule Under Unlimited Contract on resignation (UAE)-GRAND']:
+		if company=='GRAND CONTINENTAL FLAMINGO HOTEL':
+			if frappe.db.exists("Gratuity Rule", "Rule Under Limited Contract (UAE)-GRAND", cache=True):
+				gratuity_rule = 'Rule Under Limited Contract (UAE)-GRAND'
+			else:
+				gratuity_rule = 'Rule Under Limited Contract (UAE)'
+		else:
+			gratuity_rule = 'Rule Under Limited Contract (UAE)'
+
 	applicable_earnings_component = get_applicable_components(gratuity_rule)
 	total_applicable_components_amount = get_total_applicable_component_amount(
 		employee, applicable_earnings_component, gratuity_rule
@@ -121,31 +141,54 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience):
 				slab.to_year,
 				experience,
 				total_applicable_components_amount,
-				slab.fraction_of_applicable_earnings,
+				slab.fraction_of_applicable_earnings,company
 			)
 			if slab_found:
 				break
 
 		elif calculate_gratuity_amount_based_on == "Sum of all previous slabs":
 			if slab.to_year == 0 and slab.from_year == 0:
-				gratuity_amount += (
-					year_left * total_applicable_components_amount * slab.fraction_of_applicable_earnings
-				)
+				day=slab.fraction_of_applicable_earnings*30
+				day=round(day)
+				if company=='GRAND CONTINENTAL FLAMINGO HOTEL':
+					gratuity_amount += (
+						year_left * total_applicable_components_amount * slab.fraction_of_applicable_earnings
+					)
+				else:									
+					gratuity_amount += (year_left*day)*((total_applicable_components_amount*12)/365)
+
+				
 				slab_found = True
 				break
 
 			if experience > slab.to_year and experience > slab.from_year and slab.to_year != 0:
-				gratuity_amount += (
+				day=slab.fraction_of_applicable_earnings*30
+				day=round(day)
+				yer=slab.to_year - slab.from_year
+				if company=='GRAND CONTINENTAL FLAMINGO HOTEL':
+					gratuity_amount += (
 					(slab.to_year - slab.from_year)
 					* total_applicable_components_amount
 					* slab.fraction_of_applicable_earnings
-				)
+					)
+				else:
+					gratuity_amount += (yer*day)*((total_applicable_components_amount*12)/365)
+
+				
 				year_left -= slab.to_year - slab.from_year
 				slab_found = True
+				
 			elif slab.from_year <= experience and (experience < slab.to_year or slab.to_year == 0):
-				gratuity_amount += (
+				day=slab.fraction_of_applicable_earnings*30
+				day=round(day)
+				if company=='GRAND CONTINENTAL FLAMINGO HOTEL':
+					gratuity_amount += (
 					year_left * total_applicable_components_amount * slab.fraction_of_applicable_earnings
-				)
+					)
+				else:
+					gratuity_amount += (year_left*day)*((total_applicable_components_amount*12)/365)
+
+				
 				slab_found = True
 
 	if not slab_found:
@@ -201,14 +244,24 @@ def calculate_amount_based_on_current_slab(
 	to_year,
 	experience,
 	total_applicable_components_amount,
-	fraction_of_applicable_earnings,
+	fraction_of_applicable_earnings,company=''
 ):
 	slab_found = False
 	gratuity_amount = 0
 	if experience >= from_year and (to_year == 0 or experience < to_year):
-		gratuity_amount = (
+		
+		#gratuity_amount = (		
+		#	total_applicable_components_amount * experience * fraction_of_applicable_earnings
+		#)
+		day=fraction_of_applicable_earnings*30
+		day=round(day)		
+		if company=='GRAND CONTINENTAL FLAMINGO HOTEL':
+			gratuity_amount = (
 			total_applicable_components_amount * experience * fraction_of_applicable_earnings
-		)
+			)
+		else:		
+			gratuity_amount =(experience*day)*((total_applicable_components_amount*12)/365)
+
 		if fraction_of_applicable_earnings:
 			slab_found = True
 
@@ -237,3 +290,45 @@ def get_last_salary_slip(employee):
 	if not salary_slips:
 		return
 	return salary_slips[0].name
+
+def get_nonworking_days(emp,opn,start_date,end_date):
+	nwdays=float(opn)
+	filters = {
+		"docstatus": 1,
+		"status": 'On Leave',
+		"employee": emp,
+		"attendance_date": ("between", [get_datetime(start_date),get_datetime(end_date)]),
+	}
+	
+	lwp_leave_types = frappe.get_list("Leave Type", filters={"is_lwp": 1})
+	lwp_leave_types = [leave_type.name for leave_type in lwp_leave_types]
+	filters["leave_type"] = ("IN", lwp_leave_types)
+	record = frappe.get_all("Attendance", filters=filters, fields=["COUNT(name) as total_lwp"],debug=0)
+	if record:
+		nwdays += record[0].total_lwp if len(record) else 0
+
+	filters = {
+		"docstatus": 1,
+		"status": ['in',['On Leave','Half Day']],
+		"employee": emp,
+		"attendance_date": ("between", [get_datetime(start_date),get_datetime(end_date)]),
+	}
+	
+	ppl_leave_types = frappe.get_list("Leave Type", filters={"is_ppl": 1})
+	ppl_leave_types = [leave_type.name for leave_type in ppl_leave_types]
+	filters["leave_type"] = ("IN", ppl_leave_types)
+	record = frappe.get_all("Attendance", filters=filters, fields=["COUNT(name) as total_lwp"],debug=0)
+	if record:
+		nwdays += float(record[0].total_lwp)*.5 if len(record) else 0
+
+	filters = {
+		"docstatus": 1,
+		"status": 'Absent',
+		"employee": emp,
+		"attendance_date": ("between", [get_datetime(start_date),get_datetime(end_date)]),
+	}
+	record = frappe.get_all("Attendance", filters=filters, fields=["COUNT(name) as total_lwp"],debug=0)
+	if record:
+		nwdays += record[0].total_lwp if len(record) else 0
+	
+	return nwdays
