@@ -451,11 +451,11 @@ class SalarySlipCustom(SalarySlip):
 			holidays = self.get_holidays_for_employee(start_date, end_date)
 			payment_days -= len(holidays)
 		#custom code
-		
+		annual_leave_advanced_paid=0		
 		annualday=frappe.db.sql(""" select from_date,to_date,total_leave_days,half_day_date,half_day from `tabLeave Application` 
 		where docstatus=1 and leave_type='Annual Leave' and salary_paid_in_advance=1 
 		and employee='{0}' and to_date >= '{1}' and from_date <= '{2}' """.format(self.employee,start_date, end_date),as_dict=1)
-		annual_leave_advanced_paid=0
+		
 		if annualday:
 			for annual in annualday:
 				pdays=0
@@ -477,8 +477,14 @@ class SalarySlipCustom(SalarySlip):
 				else:
 					pdays=date_diff(end, start) + 1
 				
-				payment_days-=pdays
-				annual_leave_advanced_paid+=pdays
+				if self.final_settlement_request:
+					self.annual_leave+=pdays
+				else:
+					payment_days-=pdays
+					annual_leave_advanced_paid+=pdays
+
+				
+
 		# custom end
 		self.annual_leave_advanced_paid=annual_leave_advanced_paid 
 		return payment_days

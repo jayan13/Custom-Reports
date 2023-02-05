@@ -87,14 +87,20 @@ frappe.ui.form.on('Final Settlement Request', {
 				callback: function (r) {
 					if (r.message) {
 						var itemin=0;
-						frm.doc.settlement_details.forEach(function(d) { 
+						frm.doc.settlement_details.forEach(function(i,d) { 
 							if(d.settlement=='Annual Leave')
 							{
-								d.paid_amt=((r.message.sal*12)/365)*frm.doc.annual_leave;
-								itemin=1;
+								if(frm.doc.annual_leave>0)
+								{
+									d.paid_amt=((r.message.sal*12)/365)*frm.doc.annual_leave;
+									itemin=1;
+								}else{
+									cur_frm.get_field("settlement_details").grid.grid_rows[i].remove();
+								}	
+								
 							}
 						});
-						if(itemin==0)
+						if(itemin==0 && frm.doc.annual_leave>0)
 						{						
 						var c = frm.add_child("settlement_details");
 							c.settlement='Annual Leave';
@@ -152,14 +158,19 @@ frappe.ui.form.on('Final Settlement Request', {
 					if (r.message) {						
 						
 							var itemin=0;
-							frm.doc.settlement_details.forEach(function(d) { 
+							frm.doc.settlement_details.forEach(function(i,d) { 
 								if(d.settlement=='Compensatory')
 								{
-									d.paid_amt=((r.message*12)/365)*frm.doc.day_off_compensatory;
-									itemin=1;
+									if(frm.doc.day_off_compensatory>0){
+										d.paid_amt=((r.message*12)/365)*frm.doc.day_off_compensatory;
+										itemin=1;
+									}									
+									else{
+										cur_frm.get_field("settlement_details").grid.grid_rows[i].remove();
+									}
 								}
 							});
-							if(itemin==0)
+							if(itemin==0 && frm.doc.day_off_compensatory>0)
 							{
 								var c = frm.add_child("settlement_details");
 								c.settlement='Compensatory';
@@ -196,10 +207,6 @@ frappe.ui.form.on('Final Settlement Request', {
 				}
 			});
 		}
-	},
-	period_worked:function(frm)
-	{
-		
 	},
 	get_period_worked:function(frm)
 	{
@@ -241,15 +248,20 @@ frappe.ui.form.on('Final Settlement Request', {
 						frm.set_value('accured_days', r.message.accured_days);
 
 						var itemin=0;
-						frm.doc.settlement_details.forEach(function(d) { 
+						frm.doc.settlement_details.forEach(function(i,d) { 
 							if(d.settlement=='Gratuity')
-							{
-								d.paid_amt=r.message.amount;
-								d.days=r.message.accured_days;
-								itemin=1;
+							{	
+								if(r.message.amount>0){
+									d.paid_amt=r.message.amount;
+									d.days=r.message.accured_days;
+									itemin=1;
+								}else{
+									cur_frm.get_field("settlement_details").grid.grid_rows[i].remove();
+								}
+								
 							}
 						});
-						if(itemin==0)
+						if(itemin==0 && r.message.amount>0)
 						{
 
 						var c = frm.add_child("settlement_details");
@@ -271,10 +283,6 @@ frappe.ui.form.on('Final Settlement Request', {
 		}
 
 	},
-	settlement_details:function(frm)
-	{ 
-		
-	},
 	get_settlement_details:function(frm)
 	{ 
 		if (frm.doc.docstatus === 0 && frm.doc.employee && frm.doc.date_of_joining && frm.doc.relieving_date) {
@@ -287,14 +295,15 @@ frappe.ui.form.on('Final Settlement Request', {
 
 				},
 				callback: function (r) {
-					if (!r.exc && r.message) {						
+					if (r.message) {						
 						$.each(r.message, function(i, jvd) {
 							
 							var c = frm.add_child("settlement_details");
 							c.settlement=jvd.salary_component;
 							c.paid_amt=jvd.amount;
-							c.gen_amt=c.paid_amt;
+							c.gen_amt=jvd.amount;
 							c.narration=jvd.salary_component;
+							c.slip=jvd.slip;
 						});
 						frm.refresh_fields();
 					} 
