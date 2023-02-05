@@ -87,7 +87,7 @@ frappe.ui.form.on('Final Settlement Request', {
 				callback: function (r) {
 					if (r.message) {
 						var itemin=0;
-						frm.doc.settlement_details.forEach(function(i,d) { 
+						frm.doc.settlement_details.forEach(function(d,i) { 
 							if(d.settlement=='Annual Leave')
 							{
 								if(frm.doc.annual_leave>0)
@@ -158,7 +158,7 @@ frappe.ui.form.on('Final Settlement Request', {
 					if (r.message) {						
 						
 							var itemin=0;
-							frm.doc.settlement_details.forEach(function(i,d) { 
+							frm.doc.settlement_details.forEach(function(d,i) { 
 								if(d.settlement=='Compensatory')
 								{
 									if(frm.doc.day_off_compensatory>0){
@@ -248,9 +248,11 @@ frappe.ui.form.on('Final Settlement Request', {
 						frm.set_value('accured_days', r.message.accured_days);
 
 						var itemin=0;
-						frm.doc.settlement_details.forEach(function(i,d) { 
+						frm.doc.settlement_details.forEach(function(d,i) { 
+							
 							if(d.settlement=='Gratuity')
 							{	
+								console.log('grstu')
 								if(r.message.amount>0){
 									d.paid_amt=r.message.amount;
 									d.days=r.message.accured_days;
