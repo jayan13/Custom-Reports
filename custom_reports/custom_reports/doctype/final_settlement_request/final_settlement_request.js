@@ -252,7 +252,7 @@ frappe.ui.form.on('Final Settlement Request', {
 							
 							if(d.settlement=='Gratuity')
 							{	
-								console.log('grstu')
+							
 								if(r.message.amount>0){
 									d.paid_amt=r.message.amount;
 									d.days=r.message.accured_days;
