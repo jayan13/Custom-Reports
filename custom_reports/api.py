@@ -942,7 +942,7 @@ def get_employee_salarys(emp,date_from,date_to):
 	if salend_date:
 		slip_end_date=salend_date[0].end_date
 
-	if slip_end_date:
+	if slip_end_date and slip_end_date < date_from:
 		monthstart=add_days(getdate(slip_end_date),1)
 	else:
 		monthstart=get_first_day(date_from)
