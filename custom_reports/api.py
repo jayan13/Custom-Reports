@@ -951,6 +951,7 @@ def get_employee_salarys(emp,date_from,date_to):
 	salcomp=[]
 	sal_from=monthstart
 	sal_to=monthend
+	frappe.msgprint(str(sal_from)+'-'+str(sal_to))
 	i=0
 	while True:
 		
