@@ -808,7 +808,8 @@ def get_salary_structure(employee):
 	return
 def get_last_salary_slip(employee):
 	salary_slips = frappe.get_list(
-		"Salary Slip", filters={"employee": employee, "docstatus": 1}, order_by="start_date desc"
+		"Salary Slip", filters={"employee": employee, "docstatus": 1}, order_by="start_date desc",start=0,
+    page_length=1,
 	)
 	if not salary_slips:
 		return
@@ -887,3 +888,114 @@ def get_worked_days(emp,start_date,end_date):
 		nwdays += record[0].total_lwp if len(record) else 0
 	
 	return nwdays
+
+@frappe.whitelist()
+def get_emp_details(emp,start_date,end_date):
+	employee=frappe.db.get_value('Employee',{'name':emp},['company','used_tickets','opening_ticket_balance','openning_entry_date','ticket_period','opening_used_leaves','date_of_joining','no_of_tickets_eligible'],as_dict=1,debug=0)
+	
+	ticket_period=employee.ticket_period
+	ticket_eligible=employee.no_of_tickets_eligible
+	leave_in_year=get_this_year_annual_leave(emp,end_date) or 0
+
+	gross_salary=get_gross_salary(emp,end_date)
+	tick=frappe.db.sql(""" select periodical,no_of_ticket_eligible from `tabEmployee Ticket Settings` where employee='%s' and docstatus='1'  order by from_date desc"""% (emp),as_dict=1,debug=0)
+	if tick:
+		ticket_period=tick[0].periodical
+		ticket_eligible=employee.no_of_ticket_eligible
+	
+	used_leaves=getused(emp,employee.opening_used_leaves,end_date,employee.date_of_joining)
+	salary_structure=get_salary_structure(emp)
+	salcomp=frappe.db.get_all('Salary Detail',filters={'parent':salary_structure,'depends_on_payment_days':'1','amount':['>','0'],'salary_component':['in',('Basic(A)','Basic')]},fields=['salary_component','amount','parentfield'])
+	base_salary=0
+	if salcomp:
+		base_salary=salcomp[0].amount
+
+	leave_entitled=get_leave_no(emp,end_date)
+	ticket_issued=0
+	opnusedtick=employee.used_tickets or 0
+	if employee.openning_entry_date!=None:
+		ticket_issued=get_ticket_issued(emp,employee.openning_entry_date,end_date)
+	else:
+		ticket_issued=get_ticket_issued(emp,employee.date_of_joining,end_date)
+
+	ticket_issued+=float(opnusedtick)
+	
+
+	return {'ticket_issued':ticket_issued,'leave_in_year':leave_in_year,'gross_salary':gross_salary,'ticket_period':ticket_period,'used_leaves':used_leaves,'base_salary':base_salary,'leave_entitled':leave_entitled,'salary_structure':salary_structure,'ticket_eligible':ticket_eligible}
+
+def get_this_year_annual_leave(emp,end_date):
+	res=frappe.db.sql(""" select count(*) as used FROM `tabAttendance` a left join `tabLeave Type` l on l.name=a.leave_type 
+	where a.docstatus=1 and a.status='On Leave' and a.employee='{0}' and year(a.attendance_date)=year('{1}') and a.leave_type='Annual Leave' """.format(emp,end_date),as_dict=1,debug=0)
+	if res:
+		return res[0].used
+	return 
+	
+@frappe.whitelist()
+def get_employee_salarys(emp,date_from,date_to):
+	
+	salary_structure=get_salary_structure(emp)
+	salend_date = frappe.get_list(
+		"Salary Slip",fields=['end_date'], filters={"employee": emp, "docstatus": ['<',2]}, order_by="start_date desc",start=0,
+    page_length=1,
+	)
+	slip_end_date=''
+	if salend_date:
+		slip_end_date=salend_date[0].end_date
+
+	if slip_end_date:
+		monthstart=add_days(getdate(slip_end_date),1)
+	else:
+		monthstart=get_first_day(date_from)
+
+	monthend=get_last_day(date_from)	
+	salcomp=[]
+	sal_from=monthstart
+	sal_to=monthend
+	i=0
+	while True:
+		
+		if getdate(date_to).month==getdate(sal_to).month:
+			sal_to=getdate(date_to)
+
+		doc = frappe.new_doc('Salary Slip')
+		doc.employee=emp
+		doc.start_date=sal_from
+		doc.end_date=sal_to
+		doc.payroll_frequency='Monthly'
+		doc.salary_structure=salary_structure
+		doc.final_settlement_request = str(emp)+str(sal_to)
+		doc.insert()
+		
+		if len(doc.earnings):
+			for earnings in doc.earnings:
+				ern={}
+				narration=str(earnings.salary_component)+' '+str(formatdate(sal_from, "mm-yyyy"))
+				ern.update({'slip':doc.name})
+				ern.update({'salary_component':earnings.salary_component})
+				ern.update({'amount':earnings.amount})
+				ern.update({'narration':narration})
+							
+				salcomp.append(ern)
+
+		if len(doc.deductions):
+			for deductions in doc.deductions:
+				dedu={}
+				narration=str(deductions.salary_component)+' '+str(formatdate(sal_from, "mm-yyyy"))
+				dedu.update({'slip':doc.name})
+				dedu.update({'salary_component':deductions.salary_component})
+				dedu.update({'amount':deductions.amount*-1})
+				dedu.update({'narration':narration})			
+				salcomp.append(dedu)
+
+		doc.delete()
+		i+=1
+		if i==12:
+			break
+
+		if getdate(date_to).month==getdate(sal_to).month:
+			break		
+		else:
+			sal_from=add_days(sal_to,1)			
+			sal_to=get_last_day(sal_from)
+
+	return salcomp

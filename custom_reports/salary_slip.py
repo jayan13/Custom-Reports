@@ -18,7 +18,7 @@ from frappe.utils import (
 	get_first_day,
 	getdate,
 	money_in_words,
-	rounded,
+	rounded, get_last_day
 )
 from frappe.utils.background_jobs import enqueue
 from six import iteritems
@@ -1272,7 +1272,8 @@ class SalarySlipCustom(SalarySlip):
 				(flt(row.additional_amount) * flt(self.payment_days) / cint(self.total_working_days)),
 				row.precision("additional_amount"),
 			)
-			#custom 
+			#custom  
+			total_days_in_month=date_diff(get_last_day(self.start_date),get_first_day(self.start_date))+1 
 			provcompo=self.get_provision_components(self.company,self.start_date)
 			
 			pay_days=self.payment_days
@@ -1306,7 +1307,7 @@ class SalarySlipCustom(SalarySlip):
 					erning=frappe.get_all('Salary Detail',filters={'parent':self.salary_structure,'parentfield':'earnings','amount':['>',0],'salary_component':['in',provcompo]},fields=['salary_component','amount'])
 					if erning:
 						for er in erning:
-							lvsalamt+= (flt(er.amount) * flt(self.annual_leave) / cint(self.total_working_days))							
+							lvsalamt+= (flt(er.amount) * flt(self.annual_leave) / cint(total_days_in_month))							
 								
 						amount=flt(lvsalamt)+flt(additional_amount)
 					else:
@@ -1318,7 +1319,7 @@ class SalarySlipCustom(SalarySlip):
 				if pay_days > 0:	
 					amount = (
 						flt(
-							(flt(row.default_amount) * flt(pay_days) / cint(self.total_working_days)),
+							(flt(row.default_amount) * flt(pay_days) / cint(total_days_in_month)),
 							row.precision("amount"),
 						)
 						+ additional_amount
