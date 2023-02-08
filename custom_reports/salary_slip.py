@@ -453,7 +453,7 @@ class SalarySlipCustom(SalarySlip):
 		#custom code
 		annual_leave_advanced_paid=0		
 		annualday=frappe.db.sql(""" select from_date,to_date,total_leave_days,half_day_date,half_day from `tabLeave Application` 
-		where docstatus=1 and leave_type='Annual Leave' and (salary_paid_in_advance=1 or leave_category='Off Shore' )
+		where docstatus=1 and leave_type='Annual Leave' and salary_paid_in_advance=1 
 		and employee='{0}' and to_date >= '{1}' and from_date <= '{2}' """.format(self.employee,start_date, end_date),as_dict=1)
 		
 		if annualday:
@@ -511,12 +511,12 @@ class SalarySlipCustom(SalarySlip):
 
 		total_annual_leave=0
 		half=frappe.db.sql(""" select count(*) as lvcnt FROM `tabAttendance` a left join `tabLeave Application` l on l.name=a.leave_application 
-	where a.docstatus=1 and a.leave_type='Annual Leave' and  l.salary_paid_in_advance='0' and l.leave_category='Local'  and a.status='Half Day' and a.employee='{0}' and a.attendance_date between '{1}' and  '{2}'  """.format(self.employee,start_date, end_date),as_dict=1)
+	where a.docstatus=1 and a.leave_type='Annual Leave' and  l.salary_paid_in_advance='0'  and a.status='Half Day' and a.employee='{0}' and a.attendance_date between '{1}' and  '{2}'  """.format(self.employee,start_date, end_date),as_dict=1)
 		if half:
 			total_annual_leave+=float(half[0].lvcnt) *.5
 		
 		full=frappe.db.sql(""" select count(*) as lvcnt FROM `tabAttendance` a left join `tabLeave Application` l on l.name=a.leave_application 
-	where a.docstatus=1 and a.leave_type='Annual Leave' and  l.salary_paid_in_advance='0' and l.leave_category='Local'  and a.status='On Leave' and a.employee='{0}' and a.attendance_date between '{1}' and  '{2}'  """.format(self.employee,start_date, end_date),as_dict=1,debug=0)
+	where a.docstatus=1 and a.leave_type='Annual Leave' and  l.salary_paid_in_advance='0' and a.status='On Leave' and a.employee='{0}' and a.attendance_date between '{1}' and  '{2}'  """.format(self.employee,start_date, end_date),as_dict=1,debug=0)
 		if full:
 			total_annual_leave+=float(full[0].lvcnt)
 		
@@ -1275,7 +1275,12 @@ class SalarySlipCustom(SalarySlip):
 			#custom  
 			total_days_in_month=date_diff(get_last_day(self.start_date),get_first_day(self.start_date))+1 
 			provcompo=self.get_provision_components(self.company,self.start_date)
-			
+			prev_paid=0  
+			prevsql=frappe.db.sql(""" select d.paid_amt from `tabSettlement Details` d left join `tabAnnual Leave Payslip` a on a.name=d.parent 
+			where a.docstatus=1 and d.applied='Yes' and d.settlement='{0}' and d.employee='{1}' and '{2}' between d.date_from and d.date_to """.format(row.salary_component,self.employee,self.start_date),as_dict=1,debug=0)
+			if prevsql:
+				prev_paid=prevsql[0].paid_amt
+
 			pay_days=self.payment_days
 			if self.annual_leave:
 				if row.salary_component in provcompo and self.annual_leave > 0:
@@ -1326,6 +1331,8 @@ class SalarySlipCustom(SalarySlip):
 					)
 				else:
 					amount=flt(additional_amount)
+
+			amount=amount-prev_paid
 					#------ custom end --------
 		elif (
 			not self.payment_days

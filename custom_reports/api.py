@@ -416,7 +416,10 @@ def get_employee_salary(emp,date_from,date_to):
 			ern={}
 			ern.update({'slip':doc.name})
 			ern.update({'salary_component':earnings.salary_component})
-			ern.update({'amount':earnings.amount})			
+			ern.update({'amount':earnings.amount})
+			ern.update({'employee':emp})
+			ern.update({'date_from':monthstart})
+			ern.update({'date_to':monthend})				
 			salcomp.append(ern)
 
 	if len(doc.deductions):
@@ -424,7 +427,10 @@ def get_employee_salary(emp,date_from,date_to):
 			dedu={}
 			dedu.update({'slip':doc.name})
 			dedu.update({'salary_component':deductions.salary_component})
-			dedu.update({'amount':deductions.amount*-1})			
+			dedu.update({'amount':deductions.amount*-1})
+			dedu.update({'employee':emp})
+			dedu.update({'date_from':monthstart})
+			dedu.update({'date_to':monthend})				
 			salcomp.append(dedu)
 
 	doc.delete()		
@@ -977,7 +983,9 @@ def get_employee_salarys(emp,date_from,date_to):
 				ern.update({'salary_component':earnings.salary_component})
 				ern.update({'amount':earnings.amount})
 				ern.update({'narration':narration})
-							
+				ern.update({'employee':emp})
+				ern.update({'date_from':sal_from})
+				ern.update({'date_to':sal_to})			
 				salcomp.append(ern)
 
 		if len(doc.deductions):
@@ -987,7 +995,10 @@ def get_employee_salarys(emp,date_from,date_to):
 				dedu.update({'slip':doc.name})
 				dedu.update({'salary_component':deductions.salary_component})
 				dedu.update({'amount':deductions.amount*-1})
-				dedu.update({'narration':narration})			
+				dedu.update({'narration':narration})
+				dedu.update({'employee':emp})
+				dedu.update({'date_from':sal_from})
+				dedu.update({'date_to':sal_to})			
 				salcomp.append(dedu)
 
 		doc.delete()
