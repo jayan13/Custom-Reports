@@ -201,7 +201,7 @@ def get_data(conditions,filters):
 				totleave=allo.new_leaves_allocated
 			openabs=0
 			opnused=0
-			totaldays=date_diff(processing_month,start_date)						
+			totaldays=date_diff(processing_month,start_date)+1						
 			total_days+=totaldays			
 			gross_salary=get_gross_salary(emp.name,company,processing_month)
 			absent=getabsents(emp.name,openabs,start_date,processing_month)
@@ -243,9 +243,9 @@ def get_data(conditions,filters):
 
 							accrued+=accru
 							leave_code=str(emp.leaves_per_year)+'D'
-							usedleaves=float(emp.opening_used_leaves)
+							usedleaves=float(emp.opening_used_leaves.replace(',',''))
 							usedleave+=usedleaves
-							bala=round(accru-float(emp.opening_used_leaves),4)
+							bala=round(accru-float(emp.opening_used_leaves.replace(',','')),4)
 							balance+=bala
 							if getdate(processing_month)<=getdate('2022-12-31'):
 								basic_salary=sal
@@ -367,7 +367,7 @@ def get_data(conditions,filters):
 				day = getdate(emp.openning_entry_date)
 				start_date = add_days(day, 1)
 				openabs=emp.opening_absent
-				opnused=emp.opening_used_leaves
+				opnused=emp.opening_used_leaves.replace(',','')
 				leave_provision_date=emp.leave_provision_date or emp.date_of_joining
 				total_days=date_diff(processing_month,leave_provision_date)+1
 				applicable_earnings_component=[]

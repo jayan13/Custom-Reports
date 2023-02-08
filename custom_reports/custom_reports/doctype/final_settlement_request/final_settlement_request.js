@@ -2,38 +2,12 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Final Settlement Request', {
-	before_save: function(frm) {
-		var tot=0;
-		frm.doc.settlement_details.forEach(function(d) { 
-			if(d.applied=='Yes')
-			{
-				tot+=Math.round(d.paid_amt,2);
-				
-			}
-		});
-		if(frm.doc.allowance_and_deducts){
-			frm.doc.allowance_and_deducts.forEach(function(d) { 
-				
-					tot+=Math.round(d.currency_amt,2);
-				
-			});
-		}
-		frm.doc.total_amount=tot;
-	}, 
-	employee:function(frm)
-	{
-		cur_frm.clear_table("settlement_details");
-		frm.trigger("get_settlement_details"); 
-		frm.trigger("get_annual_leave");
-		frm.trigger("get_day_off_compensatory");
-		frm.trigger("annual_leave");
-		frm.trigger("day_off_compensatory");
-		frm.trigger("get_period_worked");	
-		frm.trigger("gratuity_rule");
-	},
+	
 	relieving_date:function(frm)
 	{
-		cur_frm.clear_table("settlement_details");
+		
+		if (frm.doc.docstatus === 0 && frm.doc.employee  && frm.doc.date_of_joining && frm.doc.relieving_date) {
+			cur_frm.clear_table("settlement_details");
 		frm.trigger("get_settlement_details"); 
 		frm.trigger("get_annual_leave");
 		frm.trigger("get_day_off_compensatory");
@@ -41,7 +15,7 @@ frappe.ui.form.on('Final Settlement Request', {
 		frm.trigger("day_off_compensatory");
 		frm.trigger("get_period_worked");	
 		frm.trigger("gratuity_rule");
-		if (frm.doc.docstatus === 0 && frm.doc.employee  && frm.doc.date_of_joining && frm.doc.relieving_date) {
+
 			frappe.call({
 				method: "custom_reports.api.get_ticket_given",
 				args: {					
@@ -62,17 +36,6 @@ frappe.ui.form.on('Final Settlement Request', {
 			});
 		}
 
-	},
-	date_of_joining:function(frm)
-	{
-		cur_frm.clear_table("settlement_details");
-		frm.trigger("get_settlement_details"); 
-		frm.trigger("get_annual_leave");
-		frm.trigger("get_day_off_compensatory");
-		frm.trigger("annual_leave");
-		frm.trigger("day_off_compensatory");
-		frm.trigger("get_period_worked");	
-		frm.trigger("gratuity_rule");
 	},
 	annual_leave: function(frm) {
 		
@@ -116,6 +79,7 @@ frappe.ui.form.on('Final Settlement Request', {
 						frm.doc.leave_entitled=r.message.leave_entitled
 						frm.doc.salary_structure=r.message.salary_structure						
 						frm.doc.ticket_eligible=r.message.ticket_eligible
+						frm.trigger("calc_tot");
 							frm.refresh_fields();
 					} 
 				}
@@ -137,10 +101,11 @@ frappe.ui.form.on('Final Settlement Request', {
 				},
 				callback: function (r) {
 					if (r.message) {
-						frm.set_value('annual_leave', flt(r.message,3));
+						frm.set_value('annual_leave', flt(r.message,3));						
 					} else {
 						frm.set_value('annual_leave', "0");
 					}
+					frm.refresh_field('annual_leave');
 				}
 			});
 		}
@@ -179,7 +144,7 @@ frappe.ui.form.on('Final Settlement Request', {
 								c.days=frm.doc.day_off_compensatory;
 								c.narration='Compensatory';
 							}
-
+							frm.trigger("calc_tot");
 							frm.refresh_fields();
 					} 
 				}
@@ -274,6 +239,7 @@ frappe.ui.form.on('Final Settlement Request', {
 							c.narration='Gratuity';
 						}	
 							frm.refresh_fields();
+							frm.trigger("calc_tot");
 					} else {
 						frm.set_value('gratuity_amount', "0");
 						frm.set_value('accured_days', "0");
@@ -307,10 +273,97 @@ frappe.ui.form.on('Final Settlement Request', {
 							c.narration=jvd.salary_component;
 							c.slip=jvd.slip;
 						});
-						frm.refresh_fields();
+						frm.refresh_field("settlement_details");
+						frm.trigger("calc_tot");
 					} 
 				}
 			});
 		}
+	},calc_tot: function(frm)
+	{
+		var tot=0;
+		frm.doc.settlement_details.forEach(function(d) { 
+			if(d.applied=='Yes')
+			{
+				tot+=Math.round(d.paid_amt,2);
+				
+			}
+		});
+		if(frm.doc.allowance_and_deducts){
+			frm.doc.allowance_and_deducts.forEach(function(d) { 
+				
+					tot+=Math.round(d.currency_amt,2);
+				
+			});
+		}
+		frm.doc.total_amount=tot;
+		frm.refresh_field('total_amount');
 	}
 });
+
+frappe.ui.form.on('Allowance And Deducts', {
+    
+    currency_amt(frm, cdt, cdn) {
+       
+		var tot=0;
+		frm.doc.settlement_details.forEach(function(d) { 
+			if(d.applied=='Yes')
+			{
+				tot+=Math.round(d.paid_amt,2);
+				
+			}
+		});
+		if(frm.doc.allowance_and_deducts){
+			frm.doc.allowance_and_deducts.forEach(function(d) { 
+				
+					tot+=Math.round(d.currency_amt,2);
+				
+			});
+		}
+		frm.doc.total_amount=tot;
+		frm.refresh_field('total_amount');
+    }
+})
+
+frappe.ui.form.on('Settlement Details', {
+   
+    paid_amt(frm, cdt, cdn) {
+      
+		var tot=0;
+		frm.doc.settlement_details.forEach(function(d) { 
+			if(d.applied=='Yes')
+			{
+				tot+=Math.round(d.paid_amt,2);
+				
+			}
+		});
+		if(frm.doc.allowance_and_deducts){
+			frm.doc.allowance_and_deducts.forEach(function(d) { 
+				
+					tot+=Math.round(d.currency_amt,2);
+				
+			});
+		}
+		frm.doc.total_amount=tot;
+		frm.refresh_field('total_amount');
+    },applied(frm, cdt, cdn) {
+      
+		var tot=0;
+		frm.doc.settlement_details.forEach(function(d) { 
+			if(d.applied=='Yes')
+			{
+				tot+=Math.round(d.paid_amt,2);
+				
+			}
+		});
+		if(frm.doc.allowance_and_deducts){
+			frm.doc.allowance_and_deducts.forEach(function(d) { 
+				
+					tot+=Math.round(d.currency_amt,2);
+				
+			});
+		}
+		frm.doc.total_amount=tot;
+		frm.refresh_field('total_amount');
+    }
+})

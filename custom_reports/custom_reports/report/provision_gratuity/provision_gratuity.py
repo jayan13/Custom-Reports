@@ -26,9 +26,9 @@ def execute(filters=None):
 	if not filters:
 		filters = {}
 	conditions=get_conditions(filters)
-	return get_columns(), get_data(conditions,filters)
+	return get_columns(filters), get_data(conditions,filters)
 
-def get_columns():
+def get_columns(filters):
 	
 	columns = [
 		{
@@ -85,8 +85,22 @@ def get_columns():
 		"fieldtype": "Currency",
 		"label": "Actual Worked ",	
 		"width": 80
-		},
-		{
+		},		
+ 	 	]
+	if filters.get("date_from"):
+		columns.extend([{
+		"fieldname": "accr_openning",
+		"fieldtype": "Data",
+		"label": "Openning Accrued",	
+		"width": 80
+		},{
+		"fieldname": "accr_closing",
+		"fieldtype": "Data",
+		"label": "Closing Accrued",	
+		"width": 80
+		}])
+
+	columns.extend([{
 		"fieldname": "accr_d",
 		"fieldtype": "Data",
 		"label": "Accrued Days ",	
@@ -121,9 +135,7 @@ def get_columns():
 		"fieldtype": "data",
 		"label": "Days Accrued After Limit",	
 		"width": 100
-		},
- 	 ]	
-	    
+		}])   
 	return columns
 accured_days=0  #global variable
 def get_data(conditions,filters):
@@ -141,6 +153,9 @@ def get_data(conditions,filters):
 	parent_department_emp_tot=0
 	department_name_emp_tot=0
 	departmentname=''
+	accured_days1=0
+	accured_days2=0
+
 	for emp in conc:
 		if emp.parent_department=='All Departments':
 			emp.parent_department=emp.department_name.split('-')[0]
@@ -180,15 +195,16 @@ def get_data(conditions,filters):
 			total_days2=date_diff(date_from,emp.date_of_joining)+1
 			absents2=get_nonworking_days(emp.name,openabs,start_date,date_from)
 			actual_worked2=total_days2-absents2
-			actual_worked=actual_worked-actual_worked2
+			actual_worked=(actual_worked-actual_worked2)+1
 			accrued2=calculate_work_experience_and_amount(emp.name,gratuity_rule,date_from,openabs)['amount']
-
+			accured_days2=accured_days
 			
 			paid=0
 			accrued=round(accrued,2)-round(accrued2,2)		
 			balance=accrued-paid
 			balance=round(balance,2)
-			accr_d=round(accured_days1,4)-round(accured_days,4)
+			accr_d=round(accured_days1,4)-round(accured_days2,4)
+			accr_d=round(accr_d,4)
 			parent_department_tot+=balance
 			department_name_tot+=balance
 			parent_department_emp_tot+=1
@@ -242,7 +258,9 @@ def get_data(conditions,filters):
 		emp.update({'gross_salary':gross_salary})
 		emp.update({'absent':absents})
 		emp.update({'actual_worked':actual_worked})
-		emp.update({'accr_d':accr_d})
+		emp.update({'accr_d':accr_d}) 
+		emp.update({'accr_openning':round(accured_days2,4)})
+		emp.update({'accr_closing':round(accured_days1,4)})
 		emp.update({'accrued':accrued})		
 		emp.update({'paid':paid})
 		emp.update({'balance':balance})

@@ -331,7 +331,7 @@ def get_annual_leaveamount(emp,reval_date):
 		ticket_period=tick[0].periodical
 		ticket_eligible=employee.no_of_ticket_eligible
 	
-	used_leaves=getused(emp,employee.opening_used_leaves,reval_date,employee.date_of_joining)
+	used_leaves=getused(emp,employee.opening_used_leaves.replace(',',''),reval_date,employee.date_of_joining)
 	salary_structure=get_salary_structure(emp)
 	salcomp=frappe.db.get_all('Salary Detail',filters={'parent':salary_structure,'depends_on_payment_days':'1','amount':['>','0'],'salary_component':['in',('Basic(A)','Basic')]},fields=['salary_component','amount','parentfield'])
 	base_salary=0
@@ -388,7 +388,7 @@ def get_applicable_components_annual(rule=''):
 def get_employee_salary(emp,date_from,date_to):
 	salary_structure=get_salary_structure(emp)
 	monthstart=get_first_day(date_to)	
-	monthend=get_last_day(date_to)
+	monthend=getdate(date_to)
 	#company=frappe.db.get_value('Employee',emp,'company')
 	#salcomp=frappe.db.get_all('Salary Detail',filters={'parent':salary_structure,'depends_on_payment_days':'1','amount':['>','0']},fields=['salary_component','amount','parentfield'])
 	
@@ -408,7 +408,7 @@ def get_employee_salary(emp,date_from,date_to):
 	doc.end_date=monthend
 	doc.payroll_frequency='Monthly'
 	doc.salary_structure=salary_structure
-	doc.final_settlement_request = str(emp)+str(monthend)
+	#doc.final_settlement_request = str(emp)+str(monthend)
 	doc.insert()
 	
 	if len(doc.earnings):
@@ -903,7 +903,7 @@ def get_emp_details(emp,start_date,end_date):
 		ticket_period=tick[0].periodical
 		ticket_eligible=employee.no_of_ticket_eligible
 	
-	used_leaves=getused(emp,employee.opening_used_leaves,end_date,employee.date_of_joining)
+	used_leaves=getused(emp,employee.opening_used_leaves.replace(',',''),end_date,employee.date_of_joining)
 	salary_structure=get_salary_structure(emp)
 	salcomp=frappe.db.get_all('Salary Detail',filters={'parent':salary_structure,'depends_on_payment_days':'1','amount':['>','0'],'salary_component':['in',('Basic(A)','Basic')]},fields=['salary_component','amount','parentfield'])
 	base_salary=0
@@ -947,17 +947,19 @@ def get_employee_salarys(emp,date_from,date_to):
 	else:
 		monthstart=get_first_day(date_from)
 
+	#monthstart=getdate(date_from)
+	monthstart=get_first_day(date_from)
 	monthend=get_last_day(date_from)	
 	salcomp=[]
 	sal_from=monthstart
 	sal_to=monthend
-	#frappe.msgprint(str(sal_from)+'-'+str(sal_to))
+	
 	i=0
 	while True:
 		
 		if getdate(date_to).month==getdate(sal_to).month:
 			sal_to=getdate(date_to)
-
+		#frappe.msgprint(str(sal_from)+'-'+str(sal_to))
 		doc = frappe.new_doc('Salary Slip')
 		doc.employee=emp
 		doc.start_date=sal_from

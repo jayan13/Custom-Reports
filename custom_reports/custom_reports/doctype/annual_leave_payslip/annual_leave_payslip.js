@@ -197,5 +197,24 @@ frappe.ui.form.on('Settlement Details', {
 		}
 		frm.doc.total_amount=tot;
 		frm.refresh_field('total_amount');
+    },applied(frm, cdt, cdn) {
+      
+		var tot=0;
+		frm.doc.settlement_details.forEach(function(d) { 
+			if(d.applied=='Yes')
+			{
+				tot+=Math.round(d.paid_amt,2);
+				
+			}
+		});
+		if(frm.doc.allowance_and_deducts){
+			frm.doc.allowance_and_deducts.forEach(function(d) { 
+				
+					tot+=Math.round(d.currency_amt,2);
+				
+			});
+		}
+		frm.doc.total_amount=tot;
+		frm.refresh_field('total_amount');
     }
 })
