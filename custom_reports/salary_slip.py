@@ -1280,28 +1280,27 @@ class SalarySlipCustom(SalarySlip):
 			where a.docstatus=1 and d.applied='Yes' and d.settlement='{0}' and d.employee='{1}' and '{2}' between d.date_from and d.date_to """.format(row.salary_component,self.employee,self.start_date),as_dict=1,debug=0)
 			if prevsql:
 				prev_paid=prevsql[0].paid_amt
+			house=[]
+			hose=frappe.db.get_all("House Rent Allowance",fields=['salary_component'],pluck='salary_component')
+			if hose:
+				house=hose
 
 			pay_days=self.payment_days
 			if self.annual_leave:
 				if row.salary_component in provcompo and self.annual_leave > 0:
 					pay_days=self.payment_days-self.annual_leave
 
+			if prev_paid > 0 and row.salary_component in house and self.annual_leave_advanced_paid > 0:
+				pay_days=self.payment_days+self.annual_leave_advanced_paid
+				
+
 			includehra=frappe.db.get_value('Hra Deduction Unpaid Leave Settings',{'company':self.company},'include_hra')
 			if includehra:
-				if self.leave_without_pay:
-					house=[]
-					hose=frappe.db.get_all("House Rent Allowance",fields=['salary_component'],pluck='salary_component')
-					if hose:
-						house=hose
+				if self.leave_without_pay:					
 					if row.salary_component in house:
 						pay_days=pay_days+self.leave_without_pay			
 			
-			#frappe.msgprint(str(row.salary_component)+' - '+str(pay_days))
-			#if row.salary_component in ['Leave Salary','Leave Salary(S)','Leave Salary(A)']:
-			#	if self.annual_leave > 0:				
-			#		pay_days=self.annual_leave
-			#	else:
-			#		pay_days=0
+			
 			leavesal=[]
 			leav=frappe.db.get_all("Leave Salary",fields=['salary_component'],pluck='salary_component')
 			if leav:
