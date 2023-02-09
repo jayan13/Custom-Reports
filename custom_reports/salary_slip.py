@@ -844,9 +844,18 @@ class SalarySlipCustom(SalarySlip):
 		)
 
 		for additional_salary in additional_salaries:
+			#frappe.msgprint(str(component_type)+'-'+str(additional_salary.component)+'='+str(additional_salary.amount))
+			#custom
+			prev_paid=0  
+			prevsql=frappe.db.sql(""" select d.paid_amt from `tabSettlement Details` d left join `tabAnnual Leave Payslip` a on a.name=d.parent 
+			where a.docstatus=1 and d.applied='Yes' and d.settlement='{0}' and d.employee='{1}' and '{2}' between d.date_from and d.date_to """.format(additional_salary.component,self.employee,self.start_date),as_dict=1,debug=1)
+			if prevsql:
+				prev_paid=prevsql[0].paid_amt
+			amount=additional_salary.amount-abs(prev_paid)	
+			#custon end
 			self.update_component_row(
 				get_salary_component_data(additional_salary.component),
-				additional_salary.amount,
+				amount,
 				component_type,
 				additional_salary,
 				is_recurring=additional_salary.is_recurring,
