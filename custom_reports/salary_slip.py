@@ -511,12 +511,12 @@ class SalarySlipCustom(SalarySlip):
 
 		total_annual_leave=0
 		half=frappe.db.sql(""" select count(*) as lvcnt FROM `tabAttendance` a left join `tabLeave Application` l on l.name=a.leave_application 
-	where a.docstatus=1 and a.leave_type='Annual Leave' and  l.salary_paid_in_advance='0'  and a.status='Half Day' and a.employee='{0}' and a.attendance_date between '{1}' and  '{2}'  """.format(self.employee,start_date, end_date),as_dict=1)
+	where a.docstatus=1 and a.leave_type='Annual Leave' and  (l.salary_paid_in_advance is null or l.salary_paid_in_advance='0') and a.status='Half Day' and a.employee='{0}' and a.attendance_date between '{1}' and  '{2}'  """.format(self.employee,start_date, end_date),as_dict=1)
 		if half:
 			total_annual_leave+=float(half[0].lvcnt) *.5
 		
 		full=frappe.db.sql(""" select count(*) as lvcnt FROM `tabAttendance` a left join `tabLeave Application` l on l.name=a.leave_application 
-	where a.docstatus=1 and a.leave_type='Annual Leave' and  l.salary_paid_in_advance='0' and a.status='On Leave' and a.employee='{0}' and a.attendance_date between '{1}' and  '{2}'  """.format(self.employee,start_date, end_date),as_dict=1,debug=0)
+	where a.docstatus=1 and a.leave_type='Annual Leave' and  (l.salary_paid_in_advance is null or l.salary_paid_in_advance='0')  and a.status='On Leave' and a.employee='{0}' and a.attendance_date between '{1}' and  '{2}'  """.format(self.employee,start_date, end_date),as_dict=1,debug=0)
 		if full:
 			total_annual_leave+=float(full[0].lvcnt)
 		
