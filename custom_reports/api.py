@@ -939,6 +939,7 @@ def get_this_year_annual_leave(emp,end_date):
 @frappe.whitelist()
 def get_employee_salarys(emp,date_from,date_to):
 	
+	company=frappe.db.get_value('Employee',emp,'company')
 	salary_structure=get_salary_structure(emp)
 	salend_date = frappe.get_list(
 		"Salary Slip",fields=['end_date'], filters={"employee": emp, "docstatus": ['<',2]}, order_by="start_date desc",start=0,
@@ -959,12 +960,25 @@ def get_employee_salarys(emp,date_from,date_to):
 	salcomp=[]
 	sal_from=monthstart
 	sal_to=monthend
-	
 	i=0
+	house=[]
+	hose=frappe.db.get_all("House Rent Allowance",fields=['salary_component'],pluck='salary_component')
+	if hose:
+		house=hose
+
+	includehra=frappe.db.get_value('Hra Deduction Unpaid Leave Settings',{'company':company},'include_hra')
+	provcompo=get_provision_components(company,sal_from)
+
+	leavesal=[]
+	leav=frappe.db.get_all("Leave Salary",fields=['salary_component'],pluck='salary_component')
+	if leav:
+		leavesal=leav
+
 	while True:
 		
 		if getdate(date_to).month==getdate(sal_to).month:
 			sal_to=getdate(date_to)
+		
 		#frappe.msgprint(str(sal_from)+'-'+str(sal_to))
 		doc = frappe.new_doc('Salary Slip')
 		doc.employee=emp
@@ -974,10 +988,27 @@ def get_employee_salarys(emp,date_from,date_to):
 		doc.salary_structure=salary_structure
 		doc.final_settlement_request = str(emp)+str(sal_to)
 		doc.insert()
+
 		
+
 		if len(doc.earnings):
 			for earnings in doc.earnings:
 				ern={}
+				pay_days=doc.payment_days
+				if earnings.salary_component in provcompo and doc.annual_leave > 0:
+					pay_days=doc.payment_days-doc.annual_leave		
+				
+				if includehra:
+					if doc.leave_without_pay:					
+						if earnings.salary_component in house:
+							pay_days=pay_days+doc.leave_without_pay		
+				
+				if earnings.salary_component in provcompo and doc.annual_leave > 0:
+					pay_days=doc.payment_days-doc.annual_leave
+				
+				if earnings.salary_component in leavesal:
+					pay_days=doc.annual_leave
+
 				narration=str(earnings.salary_component)+' '+str(formatdate(sal_from, "mm-yyyy"))
 				ern.update({'slip':doc.name})
 				ern.update({'salary_component':earnings.salary_component})
@@ -985,7 +1016,8 @@ def get_employee_salarys(emp,date_from,date_to):
 				ern.update({'narration':narration})
 				ern.update({'employee':emp})
 				ern.update({'date_from':sal_from})
-				ern.update({'date_to':sal_to})			
+				ern.update({'date_to':sal_to})
+				ern.update({'days':pay_days})			
 				salcomp.append(ern)
 
 		if len(doc.deductions):
@@ -998,7 +1030,8 @@ def get_employee_salarys(emp,date_from,date_to):
 				dedu.update({'narration':narration})
 				dedu.update({'employee':emp})
 				dedu.update({'date_from':sal_from})
-				dedu.update({'date_to':sal_to})			
+				dedu.update({'date_to':sal_to})
+				dedu.update({'days':'0'})			
 				salcomp.append(dedu)
 
 		doc.delete()
