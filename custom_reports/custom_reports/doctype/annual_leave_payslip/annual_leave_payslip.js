@@ -125,6 +125,7 @@ frappe.ui.form.on('Annual Leave Payslip', {
 							c.employee=jvd.employee;
 							c.date_from=jvd.date_from;
 							c.date_to=jvd.date_to;
+							c.days=jvd.days;
 						});
 						frm.refresh_field("settlement_details");
 						frm.trigger("calc_tot");

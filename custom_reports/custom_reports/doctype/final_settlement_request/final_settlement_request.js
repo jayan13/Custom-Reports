@@ -55,7 +55,7 @@ frappe.ui.form.on('Final Settlement Request', {
 							{
 								if(frm.doc.annual_leave>0)
 								{
-									d.paid_amt=((r.message.sal*12)/365)*frm.doc.annual_leave;
+									d.paid_amt=((r.message.base_salary*12)/365)*frm.doc.annual_leave;
 									itemin=1;
 								}else{
 									cur_frm.get_field("settlement_details").grid.grid_rows[i].remove();
@@ -67,7 +67,7 @@ frappe.ui.form.on('Final Settlement Request', {
 						{						
 						var c = frm.add_child("settlement_details");
 							c.settlement='Annual Leave';
-							c.paid_amt=((r.message.sal*12)/365)*frm.doc.annual_leave;
+							c.paid_amt=((r.message.base_salary*12)/365)*frm.doc.annual_leave;
 							c.gen_amt=c.paid_amt;
 							c.days=frm.doc.annual_leave;
 							c.narration='Annual Leave';
