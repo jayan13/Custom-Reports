@@ -20,9 +20,9 @@ def execute(filters=None):
 	if not filters:
 		filters = {}
 	conditions=get_conditions(filters)
-	return get_columns(), get_data(conditions,filters)
+	return get_columns(filters), get_data(conditions,filters)
 
-def get_columns():
+def get_columns(filters):
 	
 	columns = [
 		{
@@ -141,7 +141,13 @@ def get_columns():
 		"width": 100
 		},
  	 ]	
-	    
+	if filters.get("date_from"):
+		columns.extend([{
+		"fieldname": "month_balance",
+		"fieldtype": "Currency",
+		"label": "Monthly Accured",	
+		"width": 80
+		}])   
 		
 	return columns
 
@@ -175,216 +181,34 @@ def get_data(conditions,filters):
 			department_name_tot=0
 			department_name_emp_tot=0		
 		#leave_provision_date
+		month_balance=0
 		start_date=emp.date_of_joining
-		openabs=0
-		opnused=0
-		leave_code='0d'
-		gross_salary=0
-		usedleave=0
-		accrued=0
-		balance=0
-		absents=0
-		basic_salary=0
-		amount_balance=0
-		opening_balance_amount=0
-		total_days=0
-		actual_worked=0
-		amount_accrued=0
-		amount_used=0
-
 		date_from=filters.get("date_from")
 		if date_from:
-			start_date=getdate(date_from)
-			allo=get_leave_no(emp.name,processing_month)
-			totleave=emp.leaves_per_year
-			if allo:
-				totleave=allo.new_leaves_allocated
-			openabs=0
-			opnused=0
-			totaldays=date_diff(processing_month,start_date)+1						
-			total_days+=totaldays			
-			gross_salary=get_gross_salary(emp.name,company,processing_month)
-			absent=getabsents(emp.name,openabs,start_date,processing_month)
-			absents+=absent
-			usedleaves=getused(emp.name,opnused,start_date,processing_month)
-			usedleave+=usedleaves
-			leave_code=str(totleave)+'D'
-			actualworked=totaldays-absent
-			actual_worked+=actualworked
-			#accru=round((actualworked/365)*float(totleave),4)
-			accru=round(round(float(totleave)/365,4)*actualworked,4)										
-			accrued+=accru
-			bala=round(accru-usedleaves,4)
-			balance+=bala
-			amountaccrued=round(((gross_salary*12)/365)*accru,2)
-			amount_accrued+=amountaccrued
-			amountused=round(((gross_salary*12)/365)*usedleaves,2)
-			amount_used+=amountused
-			amount_balance+=round(amountaccrued-amountused,2)
-		else:
-
-			if alrules:
-				for rul in alrules:
-					if emp.openning_entry_date:
-						if (rul.date_from==None or (rul.date_from!=None and getdate(rul.date_from) <= emp.openning_entry_date)) and rul.date_to!=None and getdate(rul.date_to)>=emp.openning_entry_date:
-							leave_provision_date=emp.leave_provision_date or emp.date_of_joining
-							totaldays=date_diff(emp.openning_entry_date,leave_provision_date)+1
-							total_days+=totaldays
-							applicable_earnings_component=get_applicable_components(rul.name)
-							sal=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
-							actualworked=totaldays-float(emp.opening_absent)
-							absents+=float(emp.opening_absent)
-							actual_worked+=actualworked
-							if emp.opening_leaves_accrued > 0:
-								accru=emp.opening_leaves_accrued
-							else:
-								#accru=round((actualworked/365)*emp.leaves_per_year,4)
-								accru=round(round(emp.leaves_per_year/365,4)*actualworked,4)
-
-							accrued+=accru
-							leave_code=str(emp.leaves_per_year)+'D'
-							usedleaves=float(emp.opening_used_leaves.replace(',',''))
-							usedleave+=usedleaves
-							bala=round(accru-float(emp.opening_used_leaves.replace(',','')),4)
-							balance+=bala
-							if getdate(processing_month)<=getdate('2022-12-31'):
-								basic_salary=sal
-							opening_balance_amount=emp.opening_balance_amount
-							#amountbalance=round(((sal*12)/365)*bala,2)
-							#amount_balance+=amountbalance
-							if company=='GRAND CONTINENTAL FLAMINGO HOTEL' and getdate(processing_month)<=getdate('2022-12-31'):
-								ondaydalary=round(sal/30,4)
-							else:
-								ondaydalary=(sal*12)/365
-							
-							
-							amountused=round(ondaydalary*usedleaves,2)
-							amount_used+=amountused
-
-							#if emp.opening_balance_amount > 0:
-							#	amountaccrued=emp.opening_balance_amount+amountused
-							#else:
-							#	amountaccrued=round(ondaydalary*accru,2)
-
-							amountaccrued=round(ondaydalary*accru,2)
-							amount_accrued+=amountaccrued
-							#frappe.msgprint(str(amountaccrued))
-
-							if emp.opening_balance_amount > 0 and getdate(processing_month)<=getdate('2022-12-31'):
-								amount_balance+=emp.opening_balance_amount
-							else:
-								amount_balance+=round(amountaccrued-amountused,2)
-
-						elif getdate(processing_month) > emp.openning_entry_date and getdate(rul.date_from) <= getdate(processing_month):
-							
-							totleave=emp.leaves_per_year
-							tot_leave=get_leave_no(emp.name,processing_month)
-							if tot_leave:
-								totleave=tot_leave.new_leaves_allocated
-							day = getdate(emp.openning_entry_date)
-							start_date = add_days(day, 1)
-							openabs=0
-							opnused=0
-							totaldays=date_diff(processing_month,emp.openning_entry_date)						
-							total_days+=totaldays
-							applicable_earnings_component=get_applicable_components(rul.name)
-							gross_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
-							absent=getabsents(emp.name,openabs,start_date,processing_month)
-							absents+=absent
-							usedleaves=getused(emp.name,opnused,start_date,processing_month)
-							usedleave+=usedleaves
-							leave_code=str(totleave)+'D'
-							actualworked=totaldays-absent
-							actual_worked+=actualworked
-							#accru=round((actualworked/365)*float(totleave),4)
-							accru=round(round(float(totleave)/365,4)*actualworked,4)										
-							accrued+=accru
-							bala=round(accru-usedleaves,4)
-							balance+=bala
-							amountaccrued=round(((gross_salary*12)/365)*accru,2)
-							amount_accrued+=amountaccrued
-							amountused=round(((gross_salary*12)/365)*usedleaves,2)
-							amount_used+=amountused
-							amount_balance+=round(amountaccrued-amountused,2)
-							#frappe.msgprint(str(amountaccrued))
-							#amountbalance=round(((gross_salary*12)/365)*balance,2)
-							#amount_balance+=amountbalance
-					else:
-						leave_provision_date=emp.leave_provision_date or emp.date_of_joining
-						applicable_earnings_component=get_applicable_components(rul.name)
-						sal=0
-						if rul.date_from==None and rul.date_to!=None and getdate(leave_provision_date)<=getdate(rul.date_to):
-							start_date=leave_provision_date
-							if getdate(rul.date_to) < getdate(processing_month):
-								end_date=rul.date_to
-							else:
-								end_date=processing_month
-							basic_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
-							sal=basic_salary
-							if getdate(processing_month)>getdate('2022-12-31'):
-								basic_salary=0
-						if rul.date_from!=None and rul.date_to==None:
-							if getdate(rul.date_from) > getdate(leave_provision_date):
-								start_date=rul.date_from
-							else:
-								start_date=leave_provision_date
-
-							end_date=processing_month
-							gross_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
-							sal=gross_salary
-						#-----------------------------------------
-
-						totaldays=date_diff(end_date,start_date)+1
-						total_days+=totaldays
-						totleave=get_leave_no(emp.name,processing_month)
-						leaves_per_year=emp.leaves_per_year
-						if totleave:
-							leaves_per_year=totleave.new_leaves_allocated	
-						
-						absent=getabsents(emp.name,openabs,start_date,end_date)
-						absents+=absent
-						usedleaves=getused(emp.name,opnused,start_date,end_date)
-						usedleave+=usedleaves
-						leave_code=str(leaves_per_year)+'D'
-						actualworked=totaldays-absent
-						actual_worked+=actualworked
-						accru=round(round(float(leaves_per_year)/365,4)*actualworked,4)										
-						accrued+=accru
-						bala=round(accru-usedleaves,4)
-						balance+=bala
-						amountaccrued=round(((sal*12)/365)*accru,2)
-						amount_accrued+=amountaccrued
-						amountused=round(((sal*12)/365)*usedleaves,2)
-						amount_used+=amountused
-						amount_balance+=round(amountaccrued-amountused,2)	
-
-			else:
-				totleave=get_leave_no(emp.name,processing_month)
-				leaves_per_year=emp.leaves_per_year
-				if totleave:
-					leaves_per_year=totleave.new_leaves_allocated
-
-				day = getdate(emp.openning_entry_date)
-				start_date = add_days(day, 1)
-				openabs=emp.opening_absent
-				opnused=emp.opening_used_leaves.replace(',','')
-				leave_provision_date=emp.leave_provision_date or emp.date_of_joining
-				total_days=date_diff(processing_month,leave_provision_date)+1
-				applicable_earnings_component=[]
-				gross_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
-				absents=getabsents(emp.name,openabs,start_date,processing_month)
-				usedleave=getused(emp.name,opnused,start_date,processing_month)
-				leave_code=str(leaves_per_year)+'D'
-				actual_worked=total_days-absents
-				#accrued=round((actual_worked/365)*leaves_per_year,4)
-				accrued=round(round(leaves_per_year/365,4)*actual_worked,4)			
-				balance=round(accrued-usedleave,4)
-				amount_accrued=round(((gross_salary*12)/365)*accrued,2)
-				#frappe.msgprint(str(amount_accrued))
-				amount_used=round(((gross_salary*12)/365)*usedleave,2)
-				amount_balance=round(amount_accrued-amount_used,2)
+			prev_mon=add_days(getdate(date_from),-1)
+			last_month=get_leaves(emp,start_date,prev_mon,alrules,company)
 			
-			
+		
+		leavs=get_leaves(emp,start_date,processing_month,alrules,company)
+		#frappe.msgprint(str(date_from)+' '+str(processing_month))
+		opening_balance_amount=leavs.get('opening_balance_amount')
+		total_days=leavs.get('total_days')
+		basic_salary=leavs.get('basic_salary')
+		absents=leavs.get('absents')
+		actual_worked=leavs.get('actual_worked')
+		accrued=leavs.get('accrued')
+		usedleave=leavs.get('used')
+		amount_accrued=leavs.get('amount_accrued')
+		amount_used=leavs.get('amount_used')
+		balance=leavs.get('balance')
+		amount_balance=leavs.get('amount_balance')
+		leave_code=leavs.get('leave_code')
+		gross_salary=leavs.get('gross_salary')
+		if date_from:
+			#month_balance=float(leavs.get('amount_accrued'))-float(last_month.get('amount_accrued'))
+			month_balance=float(leavs.get('amount_accrued'))-float(last_month.get('amount_accrued'))
+			#frappe.msgprint(str(leavs.get('amount_accrued'))+' - '+str(last_month.get('amount_accrued')))
+			month_balance=round(month_balance,3)
 		accrued=round(accrued,3)
 		balance=round(balance,3)
 		amount_accrued=round(amount_accrued,2)
@@ -415,9 +239,190 @@ def get_data(conditions,filters):
 		emp.update({'amount_accrued':amount_accrued})
 		emp.update({'amount_used':amount_used})
 		emp.update({'balance':balance})
-		emp.update({'amount_balance':amount_balance})
+		emp.update({'amount_balance':amount_balance}) 
+		emp.update({'month_balance':month_balance})
 		data.append(emp)
 	return data
+def get_leaves(emp,start_date,processing_month,alrules,company):
+	#frappe.msgprint(str(start_date)+' '+str(processing_month))
+	openabs=0
+	opnused=0
+	leave_code='0d'
+	gross_salary=0
+	usedleave=0
+	accrued=0
+	balance=0
+	absents=0
+	basic_salary=0
+	amount_balance=0
+	opening_balance_amount=0
+	total_days=0
+	actual_worked=0
+	amount_accrued=0
+	amount_used=0
+
+	if alrules:
+		for rul in alrules:
+			if emp.openning_entry_date:
+				if (rul.date_from==None or (rul.date_from!=None and getdate(rul.date_from) <= emp.openning_entry_date)) and rul.date_to!=None and getdate(rul.date_to)>=emp.openning_entry_date:
+					leave_provision_date=emp.leave_provision_date or emp.date_of_joining
+					totaldays=date_diff(emp.openning_entry_date,leave_provision_date)+1
+					total_days+=totaldays
+					applicable_earnings_component=get_applicable_components(rul.name)
+					sal=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
+					actualworked=totaldays-float(emp.opening_absent)
+					absents+=float(emp.opening_absent)
+					actual_worked+=actualworked
+					if emp.opening_leaves_accrued > 0:
+						accru=emp.opening_leaves_accrued
+					else:
+						#accru=round((actualworked/365)*emp.leaves_per_year,4)
+						accru=round(round(emp.leaves_per_year/365,4)*actualworked,4)
+
+					accrued+=accru
+					leave_code=str(emp.leaves_per_year)+'D'
+					usedleaves=float(emp.opening_used_leaves.replace(',',''))
+					usedleave+=usedleaves
+					bala=round(accru-float(emp.opening_used_leaves.replace(',','')),4)
+					balance+=bala
+					if getdate(processing_month)<=getdate('2022-12-31'):
+						basic_salary=sal
+					opening_balance_amount=emp.opening_balance_amount
+					if company=='GRAND CONTINENTAL FLAMINGO HOTEL' and getdate(processing_month)<=getdate('2022-12-31'):
+						ondaydalary=round(sal/30,4)
+					else:
+						ondaydalary=(sal*12)/365		
+					amountused=round(ondaydalary*usedleaves,2)
+					amount_used+=amountused
+					amountaccrued=round(ondaydalary*accru,2)
+					amount_accrued+=amountaccrued
+					
+					if emp.opening_balance_amount > 0 and getdate(processing_month)<=getdate('2022-12-31'):
+						amount_balance+=emp.opening_balance_amount
+					else:
+						amount_balance+=round(amountaccrued-amountused,2)
+
+				elif getdate(processing_month) > emp.openning_entry_date and getdate(rul.date_from) <= getdate(processing_month):
+							
+					totleave=emp.leaves_per_year
+					tot_leave=get_leave_no(emp.name,processing_month)
+					if tot_leave:
+						totleave=tot_leave.new_leaves_allocated
+					day = getdate(emp.openning_entry_date)
+					start_date = add_days(day, 1)
+					openabs=0
+					opnused=0
+					totaldays=date_diff(processing_month,emp.openning_entry_date)						
+					total_days+=totaldays
+					applicable_earnings_component=get_applicable_components(rul.name)
+					gross_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
+					absent=getabsents(emp.name,openabs,start_date,processing_month)
+					absents+=absent
+					usedleaves=getused(emp.name,opnused,start_date,processing_month)
+					usedleave+=usedleaves
+					leave_code=str(totleave)+'D'
+					actualworked=totaldays-absent
+					actual_worked+=actualworked
+					#accru=round((actualworked/365)*float(totleave),4)
+					accru=round(round(float(totleave)/365,4)*actualworked,4)										
+					accrued+=accru
+					bala=round(accru-usedleaves,4)
+					balance+=bala
+					amountaccrued=round(((gross_salary*12)/365)*accru,2)
+					amount_accrued+=amountaccrued
+					amountused=round(((gross_salary*12)/365)*usedleaves,2)
+					amount_used+=amountused
+					amount_balance+=round(amountaccrued-amountused,2)
+
+			else:
+				leave_provision_date=emp.leave_provision_date or emp.date_of_joining
+				applicable_earnings_component=get_applicable_components(rul.name)
+				sal=0
+				if rul.date_from==None and rul.date_to!=None and getdate(leave_provision_date)<=getdate(rul.date_to):
+					start_date=leave_provision_date
+					if getdate(rul.date_to) < getdate(processing_month):
+						end_date=rul.date_to
+					else:
+						end_date=processing_month
+					basic_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
+					sal=basic_salary
+					if getdate(processing_month)>getdate('2022-12-31'):
+						basic_salary=0
+				if rul.date_from!=None and rul.date_to==None:
+					if getdate(rul.date_from) > getdate(leave_provision_date):
+						start_date=rul.date_from
+					else:
+						start_date=leave_provision_date
+
+					end_date=processing_month
+					gross_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
+					sal=gross_salary
+						#-----------------------------------------
+
+				totaldays=date_diff(end_date,start_date)+1
+				total_days+=totaldays
+				totleave=get_leave_no(emp.name,processing_month)
+				leaves_per_year=emp.leaves_per_year
+				if totleave:
+					leaves_per_year=totleave.new_leaves_allocated	
+						
+				absent=getabsents(emp.name,openabs,start_date,end_date)
+				absents+=absent
+				usedleaves=getused(emp.name,opnused,start_date,end_date)
+				usedleave+=usedleaves
+				leave_code=str(leaves_per_year)+'D'
+				actualworked=totaldays-absent
+				actual_worked+=actualworked
+				accru=round(round(float(leaves_per_year)/365,4)*actualworked,4)										
+				accrued+=accru
+				bala=round(accru-usedleaves,4)
+				balance+=bala
+				amountaccrued=round(((sal*12)/365)*accru,2)
+				amount_accrued+=amountaccrued
+				amountused=round(((sal*12)/365)*usedleaves,2)
+				amount_used+=amountused
+				amount_balance+=round(amountaccrued-amountused,2)	
+
+	else:
+		totleave=get_leave_no(emp.name,processing_month)
+		leaves_per_year=emp.leaves_per_year
+		if totleave:
+			leaves_per_year=totleave.new_leaves_allocated
+
+		day = getdate(emp.openning_entry_date)
+		start_date = add_days(day, 1)
+		openabs=emp.opening_absent
+		opnused=emp.opening_used_leaves.replace(',','')
+		leave_provision_date=emp.leave_provision_date or emp.date_of_joining
+		total_days=date_diff(processing_month,leave_provision_date)+1
+		applicable_earnings_component=[]
+		gross_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
+		absents=getabsents(emp.name,openabs,start_date,processing_month)
+		usedleave=getused(emp.name,opnused,start_date,processing_month)
+		leave_code=str(leaves_per_year)+'D'
+		actual_worked=total_days-absents
+				#accrued=round((actual_worked/365)*leaves_per_year,4)
+		accrued=round(round(leaves_per_year/365,4)*actual_worked,4)			
+		balance=round(accrued-usedleave,4)
+		amount_accrued=round(((gross_salary*12)/365)*accrued,2)
+				#frappe.msgprint(str(amount_accrued))
+		amount_used=round(((gross_salary*12)/365)*usedleave,2)
+		amount_balance=round(amount_accrued-amount_used,2)
+
+	return ({'opening_balance_amount':opening_balance_amount,
+		'total_days':total_days,
+		'basic_salary':basic_salary,
+		'gross_salary':gross_salary,
+		'absent':absents,
+		'leave_code':leave_code,
+		'actual_worked':actual_worked,
+		'accrued':accrued,
+		'used':usedleave,
+		'amount_accrued':amount_accrued,
+		'amount_used':amount_used,
+		'balance':balance,
+		'amount_balance':amount_balance
+		})
 
 def get_conditions(filters):
 	
