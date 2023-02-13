@@ -362,7 +362,18 @@ def employee_list(department,date_from,date_to):
 	
 	daytype=['OW','AL','UL','CO.L','RO','P','A','PH','O','SL','BT']
 	dayname=['Offday working','Annual Leave','Unpaid Leave','Compassionate Leave','Replacement Off Day','Present','Absant','Public Holiday','Day Off','Sick Leave','Business Trip']
-	shifts=frappe.db.get_all('Shift Type',fields=['name'],pluck='name')
+	shift=frappe.db.get_all('Shift Type',fields=['name','start_time','end_time']) #start_time end_time txt.split(", ") 
+	shifts=[]
+	for shif in shift:
+		label=''
+		name=shif.name
+		if '(' in str(shif.name):
+			name=name.split("(")[0]
+		start_time=str(shif.start_time).split(':')
+		end_time=str(shif.end_time).split(':')
+		label=name+' ('+str(start_time[0])+'-'+str(end_time[0])+')'
+		shifts.append({'name':shif.name,'label':label})
+	frappe.msgprint(str(shifts))
 	user_def_shift=''
 	holi_days={}
 	dayarray=[]
@@ -468,9 +479,9 @@ def employee_list(department,date_from,date_to):
 				body+='<select name="shift[]" id="'+ids+'_s" class="chkcng" style="margin-bottom:6px;"><option value=""></option>'
 				for sh in shifts:
 					ssel=''
-					if rosshift==str(sh):
+					if rosshift==str(sh.get('name')):
 						ssel=' selected'
-					body+='<option value="'+str(sh)+'" '+ssel+'>'+str(sh)+'</option>'
+					body+='<option value="'+str(sh.get('name'))+'" '+ssel+'>'+str(sh.get('label'))+'</option>'
 
 				body+='</select><br>'
 

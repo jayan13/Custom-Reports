@@ -404,7 +404,7 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 				slab_found = True
 				break
 
-			if experience > slab.to_year and experience > slab.from_year and slab.to_year != 0:
+			if experience >= slab.to_year and experience > slab.from_year and slab.to_year != 0:
 				day=slab.fraction_of_applicable_earnings*30
 				day=round(day)
 				yer=slab.to_year - slab.from_year
