@@ -371,9 +371,9 @@ def employee_list(department,date_from,date_to):
 			name=name.split("(")[0]
 		start_time=str(shif.start_time).split(':')
 		end_time=str(shif.end_time).split(':')
-		label=name+' ('+str(start_time[0])+'-'+str(end_time[0])+')'
+		label=name+' ('+str(start_time[0])+':'+str(start_time[1])+'-'+str(end_time[0])+':'+str(end_time[1])+')'
 		shifts.append({'name':shif.name,'label':label})
-	frappe.msgprint(str(shifts))
+	#frappe.msgprint(str(shifts))
 	user_def_shift=''
 	holi_days={}
 	dayarray=[]
