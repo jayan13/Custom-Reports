@@ -1,0 +1,46 @@
+<div style="width:100%;">
+<div style="width:70%;float: left;">
+<h2 class="text-center">{%= filters.company %}</h2>
+<h3 class="text-center">{%= __("Shift Roster Report") %}</h3>
+<h4 class="text-center"> From : {%= frappe.format(filters.date_from, {fieldtype: "Date"})%}</h4>
+<h4 class="text-center"> To : {%= frappe.format(filters.date_to, {fieldtype: "Date"})%}</h4>
+</div>
+</div>
+<hr>
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<th style="width: 1%">#</th>
+			{% for(var j=0,l=columns.length; j<l; j++) { %}				
+			<th >{%=columns[j].label%}</th>
+			{% } %}
+		</tr>
+	</thead>
+	<tbody>
+
+		{% for(var i=0,l=data.length; i<l; i++) {  %}
+		
+			<tr>			
+				<td style="text-align: right">
+					{%=i+1 %}
+				</td>
+				<td>
+					{%=data[i].employee%} - {%=data[i].employee_name%}					
+				</td>
+				{% for (key in data[i]){ %} 
+				 {% if(key!='employee')
+				 { %}  
+				 {% if(key!='employee_name')
+				 { %}	  
+				   
+	  			<td>
+					{%=data[i][key]%}					
+				</td>
+   				{% } } } %}
+				
+			</tr>
+			
+		{% } %}
+	</tbody>
+</table>
+
