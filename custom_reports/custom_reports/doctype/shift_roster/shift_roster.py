@@ -156,7 +156,7 @@ class ShiftRoster(Document):
 					shift_roster=shf.get('shift_roster')
 					if default_shift!=shift_type:
 						
-						shift_exist=frappe.db.get_value('Shift Assignment',{'status':'Active','docstatus':1,'shift_type':shift_type,'start_date':start_date,'end_date':end_date},['name'])
+						shift_exist=frappe.db.get_value('Shift Assignment',{'status':'Active','docstatus':1,'employee':employee,'shift_type':shift_type,'start_date':start_date,'end_date':end_date},['name'])
 						if not shift_exist:
 							shfass=frappe.db.sql(""" SELECT name from `tabShift Assignment` where docstatus=1 and status='Active' and employee='{0}' and (('{1}' between start_date and end_date) or ('{2}' between start_date and end_date)) """.format(employee,start_date,end_date), as_dict=1,debug=0)
 							if shfass:
