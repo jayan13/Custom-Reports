@@ -24,8 +24,13 @@ frappe.query_reports["Shift Roster"] = {
 	},{
 		"fieldname": "department",
 		"label": __("Department"),
-		"fieldtype": "Link",
+		"fieldtype": "MultiSelectList",
 		"options":"Department",
+		get_data: function(txt) {
+			return frappe.db.get_link_options('Department', txt, {
+				company: frappe.query_report.get_filter_value("company")
+			});
+		}
 	}
 	,{
 		"fieldname": "employee",

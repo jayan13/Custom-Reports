@@ -1,24 +1,19 @@
 <div style="width:100%;">
-<div style="width:70%;float: left;">
-<h2 class="text-center">{%= filters.company %}</h2>
-<h3 class="text-center">{%= __("Shift Roster Report") %}</h3>
-<h4 class="text-center"> From : {%= frappe.format(filters.date_from, {fieldtype: "Date"})%}</h4>
-<h4 class="text-center"> To : {%= frappe.format(filters.date_to, {fieldtype: "Date"})%}</h4>
+<div style="width:65%;float: left;">
+	<h2 style="text-align:center;margin: 5px 0 5px 0 !important;line-height: 1em;" >{%= filters.company %}</h2>
+	<h3 style="text-align:center;margin: 5px 0 5px 0 !important;line-height: 1em;">{%= filters.department %} {%= __("Shift Roster Report") %}</h3>
+	<h4 style="text-align:center;margin: 5px 0 5px 0 !important;line-height: 1em;"> From : {%= frappe.format(filters.date_from, {fieldtype: "Date"})%} - To : {%= frappe.format(filters.date_to, {fieldtype: "Date"})%}</h4>
+	
 </div>
 
-<div style="width:30%;float: right;">
+<div style="width:35%;float: right;">
 <table class="table table-bordered">
-<tr><td>OW</td><td>Offday working</td></tr>
-<tr><td>AL</td><td>Annual Leave</td></tr>
-<tr><td>UL</td><td>Unpaid Leave</td></tr>
-<tr><td>CO.L</td><td>Compassionate Leave</td></tr>
-<tr><td>RO</td><td>Replacement Off Day</td></tr>
-<tr><td>P</td><td>Present</td></tr>
-<tr><td>A</td><td>Absant</td></tr>
-<tr><td>PH</td><td>Public Holiday</td></tr>
-<tr><td>O</td><td>Day Off</td></tr>
-<tr><td>SL</td><td>Sick Leave</td></tr>
-<tr><td>BT</td><td>Business Trip</td></tr>
+<tr><td>OW</td><td>Offday working</td><td>AL</td><td>Annual Leave</td></tr>
+<tr><td>UL</td><td>Unpaid Leave</td><td>CO.L</td><td>Compassionate Leave</td></tr>
+<tr><td>RO</td><td>Replacement Off Day</td><td>P</td><td>Present</td></tr>
+<tr><td>A</td><td>Absant</td><td>PH</td><td>Public Holiday</td></tr>
+<tr><td>O</td><td>Day Off</td><td>SL</td><td>Sick Leave</td></tr>
+<tr><td>BT</td><td>Business Trip</td><td></td></tr>
 </table>
 </div>
 </div>
@@ -43,16 +38,19 @@
 				<td>
 					{%=data[i].employee%} - {%=data[i].employee_name%}					
 				</td>
-				{% for (key in data[i]){ %} 
-				 {% if(key!='employee')
-				 { %}  
-				 {% if(key!='employee_name')
-				 { %}	  
-				   
-	  			<td>
-					{%=data[i][key]%}					
-				</td>
-   				{% } } } %}
+				{% for(var j=0,l=columns.length; j<l; j++) {  
+					var key=columns[j].fieldname %}	
+					{% if(key!='employee' && key!='employee_name') { %}
+						{% if(data[i][key]) { %} 
+							<td>
+							{%=data[i][key]%}					
+							</td>
+						{% } 
+						else{ %} 
+						<td></td>
+						{% } %}
+					{% } %}
+				{% } %}
 				
 			</tr>
 			

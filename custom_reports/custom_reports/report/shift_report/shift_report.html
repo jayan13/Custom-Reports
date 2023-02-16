@@ -1,9 +1,9 @@
 <div style="width:100%;">
 <div style="width:100%;">
-<h2 class="text-center">{%= filters.company %}</h2>
-<h3 class="text-center">{%= __("Shift Roster Report") %}</h3>
-<h4 class="text-center"> From : {%= frappe.format(filters.date_from, {fieldtype: "Date"})%}</h4>
-<h4 class="text-center"> To : {%= frappe.format(filters.date_to, {fieldtype: "Date"})%}</h4>
+<h2 style="text-align:center;margin: 5px 0 5px 0 !important;line-height: 1em;" >{%= filters.company %}</h2>
+<h3 style="text-align:center;margin: 5px 0 5px 0 !important;line-height: 1em;">{%= filters.department %} {%= __("Shift Roster Report") %} </h3>
+<h4 style="text-align:center;margin: 5px 0 5px 0 !important;line-height: 1em;"> From : {%= frappe.format(filters.date_from, {fieldtype: "Date"})%} - To : {%= frappe.format(filters.date_to, {fieldtype: "Date"})%}</h4>
+
 </div>
 </div>
 <hr>
@@ -27,16 +27,20 @@
 				<td>
 					{%=data[i].employee%} - {%=data[i].employee_name%}					
 				</td>
-				{% for (key in data[i]){ %} 
-				 {% if(key!='employee')
-				 { %}  
-				 {% if(key!='employee_name')
-				 { %}	  
-				   
-	  			<td>
-					{%=data[i][key]%}					
-				</td>
-   				{% } } } %}
+				
+				{% for(var j=0,l=columns.length; j<l; j++) {  
+					var key=columns[j].fieldname %}	
+					{% if(key!='employee' && key!='employee_name') { %}
+						{% if(data[i][key]) { %} 
+							<td>
+							{%=data[i][key]%}					
+							</td>
+						{% } 
+						else{ %} 
+						<td></td>
+						{% } %}
+					{% } %}
+				{% } %}
 				
 			</tr>
 			

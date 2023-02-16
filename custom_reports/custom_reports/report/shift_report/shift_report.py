@@ -55,7 +55,20 @@ def get_columns(filters):
 				}
 				])
 
-	
+	columns.extend([
+				{
+				"label": 'Tot Days',
+				"fieldname": 'total_days',
+				"fieldtype": "Data",
+				"width": 60
+				},
+				{"label": 'Tot Present',
+				"fieldname": 'total_present',
+				"fieldtype": "Data",
+				"width": 60
+				}
+				])
+		
 	return columns
 
 def get_data(conditions,filters):
@@ -73,14 +86,19 @@ def get_data(conditions,filters):
 
 		cond=conditions+" and r.employee= '{0}' ".format(emp.employee)
 		attn=frappe.db.sql(""" select r.day,r.day_type,r.shift_type from `tabEmployee Shift Roster` r left join `tabShift Roster` s on r.shift_roster=s.name where  %s  order by r.day"""% (cond),as_dict=1,debug=0)
+		precnt=0
+		totcnt=len(attn)
 		for at in attn:
+			
 			label=str(at.day).replace('-','_')
-			if at.day_type=='P':
+			if at.day_type in ['P','OW']:
 				day_type=shifts.get(at.shift_type)
+				precnt+=1
 			else:
 				day_type='OFF'
 			emp.update({label:day_type})
-
+		emp.update({'total_days':totcnt})
+		emp.update({'total_present':precnt})
 	return employee
 
 def get_conditions(filters):
@@ -89,9 +107,12 @@ def get_conditions(filters):
 	if filters.get("company"):
 		company=filters.get("company")
 		conditions += " and s.company= '{0}' ".format(company)
+	
 	if filters.get("department"):
 		department=filters.get("department")
-		conditions += " and s.department= '{0}' ".format(department)			
+		dept="','".join([str(elem) for elem in department])
+		conditions += "  and s.department in ('{0}') ".format(dept)
+
 	if filters.get("date_from"):
 		date_from=filters.get("date_from")
 		conditions += "  and r.day >= '{0}'".format(date_from)
