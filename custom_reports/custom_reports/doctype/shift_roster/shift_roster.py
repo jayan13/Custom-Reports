@@ -156,29 +156,31 @@ class ShiftRoster(Document):
 					shift_roster=shf.get('shift_roster')
 					if default_shift!=shift_type:
 						
-						shfass=frappe.db.sql(""" SELECT name from `tabShift Assignment` where docstatus=1 and status='Active' and employee='{0}' and (('{1}' between start_date and end_date) or ('{2}' between start_date and end_date)) """.format(employee,start_date,end_date), as_dict=1,debug=0)
-						if shfass:
-							for shf in shfass:
-								doc = frappe.get_doc('Shift Assignment',shf.name)
-								doc.status='Inactive'
-								doc.save()
-								
-						#if not shfass:
-						empy=frappe.db.get_value('Employee',{'name':employee},['department','company'],as_dict=1,debug=1)
-						
-						doc = frappe.get_doc({
-    						'doctype': 'Shift Assignment',
-    						'start_date': getdate(start_date),
-							'end_date':getdate(end_date),
-							'shift_type':shift_type,
-							'employee':employee,
-							'status':'Active',
-							'department':empy.department,
-							'company':empy.company,
-							'shift_roster':shift_roster,
-							})
-						doc.insert()
-						doc.submit()
+						shift_exist=frappe.db.get_value('Shift Assignment',{'status':'Active','docstatus':1,'shift_type':shift_type,'start_date':start_date,'end_date':end_date},['name'])
+						if not shift_exist:
+							shfass=frappe.db.sql(""" SELECT name from `tabShift Assignment` where docstatus=1 and status='Active' and employee='{0}' and (('{1}' between start_date and end_date) or ('{2}' between start_date and end_date)) """.format(employee,start_date,end_date), as_dict=1,debug=0)
+							if shfass:
+								for shf in shfass:
+									doc = frappe.get_doc('Shift Assignment',shf.name)
+									doc.status='Inactive'
+									doc.save()
+									
+							#if not shfass:
+							empy=frappe.db.get_value('Employee',{'name':employee},['department','company'],as_dict=1,debug=1)
+							
+							doc = frappe.get_doc({
+								'doctype': 'Shift Assignment',
+								'start_date': getdate(start_date),
+								'end_date':getdate(end_date),
+								'shift_type':shift_type,
+								'employee':employee,
+								'status':'Active',
+								'department':empy.department,
+								'company':empy.company,
+								'shift_roster':shift_roster,
+								})
+							doc.insert()
+							doc.submit()
 
 		
 
