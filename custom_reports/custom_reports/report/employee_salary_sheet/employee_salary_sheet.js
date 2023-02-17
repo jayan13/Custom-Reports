@@ -11,6 +11,12 @@ frappe.query_reports["Employee Salary Sheet"] = {
 			"options":"Company",
 			"reqd": 1 ,
 			"default": frappe.defaults.get_user_default("Company"),			
+		},
+		{
+			"fieldname": "payroll_entry",
+			"label": __("Payroll Entry"),
+			"fieldtype": "Link",
+			"options":"Payroll Entry",					
 		}		
 		,{
 			"fieldname": "date_to",

@@ -118,7 +118,8 @@ def get_data(conditions,filters):
 	data=[]
 	
 	date_to=filters.get("date_to")
-	company=filters.get("company")	
+	company=filters.get("company")
+		
 	#mnth=frappe.utils.formatdate(date_to, "MMMM yyyy")	
 	#filters.update({'month':mnth})
 	
@@ -164,8 +165,11 @@ def get_data(conditions,filters):
 			emps=filters.get("employee")
 			empq="','".join([str(elem) for elem in emps])
 			empqry = "  and employee in ('{0}') ".format(empq)
+		
+		if filters.get("payroll_entry"):
+			payroll_entry=filters.get("payroll_entry")
+			empqry+=" and payroll_entry='{0}' ".format(payroll_entry)
 			
-
 		slip=frappe.db.sql(""" select * from `tabSalary Slip` where company='{0}' and department='{1}' and MONTH(posting_date)=MONTH('{2}') and YEAR(posting_date)=YEAR('{2}') {3} """.format(company,dept.name,date_to,empqry),as_dict=1,debug=0)
 		if slip:
 			
