@@ -23,7 +23,9 @@
 		<tr>
 			<th style="width: 1%">#</th>
 			{% for(var j=0,l=columns.length; j<l; j++) { %}				
+			{% if(columns[j].label!='Name') { %}			
 			<th >{%=columns[j].label%}</th>
+			{% } %}
 			{% } %}
 		</tr>
 	</thead>
@@ -38,7 +40,7 @@
 				<td>
 					{%=data[i].employee%} - {%=data[i].employee_name%}					
 				</td>
-				{% for(var j=0,l=columns.length; j<l; j++) {  
+				{% for(var j=0,m=columns.length; j<m; j++) {  
 					var key=columns[j].fieldname %}	
 					{% if(key!='employee' && key!='employee_name') { %}
 						{% if(data[i][key]) { %} 

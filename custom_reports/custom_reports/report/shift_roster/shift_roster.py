@@ -36,6 +36,12 @@ def get_columns(filters):
 		"label": "Employee",
 		"options": "Employee",	
 		"width": 200
+		},
+		{
+		"fieldname": "employee_name",
+		"fieldtype": "Data",
+		"label": "Name",		
+		"width": 200
 		}
  	 ]
 	wekkday=['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
