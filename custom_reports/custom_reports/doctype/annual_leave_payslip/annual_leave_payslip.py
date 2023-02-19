@@ -10,8 +10,10 @@ class AnnualLeavePayslip(Document):
 		#doc.salary_paid_in_advance = '1'
 		#doc.save()
 		frappe.db.set_value('Leave Application', self.leave_application, 'salary_paid_in_advance',1)
+		frappe.msgprint('hai')
 	def on_cancel(self):
 		#doc = frappe.get_doc('Leave Application', self.leave_application)
 		#doc.salary_paid_in_advance = '0'
 		#doc.save()	
 		frappe.db.set_value('Leave Application', self.leave_application, 'salary_paid_in_advance',0)
+		frappe.msgprint('hai')
