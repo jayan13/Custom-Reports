@@ -27,8 +27,8 @@ def get_report(payroll_entry=None):
     department_ded_tot=0
     if slip:
         for slp in slip:
-            department=slp.department.split('-')[0]
-            parent_department=slp.parent_department.split('-')[0]
+            department=slp.department.split('-')[0] if slp.department else ''
+            parent_department=slp.parent_department.split('-')[0] if slp.parent_department else ''
             if parent_department != parent_department_name:
                 parent_department_name=parent_department
                 parent_department_tot=0
