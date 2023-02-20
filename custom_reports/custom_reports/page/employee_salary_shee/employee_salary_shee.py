@@ -120,6 +120,21 @@ def get_report(payroll_entry=None):
             dt.update({'parent_department_basic_pay_tot':parent_department_basic_pay_tot})
             dt.update({'parent_department_allowance_tot':parent_department_allowance_tot})
             slips.append(dt)
+
+        dt={}
+        basic=sum(d.get('basic') for d in slips)
+        dt.update({'basic':basic})
+        basic_paid=sum(d.get('basic_paid') for d in slips)
+        dt.update({'basic_paid':basic_paid})
+        allowance=sum(d.get('allowance') for d in slips)
+        dt.update({'allowance':allowance})
+        gross_pay=sum(d.get('gross_pay') for d in slips)
+        dt.update({'gross_pay':gross_pay})
+        total_deduction=sum(d.get('total_deduction') for d in slips)
+        dt.update({'total_deduction':total_deduction})
+        net_pay=sum(d.get("net_pay") for d in slips)
+        dt.update({'net_pay':net_pay})
+        slips.append(dt)
     data['data']=slips
     return data
 

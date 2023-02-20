@@ -45,7 +45,7 @@ frappe.pages['employee-salary-shee'].on_page_load = function(wrapper) {
 		
 					  var newWin=window.open('','Print-Window');
 					  newWin.document.open();
-					  newWin.document.write('<html><body onload="window.print()">'+divToPrint.innerHTML+'</body></html>');
+					  newWin.document.write('<html><style>	.table-bordered{ display: table; text-indent: initial; border-spacing: 0; border-collapse: collapse; width: 100%; max-width: 100%; font-size: inherit; } .table-bordered tr td{ border-color: black !important; border-left:none !important; border-right:none !important; } .table-bordered{ border:none !important; } </style><body onload="window.print()">'+divToPrint.innerHTML+'</body></html>');
 					  newWin.document.close();
 					  setTimeout(function(){newWin.close();},10);
 		  
