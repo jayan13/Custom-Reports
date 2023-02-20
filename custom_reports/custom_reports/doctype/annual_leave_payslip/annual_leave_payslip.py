@@ -6,7 +6,7 @@ from frappe.model.document import Document
 
 class AnnualLeavePayslip(Document):
 	def on_submit(self):
-		frappe.msgprint('hai')
+		#frappe.msgprint('hai')
 		#doc = frappe.get_doc('Leave Application', self.leave_application)
 		#doc.salary_paid_in_advance = '1'
 		#doc.save()
