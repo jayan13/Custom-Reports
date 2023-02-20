@@ -25,6 +25,13 @@ def get_report(payroll_entry=None):
     department_tot=0
     department_ern_tot=0
     department_ded_tot=0
+    department_basic_tot=0
+    department_basic_pay_tot=0
+    department_allowance_tot=0
+    parent_department_basic_tot=0
+    parent_department_basic_pay_tot=0
+    parent_department_allowance_tot=0
+
     if slip:
         for slp in slip:
             department=slp.department.split('-')[0] if slp.department else ''
