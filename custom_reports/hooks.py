@@ -122,6 +122,14 @@ doc_events = {
 		"on_submit": "custom_reports.api.update_additional_sal_narration_sb",
 		"after_insert": "custom_reports.api.update_additional_sal_narration_sb",
 		"before_insert": "custom_reports.api.update_additional_sal_narration",
+	},
+	"Journal Entry":{
+		"on_submit": "custom_reports.api.update_pro_pay",
+		"on_cancel": "custom_reports.api.update_pro_pay_cancel",
+	},
+	"Payment Entry":{
+		"on_submit": "custom_reports.api.update_pro_pay",
+		"on_cancel": "custom_reports.api.update_pro_pay_cancel",
 	}	
 }
 # Scheduled Tasks

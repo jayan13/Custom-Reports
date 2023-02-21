@@ -1046,3 +1046,13 @@ def get_employee_salarys(emp,date_from,date_to):
 			sal_to=get_last_day(sal_from)
 
 	return salcomp
+
+@frappe.whitelist()
+def update_pro_pay(doc,event):
+	if doc.expense_request:
+		frappe.db.set_value('PRO Expense Request', doc.expense_request, 'workflow_state', 'Paid')
+
+@frappe.whitelist()
+def update_pro_pay_cancel(doc,event):
+	if doc.expense_request:
+		frappe.db.set_value('PRO Expense Request', doc.expense_request, 'workflow_state', 'Approved')
