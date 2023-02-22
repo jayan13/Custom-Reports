@@ -1056,3 +1056,7 @@ def update_pro_pay(doc,event):
 def update_pro_pay_cancel(doc,event):
 	if doc.expense_request:
 		frappe.db.set_value('PRO Expense Request', doc.expense_request, 'workflow_state', 'Approved')
+
+@frappe.whitelist()
+def update_pro(pro):
+	frappe.db.set_value('PRO Expense Request', pro, 'workflow_state', 'Paid')
