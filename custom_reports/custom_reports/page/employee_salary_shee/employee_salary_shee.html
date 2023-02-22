@@ -172,7 +172,7 @@
 					<td colspan="3" style="border-bottom:solid 1px #000;">
 						{% if(data[i].salary_structure.length>0){ %}
 						<table align="right">
-							<tr ><td style="border-bottom:solid 1px #000  !important;"><b>Sal Components</b></td><td style="border-bottom:solid 1px #000  !important;"><b>Amount</b></td></tr>
+							<tr ><td style="border-bottom:solid 1px #000  !important;"><b>Salary Structure</b></td><td style="border-bottom:solid 1px #000  !important;"><b>Amount</b></td></tr>
 							{% for(var z=0; z < data[i].salary_structure.length; z++){ %}
 							<tr><td>{%=data[i].salary_structure[z].salary_component%}</td>
 								<td style="text-align: right">{%=data[i].salary_structure[z].amount%}</td></tr>
