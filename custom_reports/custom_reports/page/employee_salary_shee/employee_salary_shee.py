@@ -9,7 +9,7 @@ def get_report(payroll_entry=None):
     data['start_date']=frappe.utils.formatdate(payro.start_date, "MMMM yyyy")
     data['end_date']=frappe.utils.formatdate(payro.end_date, "MMMM yyyy")    
     
-    slip=frappe.db.sql(""" select s.name,s.employee,s.employee_name,s.gross_pay,s.net_pay,s.total_deduction,s.leave_without_pay,s.payment_days,
+    slip=frappe.db.sql(""" select s.name,s.employee,s.salary_structure,s.employee_name,s.gross_pay,s.net_pay,s.total_deduction,s.leave_without_pay,s.payment_days,
     d.name as department,IF(d.parent_department='All Departments',d.name,d.parent_department) as parent_department 
     from `tabSalary Slip` s left join `tabEmployee` e on e.name=s.employee 
     left join `tabDepartment` d on d.name=e.department where s.payroll_entry='{0}'  order by d.parent_department,d.name """.format(payroll_entry),as_dict=1,debug=0)
