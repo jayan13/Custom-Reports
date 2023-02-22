@@ -97,6 +97,13 @@ def get_report(payroll_entry=None):
             dt.update({'basic':base})
             earnings=[]
             deductions=[]
+            salary_structure=[]
+            earn_tot=0
+            sal_stru=frappe.db.get_all('Salary Detail',filters={'parent':slp.salary_structure,'amount':['>',0],'parentfield':'earnings'},fields=['salary_component','amount'])
+            if sal_stru:
+                salary_structure=sal_stru
+                earn_tot=sum(d.get('amount') for d in sal_stru)
+
             earnin=frappe.db.sql(""" select salary_component,amount from `tabSalary Detail` where parentfield='earnings' and parent ='{0}' """.format(slp.name),as_dict=1,debug=0)
             basic_paid=0
             if earnin:
@@ -112,6 +119,8 @@ def get_report(payroll_entry=None):
                 deductions=deduct
             dt.update({'deductions':deductions})
             dt.update({'basic_paid':basic_paid})
+            dt.update({'salary_structure':salary_structure})
+            dt.update({'earn_tot':earn_tot})
             allowance=float(slp.gross_pay)-float(basic_paid)
             dt.update({'allowance':allowance})
             department_basic_tot+=base
