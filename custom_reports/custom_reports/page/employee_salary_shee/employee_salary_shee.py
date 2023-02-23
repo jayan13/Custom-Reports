@@ -104,7 +104,7 @@ def get_report(payroll_entry=None):
                 salary_structure=sal_stru
                 earn_tot=sum(d.get('amount') for d in sal_stru)
 
-            earnin=frappe.db.sql(""" select salary_component,amount from `tabSalary Detail` where parentfield='earnings' and parent ='{0}'  """.format(slp.name),as_dict=1,debug=0)
+            earnin=frappe.db.sql(""" select salary_component,amount from `tabSalary Detail` where parentfield='earnings' and parent ='{0}'  order by idx""".format(slp.name),as_dict=1,debug=0)
             basic_paid=0
             if earnin:
                 for ern in earnin:
@@ -114,7 +114,7 @@ def get_report(payroll_entry=None):
                         earnings.append(ern)
 
             dt.update({'earnings':earnings})
-            deduct=frappe.db.sql(""" select salary_component,amount from `tabSalary Detail` where parentfield='deductions' and parent ='{0}' """.format(slp.name),as_dict=1,debug=0)
+            deduct=frappe.db.sql(""" select salary_component,amount from `tabSalary Detail` where parentfield='deductions' and parent ='{0}' order by idx""".format(slp.name),as_dict=1,debug=0)
             if deduct:
                 deductions=deduct
             dt.update({'deductions':deductions})
