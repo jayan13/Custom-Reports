@@ -707,7 +707,38 @@ class SalarySlipCustom(SalarySlip):
 				amount=1
 			else:
 				amount = self.eval_condition_and_formula(struct_row, data)
-			
+			#over time
+			ovt=frappe.db.get_value('Over Time Calculation Settings',{'company':self.company},['over_time_limit','over_time_component','holiday_over_time_limit','holiday_over_time_component','productive_incentive_component','calculation_based_on'], as_dict=1)
+			if ovt and struct_row.salary_component==ovt.productive_incentive_component:
+				#total_days_in_month=date_diff(get_last_day(self.start_date),get_first_day(self.start_date))+1
+				#total_days_in_month=30
+				amount=0
+				gpayamt=0
+				base=frappe.db.get_value('Salary Structure Assignment',{'salary_structure':self.salary_structure,'employee':self.employee},'base') or 0			
+				one_hour_base=float(base)/240
+				if ovt.calculation_based_on=='Gross Salary':
+					gerning=frappe.get_all('Salary Detail',filters={'parent':self.salary_structure,'parentfield':'earnings','amount':['>',0]},fields=['salary_component','amount'])
+					if gerning:
+						for er in gerning:
+							gpayamt+= flt(er.amount)
+					
+					#one_hoursal=(gpayamt/cint(total_days_in_month))/8
+					one_hoursal=gpayamt/240
+					#frappe.msgprint(str(one_hoursal)+' b '+str(one_hour_base))
+					if self.over_time > ovt.over_time_limit:
+						amount+=(float(self.over_time)*one_hoursal*1.25)-(float(ovt.over_time_limit)*one_hour_base*1.25)
+					else:
+						amount+=(float(self.over_time)*one_hoursal*1.25)-(float(self.over_time)*one_hour_base*1.25)
+					if self.holiday_over_time > ovt.holiday_over_time_limit:
+						amount+=(float(self.holiday_over_time)*one_hoursal*1.5)-(float(ovt.holiday_over_time_limit)*one_hour_base*1.5)
+					else:
+						amount+=(float(self.holiday_over_time)*one_hoursal*1.5)-(float(self.holiday_over_time)*one_hour_base*1.5)
+				else:					
+					if self.over_time > ovt.over_time_limit:
+						amount+=(float(self.over_time)-float(ovt.over_time_limit))*float(one_hour_base)*1.25
+					if self.holiday_over_time > ovt.holiday_over_time_limit:
+						amount+=(float(self.holiday_over_time)-float(ovt.holiday_over_time_limit))*float(one_hour_base)*1.5
+
 			if (
 				amount or (struct_row.amount_based_on_formula and amount is not None) 
 			) and struct_row.statistical_component == 0:
@@ -1309,7 +1340,7 @@ class SalarySlipCustom(SalarySlip):
 					if row.salary_component in house:
 						pay_days=pay_days+self.leave_without_pay			
 			
-			
+	
 			leavesal=[]
 			leav=frappe.db.get_all("Leave Salary",fields=['salary_component'],pluck='salary_component')
 			if leav:
@@ -1327,7 +1358,6 @@ class SalarySlipCustom(SalarySlip):
 						amount=flt(additional_amount)
 				else:
 					amount=0
-
 			else:
 				if pay_days > 0:	
 					amount = (
