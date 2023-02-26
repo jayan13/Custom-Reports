@@ -708,8 +708,17 @@ class SalarySlipCustom(SalarySlip):
 			else:
 				amount = self.eval_condition_and_formula(struct_row, data)
 			#over time
-			ovt=frappe.db.get_value('Over Time Calculation Settings',{'company':self.company},['over_time_limit','over_time_component','holiday_over_time_limit','holiday_over_time_component','productive_incentive_component','calculation_based_on'], as_dict=1)
-			if ovt and struct_row.salary_component==ovt.productive_incentive_component:
+
+			ovt=frappe.db.get_value('Over Time Calculation Settings',{'company':self.company},['name','over_time_limit','holiday_over_time_limit','productive_incentive_component','calculation_based_on'], as_dict=1)
+			
+			incentive=[]
+			if ovt:
+				over_time=self.over_time or 0
+				holiday_over_time=self.holiday_over_time or 0
+				incentives=frappe.db.get_all("Productive Incentive Components",filters={'parent':ovt.name},fields=['productive_incentive_component'],pluck='productive_incentive_component')
+				if incentives:
+					incentive=incentives
+			if ovt and struct_row.salary_component in incentive and (over_time > 0 or holiday_over_time > 0):
 				#total_days_in_month=date_diff(get_last_day(self.start_date),get_first_day(self.start_date))+1
 				#total_days_in_month=30
 				amount=0
@@ -725,19 +734,19 @@ class SalarySlipCustom(SalarySlip):
 					#one_hoursal=(gpayamt/cint(total_days_in_month))/8
 					one_hoursal=gpayamt/240
 					#frappe.msgprint(str(one_hoursal)+' b '+str(one_hour_base))
-					if self.over_time > ovt.over_time_limit:
-						amount+=(float(self.over_time)*one_hoursal*1.25)-(float(ovt.over_time_limit)*one_hour_base*1.25)
+					if float(over_time) > float(ovt.over_time_limit):
+						amount+=(float(over_time)*one_hoursal*1.25)-(float(ovt.over_time_limit)*one_hour_base*1.25)
 					else:
-						amount+=(float(self.over_time)*one_hoursal*1.25)-(float(self.over_time)*one_hour_base*1.25)
-					if self.holiday_over_time > ovt.holiday_over_time_limit:
-						amount+=(float(self.holiday_over_time)*one_hoursal*1.5)-(float(ovt.holiday_over_time_limit)*one_hour_base*1.5)
+						amount+=(float(over_time)*one_hoursal*1.25)-(float(over_time)*one_hour_base*1.25)
+					if float(holiday_over_time) > float(ovt.holiday_over_time_limit):
+						amount+=(float(holiday_over_time)*one_hoursal*1.5)-(float(ovt.holiday_over_time_limit)*one_hour_base*1.5)
 					else:
-						amount+=(float(self.holiday_over_time)*one_hoursal*1.5)-(float(self.holiday_over_time)*one_hour_base*1.5)
+						amount+=(float(holiday_over_time)*one_hoursal*1.5)-(float(holiday_over_time)*one_hour_base*1.5)
 				else:					
-					if self.over_time > ovt.over_time_limit:
-						amount+=(float(self.over_time)-float(ovt.over_time_limit))*float(one_hour_base)*1.25
-					if self.holiday_over_time > ovt.holiday_over_time_limit:
-						amount+=(float(self.holiday_over_time)-float(ovt.holiday_over_time_limit))*float(one_hour_base)*1.5
+					if float(over_time) > float(ovt.over_time_limit):
+						amount+=(float(over_time)-float(ovt.over_time_limit))*float(one_hour_base)*1.25
+					if float(holiday_over_time) > float(ovt.holiday_over_time_limit):
+						amount+=(float(holiday_over_time)-float(ovt.holiday_over_time_limit))*float(one_hour_base)*1.5
 
 			if (
 				amount or (struct_row.amount_based_on_formula and amount is not None) 
