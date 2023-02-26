@@ -13,7 +13,7 @@ def execute(filters=None):
 	if not filters:
 		filters = {}
 	conditions=get_conditions(filters)
-	return get_columns(), get_data_n(conditions,filters)
+	return get_columns(), get_data(conditions,filters)
 
 def get_columns():
 	
