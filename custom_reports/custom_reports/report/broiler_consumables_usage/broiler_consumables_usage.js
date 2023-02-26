@@ -8,18 +8,20 @@ frappe.query_reports["Broiler Consumables Usage"] = {
 		"label": __("Company"),
 		"fieldtype": "Link",
 		"options":"Company",
-		"default": "ABU DHABI MODERNE POULTRY FARM L.L.C."
+		"default": frappe.defaults.get_user_default("Company"),
 	},{
 		"fieldname": "date_from",
 		"label": __("From"),
 		"fieldtype": "Date",
 		"reqd": 1 ,
+		"default": frappe.datetime.month_start()
 	},
 	{
 		"fieldname": "date_to",
 		"label": __("To"),
 		"fieldtype": "Date",
 		"reqd": 1 ,
+		"default": frappe.datetime.get_today()
 	}
 	]
 };
