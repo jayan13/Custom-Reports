@@ -257,28 +257,29 @@ def get_data_n(conditions,filters):
 	if filters.get("date_to"):
 		date_to=filters.get("date_to")
 
-	broiler_batchs=frappe.db.sql(""" select DISTINCT boil.broiler_batch from (select a.name as broiler_batch from `tabBroiler Batch` a left join `tabMedicine`
+	broiler_batchs=frappe.db.sql(""" select DISTINCT boil.broiler_batch,boil.start_date from (select a.name as broiler_batch,a.start_date as start_date from `tabBroiler Batch` a left join `tabMedicine`
 	 m on a.name=m.parent where m.item is not null and m.item!='' and a.company='{0}' and m.date >= '{1}' and m.date <= '{2}' group by a.name 
 	 UNION 
-	 select b.name as broiler_batch from `tabBroiler Batch` b left join `tabVaccine` f
+	 select b.name as broiler_batch,b.start_date as start_date from `tabBroiler Batch` b left join `tabVaccine` f
 	  on b.name=f.parent where f.item is not null and f.item!='' and b.company='{0}' and f.date >= '{1}' and f.date <= '{2}' group by b.name
 	 UNION
-	select c.name as broiler_batch from `tabBroiler Batch` c left join `tabFeed` g
+	select c.name as broiler_batch,c.start_date as start_date from `tabBroiler Batch` c left join `tabFeed` g
 	 on c.name=g.parent where g.starter_item is not null and g.starter_item!='' and c.company='{0}' and g.date >= '{1}' and g.date <= '{2}' group by c.name
 	 UNION
-	 select d.name as broiler_batch from `tabBroiler Batch` d left join `tabFeed` h
+	 select d.name as broiler_batch,d.start_date as start_date from `tabBroiler Batch` d left join `tabFeed` h
 	  on d.name=h.parent where h.finisher_item is not null and h.finisher_item!='' and d.company='{0}' and h.date >= '{1}' and h.date <= '{2}' group by d.name) boil
 	  order by boil.broiler_batch""".format(company,date_from,date_to),as_dict=1,debug=0)
 	data=[]
 	if broiler_batchs:
 		for broilerbatch in broiler_batchs:
-			if broilerbatch.broiler_batch!='640-BROILER-HERZ-24-SHED-2':
-				continue
+			#if broilerbatch.broiler_batch!='640-BROILER-HERZ-24-SHED-2':
+			#	continue
 			vac=0
 			med=0
 			starter=0
 			finisher=0
 			broiler_batch=broilerbatch.broiler_batch
+			batch_date=broilerbatch.start_date
 			bro_date=''
 			medicines=frappe.db.sql("""select b.name,b.broiler_shed,m.item,m.qty,m.uom,m.date,TIME(m.creation) as itime from `tabBroiler Batch` b left join `tabMedicine`
 	 			m on b.name=m.parent where m.item is not null and m.item!='' and b.company='{0}' and m.date >= '{1}' and m.date <= '{2}' and b.name='{3}' """.format(company,date_from,date_to,broiler_batch),as_dict=1,debug=0)
@@ -349,7 +350,7 @@ def get_data_n(conditions,filters):
 					finisher+=base_row_rate * float(medicine.finisher_qty) * float(conversion_factor)
 
 			manu={}
-			manu.update({'posting_date':bro_date})
+			manu.update({'posting_date':batch_date})
 			manu.update({'project':broiler_batch})
 			manu.update({'vaccine':vac})
 			manu.update({'medicine':med})
