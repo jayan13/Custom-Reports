@@ -218,7 +218,9 @@ def get_applicable_components(gratuity_rule):
 
 
 def get_total_applicable_component_amount(employee, applicable_earnings_component, gratuity_rule):
-	sal_slip = get_last_salary_slip(employee)
+	#sal_slip = get_last_salary_slip(employee)
+	sal_slip = get_salary_structure(employee)
+	# modified take components amount from salary structure because we introduced leave salary components to hold basic erarning components value for annual leaves taken
 	if not sal_slip:
 		frappe.throw(_("No Salary Slip is found for Employee: {0}").format(bold(employee)))
 	component_and_amounts = frappe.get_all(
