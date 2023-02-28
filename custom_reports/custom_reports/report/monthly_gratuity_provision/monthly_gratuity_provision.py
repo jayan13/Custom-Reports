@@ -512,7 +512,8 @@ def get_applicable_components(gratuity_rule):
 
 
 def get_total_applicable_component_amount(employee, applicable_earnings_component, gratuity_rule,processing_month):
-	sal_slip = get_last_salary_slip(employee)
+	#sal_slip = get_last_salary_slip(employee)
+	sal_slip=''
 	if not sal_slip:
 		salary_structure=frappe.db.get_value("Salary Structure Assignment",{'employee':employee,'from_date':['<=',processing_month]},'salary_structure',debug=0)
 		component_and_amounts = frappe.get_all(

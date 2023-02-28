@@ -261,7 +261,8 @@ def getused(emp,opn,start_date,end_date):
 
 #========================================================
 def get_total_applicable_component_amount(employee, applicable_earnings_component, processing_month):
-	sal_slip = get_last_salary_slip(employee,processing_month)
+	#sal_slip = get_last_salary_slip(employee,processing_month)
+	sal_slip=''
 	sal_stru = get_last_salary_structure(employee,processing_month)
 	pare= sal_slip or sal_stru
 	component_and_amounts=''

@@ -424,7 +424,7 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 				gratuity_rule = 'Rule Under Limited Contract (UAE)'
 		else:
 			gratuity_rule = 'Rule Under Limited Contract (UAE)'
-
+	
 	applicable_earnings_component = get_applicable_components(gratuity_rule)
 	total_applicable_components_amount = get_total_applicable_component_amount(
 		employee, applicable_earnings_component, gratuity_rule,processing_month
@@ -465,10 +465,11 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 					gratuity_amount += (year_left*day)*((total_applicable_components_amount*12)/365)
 
 				accured_days+=(year_left*day)
+				#frappe.msgprint(str(year_left)+'-'+str(accured_days)+"-1")
 				slab_found = True
 				break
 
-			if experience > slab.to_year and experience > slab.from_year and slab.to_year != 0:
+			if experience >= slab.to_year and experience > slab.from_year and slab.to_year != 0:
 				day=slab.fraction_of_applicable_earnings*30
 				day=round(day)
 				yer=slab.to_year - slab.from_year
@@ -482,6 +483,7 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 					gratuity_amount += (yer*day)*((total_applicable_components_amount*12)/365)
 
 				accured_days+=(yer*day)
+				#frappe.msgprint(str(year_left)+'-'+str(accured_days)+"-2")
 				year_left -= slab.to_year - slab.from_year
 				slab_found = True
 				#frappe.msgprint(str(experience)+'-('+str(slab.from_year)+'-'+str(slab.to_year)+')-'+str(slab.fraction_of_applicable_earnings)+'*'+str(slab.to_year - slab.from_year)+'*'+str(total_applicable_components_amount))
@@ -496,6 +498,7 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 					gratuity_amount += (year_left*day)*((total_applicable_components_amount*12)/365)
 
 				accured_days+=(year_left*day)
+				#frappe.msgprint(str(year_left)+'-'+str(day)+"-3")
 				slab_found = True
 				#frappe.msgprint(str(experience)+'-('+str(slab.from_year)+'-'+str(slab.to_year)+')-'+str(slab.fraction_of_applicable_earnings)+'*'+str(year_left)+'*'+str(total_applicable_components_amount))
 
@@ -526,7 +529,8 @@ def get_applicable_components(gratuity_rule):
 
 
 def get_total_applicable_component_amount(employee, applicable_earnings_component, gratuity_rule,processing_month):
-	sal_slip = get_last_salary_slip(employee)
+	#sal_slip = get_last_salary_slip(employee)
+	sal_slip=''
 	if not sal_slip:
 		salary_structure=frappe.db.get_value("Salary Structure Assignment",{'employee':employee,'from_date':['<=',processing_month]},'salary_structure',debug=0)
 		component_and_amounts = frappe.get_all(
