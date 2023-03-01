@@ -333,10 +333,14 @@ def get_annual_leaveamount(emp,reval_date):
 	
 	used_leaves=getused(emp,employee.opening_used_leaves.replace(',',''),reval_date,employee.date_of_joining)
 	salary_structure=get_salary_structure(emp)
-	salcomp=frappe.db.get_all('Salary Detail',filters={'parent':salary_structure,'depends_on_payment_days':'1','amount':['>','0'],'salary_component':['in',('Basic(A)','Basic')]},fields=['salary_component','amount','parentfield'])
 	base_salary=0
-	if salcomp:
-		base_salary=salcomp[0].amount
+	#salcomp=frappe.db.get_all('Salary Detail',filters={'parent':salary_structure,'depends_on_payment_days':'1','amount':['>','0'],'salary_component':['in',('Basic(A)','Basic')]},fields=['salary_component','amount','parentfield'])
+
+	#if salcomp:
+	#	base_salary=salcomp[0].amount
+	base=frappe.db.get_value("Salary Structure Assignment",{'employee':emp,'salary_structure':salary_structure},'base',debug=0)
+	if base:
+		base_salary=base
 
 	leave_entitled=get_leave_no(emp,reval_date)
 
@@ -911,11 +915,13 @@ def get_emp_details(emp,start_date,end_date):
 	
 	used_leaves=getused(emp,employee.opening_used_leaves.replace(',',''),end_date,employee.date_of_joining)
 	salary_structure=get_salary_structure(emp)
-	salcomp=frappe.db.get_all('Salary Detail',filters={'parent':salary_structure,'depends_on_payment_days':'1','amount':['>','0'],'salary_component':['in',('Basic(A)','Basic')]},fields=['salary_component','amount','parentfield'])
+	#salcomp=frappe.db.get_all('Salary Detail',filters={'parent':salary_structure,'depends_on_payment_days':'1','amount':['>','0'],'salary_component':['in',('Basic(A)','Basic')]},fields=['salary_component','amount','parentfield'])
 	base_salary=0
-	if salcomp:
-		base_salary=salcomp[0].amount
-
+	#if salcomp:
+	#	base_salary=salcomp[0].amount
+	base=frappe.db.get_value("Salary Structure Assignment",{'employee':emp,'salary_structure':salary_structure},'base',debug=0)
+	if base:
+		base_salary=base
 	leave_entitled=get_leave_no(emp,end_date)
 	ticket_issued=0
 	opnusedtick=employee.used_tickets or 0
