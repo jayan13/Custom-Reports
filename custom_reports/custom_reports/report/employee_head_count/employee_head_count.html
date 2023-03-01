@@ -3,30 +3,37 @@
 		border-color: black !important;
 		border-left:none !important;
 		border-right:none !important;
+		line-height: 1 !important;
 	}
 	.table-bordered{
 		border:none !important;
 	}
 </style>
-<h1 class="text-center">{%= filters.company %}</h1>
-<h2 class="text-center">
+
 {% const date = new Date(filters.date_to) %}
 {% const month = ["January","February","March","April","May","June","July","August","September","October","November","December"] %}
-{%=month[date.getMonth()]%}, {%=date.getFullYear()%}
-</h2>
-<h2 class="text-center"> {%= __("Employee Head Count") %} </h2>
-<h3 class="text-center">Based On Payroll Month Attendance</h3>
- 
-<hr style=" border-top: black 2px solid;">
+<div style="width: 100%;font-size: 18px;font-weight: bold; text-align: center; ">
+	{%= filters.company %}
+</div>
+<div style="width: 100%;font-size: 18px;font-weight: bold; text-align: center; ">
+	{%=month[date.getMonth()]%}, {%=date.getFullYear()%}
+</div>
+<div style="width: 100%;font-size: 16px;font-weight: bold; text-align: center; ">
+	{%= __("Employee Head Count") %}
+</div>
+<div style="width: 100%;font-size: 16px;font-weight: bold; text-align: center; ">
+	Based On Payroll Month Attendance
+</div>
+
 <table class="table table-bordered">
 	<thead>		
 		<tr>
 			<td style="width: 1%"></td>
 			<td style="width: 29%;font-weight: bold;">{%= __("Department") %}</td>
-			<td style="width: 5%; text-align: right;font-weight: bold;" >{%= __("Last Month") %}</td>
-			<td style="width: 5%; text-align: right;font-weight: bold;"  >{%= __("New Joined") %}</td>
-			<td style="width: 5%; text-align: right;font-weight: bold;"  >{%= __("Employees Left") %}</td>
-			<td style="width: 5%; text-align: right;font-weight: bold;" >{%= __("Current Month") %}</td>
+			<td style="width: 15%; text-align: right;font-weight: bold;" >{%= __("Last Month") %}</td>
+			<td style="width: 15%; text-align: right;font-weight: bold;"  >{%= __("New Joined") %}</td>
+			<td style="width: 15%; text-align: right;font-weight: bold;"  >{%= __("Employees Left") %}</td>
+			<td style="width: 15%; text-align: right;font-weight: bold;" >{%= __("Current Month") %}</td>
 			
 		</tr>
 	</thead>

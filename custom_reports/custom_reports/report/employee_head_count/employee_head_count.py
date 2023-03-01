@@ -83,9 +83,7 @@ def get_data(conditions,filters):
 			parent_department_left=0
 			parent_department_current=0
 
-		dt={}				
-		dt.update({'department':department})
-		dt.update({'parent_department':parent_department_name})
+		
 		current_month=0
 		employees_left=0
 		new_joined=0
@@ -121,7 +119,11 @@ def get_data(conditions,filters):
 		if current:
 			current_month=current[0].cnt
 			parent_department_current+=current_month
-
+		if current_month == 0 and last_month==0:
+			continue  	
+		dt={}				
+		dt.update({'department':department})
+		dt.update({'parent_department':parent_department_name})
 		dt.update({'last_month':last_month})
 		dt.update({'new_joined':new_joined})
 		dt.update({'employees_left':employees_left})
