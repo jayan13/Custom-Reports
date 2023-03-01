@@ -93,26 +93,31 @@ def get_data(conditions,filters):
 		lmonth=add_days(get_first_day(getdate(date_to)),-1)
 
 		pvmonth=frappe.db.sql(""" select count(e.employee) as cnt from `tabSalary Slip` s left join `tabEmployee` e on e.name=s.employee where s.docstatus in (0,1) and s.company='{0}' and (s.department='{1}' or e.department='{1}') and MONTH(s.end_date)=MONTH('{2}') 
-		 and YEAR(s.end_date)=YEAR('{2}') and e.status='Active' group by e.department """.format(company,dept.name,lmonth),as_dict=1,debug=0)
+		 and YEAR(s.end_date)=YEAR('{2}')  group by e.department """.format(company,dept.name,lmonth),as_dict=1,debug=0)
 		if pvmonth:
 			last_month=pvmonth[0].cnt
 			parent_department_last+=last_month
 
 		newjoi=frappe.db.sql(""" select count(e.employee) as cnt from `tabSalary Slip` s left join `tabEmployee` e on e.name=s.employee where s.docstatus in (0,1) and s.company='{0}' and (s.department='{1}' or e.department='{1}') and MONTH(s.end_date)=MONTH('{2}') 
-		 and YEAR(s.end_date)=YEAR('{2}') and YEAR(e.date_of_joining)=YEAR('{2}') and MONTH(e.date_of_joining)=MONTH('{2}') group by e.department """.format(company,dept.name,date_to),as_dict=1,debug=0)
+		 and YEAR(s.end_date)=YEAR('{2}') and e.employee not in(select e.employee from `tabSalary Slip` s left join `tabEmployee` e on e.name=s.employee where s.docstatus in (0,1) and s.company='{0}' and (s.department='{1}' or e.department='{1}') and MONTH(s.end_date)=MONTH('{3}') 
+		 and YEAR(s.end_date)=YEAR('{3}')) and (select count(e.employee) from `tabSalary Slip` s left join `tabEmployee` e on e.name=s.employee where s.docstatus in (0,1) and s.company='{0}' and (s.department='{1}' or e.department='{1}') and MONTH(s.end_date)=MONTH('{3}') 
+		 and YEAR(s.end_date)=YEAR('{3}')) > 0 group by e.department """.format(company,dept.name,date_to,lmonth),as_dict=1,debug=0)
+		#YEAR(e.date_of_joining)=YEAR('{2}') and MONTH(e.date_of_joining)=MONTH('{2}')
 		if newjoi:
 			new_joined=newjoi[0].cnt
 			parent_department_new+=new_joined
 
 		left=frappe.db.sql(""" select count(e.employee) as cnt from `tabSalary Slip` s left join `tabEmployee` e on e.name=s.employee where s.docstatus in (0,1) and s.company='{0}' and (s.department='{1}' or e.department='{1}') and MONTH(s.end_date)=MONTH('{2}') 
-		 and YEAR(s.end_date)=YEAR('{2}') and e.status='Left'  group by e.department """.format(company,dept.name,date_to),as_dict=1,debug=0)
+		 and YEAR(s.end_date)=YEAR('{2}') and e.employee not in(select e.employee from `tabSalary Slip` s left join `tabEmployee` e on e.name=s.employee where s.docstatus in (0,1) and s.company='{0}' and (s.department='{1}' or e.department='{1}') and MONTH(s.end_date)=MONTH('{3}') 
+		 and YEAR(s.end_date)=YEAR('{3}')) and (select count(e.employee) from `tabSalary Slip` s left join `tabEmployee` e on e.name=s.employee where s.docstatus in (0,1) and s.company='{0}' and (s.department='{1}' or e.department='{1}') and MONTH(s.end_date)=MONTH('{3}') 
+		 and YEAR(s.end_date)=YEAR('{3}'))>0 group by e.department """.format(company,dept.name,lmonth,date_to),as_dict=1,debug=0)
 		#YEAR(e.relieving_date)=YEAR('{2}') and MONTH(e.relieving_date)=MONTH('{2}')
 		if left:
 			employees_left=left[0].cnt
 			parent_department_left+=employees_left
 
 		current=frappe.db.sql(""" select count(e.employee) as cnt from `tabSalary Slip` s left join `tabEmployee` e on e.name=s.employee where s.docstatus in (0,1) and s.company='{0}' and (s.department='{1}' or e.department='{1}') and MONTH(s.end_date)=MONTH('{2}') 
-		 and YEAR(s.end_date)=YEAR('{2}') and e.status='Active' group by e.department """.format(company,dept.name,date_to),as_dict=1,debug=0)
+		 and YEAR(s.end_date)=YEAR('{2}')  group by e.department """.format(company,dept.name,date_to),as_dict=1,debug=0)
 		if current:
 			current_month=current[0].cnt
 			parent_department_current+=current_month
