@@ -296,6 +296,7 @@ def get_data_n(conditions,filters):
 		
 		for vac in vaccines:
 			if vaccines:
+				sett = frappe.get_doc('Broiler Shed',vaccines[0].broiler_shed)
 				manu={}
 				conversion_factor = get_conversion_factor(vac.item, vac.uom).get("conversion_factor")
 				base_row_rate = get_incoming_rate({
@@ -327,6 +328,7 @@ def get_data_n(conditions,filters):
 
 		for vac in starters:
 			if starters:
+				sett = frappe.get_doc('Broiler Shed',starters[0].broiler_shed)
 				manu={}
 				conversion_factor = get_conversion_factor(vac.item, vac.uom).get("conversion_factor")
 				base_row_rate = get_incoming_rate({
@@ -358,6 +360,7 @@ def get_data_n(conditions,filters):
 
 		for vac in finishers:
 			if finishers:
+				sett = frappe.get_doc('Broiler Shed',finishers[0].broiler_shed)
 				manu={}
 				conversion_factor = get_conversion_factor(vac.item, vac.uom).get("conversion_factor")
 				base_row_rate = get_incoming_rate({
