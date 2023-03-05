@@ -1,0 +1,107 @@
+<style>
+	.table-bordered tr td{
+		border-color: black !important;
+		border-left:none !important;
+		border-right:none !important;
+	}
+	.table-bordered{
+		border:none !important;
+	}
+</style>
+<h1 class="text-center">{%= filters.company %}</h1>
+<h2 class="text-center">{%= __("Over Time Sheet") %} 
+{% const date = new Date(filters.date_to) %}
+{% const month = ["January","February","March","April","May","June","July","August","September","October","November","December"] %}
+</h2>
+<h3 class="text-center">Salary Sheet For The Month Of {%=month[date.getMonth()]%}, {%=date.getFullYear()%}
+</h3>
+ 
+<hr style=" border-top: black 2px solid;">
+<table class="table table-bordered">
+	<thead>
+		{% var cols=columns.length %}
+		
+		<tr>
+			<th style="width: 1%">#</th>
+			{% for(var j=0,l=columns.length; j<l; j++) { %}	
+			{% if(columns[j].label!='Department' && columns[j].label!='Main Department') { %}
+			{% if(j>3){ var cls='style="text-align:right;"'}else{ cls='' } %}			
+			<th {%=cls%}>{%=columns[j].label%}</th>
+			{% } %}
+			{% } %}
+
+		</tr>
+	</thead>
+	<tbody>
+		
+		{% for(var i=0,l=data.length; i<l; i++) { 
+			 if(i==0 && data[i].department){ %}
+		<tr><td colspan="{%=cols-1%}" style="font-size:14px;"><b>{%=data[i].parent_department%}</b></td></tr>
+		<tr><td colspan="{%=cols-1%}"><b>{%=data[i].department%}</b></td></tr>
+		{% } else if (i >0 && data[i].department){  
+			if(data[i-1].parent_department!=data[i].parent_department){ %} 
+			<tr><td colspan="{%=cols-1%}" style="font-size:14px;"><b>{%=data[i].parent_department%}</b></td></tr>
+			{% }
+			if(data[i-1].department!=data[i].department){ %}
+		<tr><td colspan="{%=cols-1%}"><b>{%=data[i].department%}</b></td></tr>
+		{% } } %}
+		{% if(i+1==l) { %}
+		<tr>			
+			<td colspan="{%=cols-2%}" style="text-align: right;font-size:14px;">
+				<b># Employee {%=data[i-1].emp_count%} Grand Total : </b>
+			</td>
+			
+			
+			<td style="text-align: right;font-size:14px;">
+				<b>{%=format_currency(data[i].net_pay) %}</b>
+			</td>
+
+		</tr>
+		{% } else { %}
+			<tr>
+			
+				<td style="text-align: right">
+					{%=i+1 %}
+				</td>
+				{% for(var j=0,m=columns.length; j<m; j++) {  
+					var key=columns[j].fieldname %}	
+					{% if(j>3){ var cls='style="text-align:right;"'}else{ cls='' } %}
+					{% if(key!='department' && key!='parent_department') { %}
+						
+							<td {%=cls%}>
+							{%=data[i][key]%}					
+							</td>
+					
+							{% } %}		
+				{% } %}
+				
+
+			</tr>
+			
+			{% } %}
+			{% if(i==(l-1)) { %}
+			
+			{% } else if (i >=0){  
+				if(data[i].department!=data[i+1].department){ %} 
+				<tr><td  style="text-align: right" colspan="{%=cols-2%}"># Employee {%=data[i].emp_count_dept%} <b>Department Total :</b></td>
+
+					
+					<td style="text-align: right"><b>{%=format_currency(data[i].department_tot)%}</b></td></tr>
+				{% }
+				if(data[i].parent_department!=data[i+1].parent_department){ %}
+			<tr><td  style="text-align: right" colspan="{%=cols-2%}"># Employee {%=data[i].emp_count_pare_dept%} <b>Main Department Total :</b></td>
+				
+				
+				<td style="text-align: right"><b>{%=format_currency(data[i].parent_department_tot)%}</b></td></tr>
+			{% } } %}
+
+
+		{% } %}
+	</tbody>
+</table>
+<div style="width:100%;margin-top:100px;padding-bottom: 100px;">
+	<div style="text-align:center;width:24%;float:left;font-weight: bold;">HR Department</div>
+	<div style="text-align:center;width:24%;float:left;font-weight: bold;"> Financial Accountant</div>
+	<div style="text-align:center;width:24%;float:left;font-weight: bold;">Financial Controller</div>
+	<div style="text-align:center;width:24%;float:left;font-weight: bold;">General Manager</div>
+</div>

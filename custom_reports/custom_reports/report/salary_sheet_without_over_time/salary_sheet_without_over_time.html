@@ -1,0 +1,195 @@
+<style>
+	.table-bordered tr td{
+		border-color: black !important;
+		border-left:none !important;
+		border-right:none !important;
+	}
+	.table-bordered{
+		border:none !important;
+	}
+</style>
+<h1 class="text-center">{%= filters.company %}</h1>
+<h2 class="text-center">{%= __("Salary Sheet Without Over Time") %} 
+{% const date = new Date(filters.date_to) %}
+{% const month = ["January","February","March","April","May","June","July","August","September","October","November","December"] %}
+</h2>
+<h3 class="text-center">Salary Sheet For The Month Of {%=month[date.getMonth()]%}, {%=date.getFullYear()%}
+</h3>
+ 
+<hr style=" border-top: black 2px solid;">
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<td></td><td></td><td colspan="3" style="text-align:center ;"> Days</td>
+			<td colspan="2">Over Time (Hr)</td>
+			<td></td><td></td><td></td><td></td><td></td><td></td>
+		</tr>
+		<tr>
+			<td style="width: 1%"></td>
+			<td style="width: 29%;font-weight: bold;">{%= __("Employee") %}</td>
+
+			<td style="width: 5%; text-align: right;font-weight: bold;" >{%= __("Paid Days") %}</td>
+			<td style="width: 5%; text-align: right;font-weight: bold;"  >{%= __("Paid Leaves") %}</td>
+			<td style="width: 5%; text-align: right;font-weight: bold;"  >{%= __("Unpaid Paid Days") %}</td>
+
+			<td style="width: 5%; text-align: right;font-weight: bold;" >{%= __("Nor @1.25") %}</td>
+			<td style="width: 5%; text-align: right;font-weight: bold;" >{%= __("Holi @1.50") %}</td>
+
+			<td style="width: 7%; text-align: right;font-weight: bold;" >{%= __("Basic Salary") %}</td>
+			<td style="width: 7%; text-align: right;font-weight: bold;" >{%= __("Basic Paid") %}</td>
+			<td style="width: 7%; text-align: right;font-weight: bold;"  >{%= __("Tot Allow/Earn") %}</td>
+
+			<td style="width: 7%; text-align: right;font-weight: bold;" >{%= __("Gross Pay") %}</td>
+			<td style="width: 7%; text-align: right;font-weight: bold;"  >{%= __("Deduction") %}</td>		
+			<td style="width: 10%; text-align: right;font-weight: bold;" >{%= __("Net Pay") %}</td>
+		</tr>
+	</thead>
+	<tbody>
+		
+		{% for(var i=0,l=data.length; i<l; i++) { 
+			 if(i==0 && data[i].department){ %}
+		<tr><td colspan="13" style="font-size:14px;"><b>{%=data[i].parent_department%}</b></td></tr>
+		<tr><td colspan="13"><b>{%=data[i].department%}</b></td></tr>
+		{% } else if (i >1 && data[i].department){  
+			if(data[i-1].parent_department!=data[i].parent_department){ %} 
+			<tr><td colspan="13" style="font-size:14px;"><b>{%=data[i].parent_department%}</b></td></tr>
+			{% }
+			if(data[i-1].department!=data[i].department){ %}
+		<tr><td colspan="13"><b>{%=data[i].department%}</b></td></tr>
+		{% } } %}
+		{% if(i+1==l) { %}
+		<tr>			
+			<td colspan="7" style="text-align: right;font-size:14px;">
+				<b># Employee {%=data[i-1].emp_count%} Grand Total : </b>
+			</td>
+			<td style="text-align: right;font-size:14px;">
+				<b>{%=format_currency(data[i].basic) %}</b>
+			</td>
+			<td style="text-align: right;font-size:14px;">
+				<b>{%=format_currency(data[i].basic_paid) %}</b>
+			</td>
+			<td style="text-align: right;font-size:14px;">
+				<b>{%=format_currency(data[i].allowance) %}</b>
+			</td>
+			<td style="text-align: right;font-size:14px;">
+				<b>{%=format_currency(data[i].gross_pay) %}</b>
+			</td>
+
+			<td style="text-align: right;font-size:14px;">
+				<b>{%=format_currency(data[i].total_deduction) %}</b>
+			</td>
+			<td style="text-align: right;font-size:14px;">
+				<b>{%=format_currency(data[i].net_pay) %}</b>
+			</td>
+
+		</tr>
+		{% } else { %}
+			<tr>
+			
+				<td style="text-align: right">
+					{%=i+1 %}
+				</td>
+				<td >
+					{%=data[i].employee %} {%=data[i].employee_name %}
+				</td>
+				<td style="text-align: right">
+					{%=format_currency(data[i].payment_days) %}
+				</td>
+
+				<td style="text-align: right">
+					{%=format_currency(data[i].paid_leaves) %}
+				</td>
+				<td style="text-align: right">
+					{%=format_currency(data[i].leave_without_pay) %}
+				</td>
+				<td style="text-align: right">
+					{%=format_currency(data[i].over_time) %}
+				</td>
+				<td style="text-align: right">
+					{%=format_currency(data[i].holiday_over_time) %}
+				</td>
+
+				<td style="text-align: right">
+					{%=format_currency(data[i].basic) %}
+				</td>
+				<td style="text-align: right">
+					{%=format_currency(data[i].basic_paid) %}
+				</td>
+				<td style="text-align: right">
+					{%=format_currency(data[i].allowance) %}
+				</td>
+
+
+				<td style="text-align: right">
+					{%=format_currency(data[i].gross_pay) %}
+				</td>
+				<td style="text-align: right">
+					{%=format_currency(data[i].total_deduction) %}
+				</td>
+				<td style="text-align: right">
+					{%=format_currency(data[i].net_pay) %}
+				</td>
+				
+
+			</tr>
+			<tr><td ></td>
+				<td colspan="2" style="text-align:right;">
+					{% if(data[i].earnings.length>0){ %}
+				<table align="right">
+					<tr style="border-bottom:solid 1px #000 ;"><td><b>Allowance/Earning</b></td><td><b>Amount</b></td></tr>
+						{% for(var x=0; x < data[i].earnings.length; x++){ %}
+						<tr><td>{%=data[i].earnings[x].salary_component%}</td>
+							<td style="text-align: right">{%=data[i].earnings[x].amount%}</td></tr>
+						{% } %}
+						<tr style="border-top:solid 1px #000 ;"><td><b>Total</b></td><td style="text-align: right"><b>{%=format_currency(data[i].allowance) %}</b></td></tr>
+				</table>	
+				{% } %}
+				</td>
+				<td colspan="4" style="text-align:right;">
+					{% if(data[i].deductions.length>0){ %}
+					<table align="right">
+						<tr style="border-bottom:solid 1px #000 ;"><td><b>Deduction</b></td><td><b>Amount</b></td></tr>
+						{% for(var z=0; z < data[i].deductions.length; z++){ %}
+						<tr><td>{%=data[i].deductions[z].salary_component%}</td>
+							<td style="text-align: right">{%=data[i].deductions[z].amount%}</td></tr>
+						{% } %}
+						<tr style="border-top:solid 1px #000 ;"><td><b>Total</b></td><td style="text-align: right"><b>{%=format_currency(data[i].total_deduction) %}</b></td></tr>
+					</table>
+					{% } %}
+				</td>
+				<td colspan="6"></td></tr>
+			{% } %}
+			{% if(i==(l-1)) { %}
+			
+			{% } else if (i >1){  
+				if(data[i].department!=data[i+1].department){ %} 
+				<tr><td></td><td  style="text-align: right" colspan="6"># Employee {%=data[i].emp_count_dept%} <b>Department Total :</b></td>
+					<td style="text-align: right">{%=format_currency(data[i].department_basic_tot)%}</td>
+					<td style="text-align: right">{%=format_currency(data[i].department_basic_pay_tot)%}</td>
+					<td style="text-align: right">{%=format_currency(data[i].department_allowance_tot)%}</td>
+
+					<td style="text-align: right">{%=format_currency(data[i].department_ern_tot)%}</td>
+					<td style="text-align: right">{%=format_currency(data[i].department_ded_tot)%}</td> 
+					<td style="text-align: right"><b>{%=format_currency(data[i].department_tot)%}</b></td></tr>
+				{% }
+				if(data[i].parent_department!=data[i+1].parent_department){ %}
+			<tr><td></td><td  style="text-align: right" colspan="6"># Employee {%=data[i].emp_count_pare_dept%} <b>Main Department Total :</b></td>
+				<td style="text-align: right">{%=format_currency(data[i].parent_department_basic_tot)%}</td>
+				<td style="text-align: right">{%=format_currency(data[i].parent_department_basic_pay_tot)%}</td>
+				<td style="text-align: right">{%=format_currency(data[i].parent_department_allowance_tot)%}</td>
+				
+				<td style="text-align: right">{%=format_currency(data[i].parent_department_ern_tot)%}</td>
+				<td style="text-align: right">{%=format_currency(data[i].parent_department_ded_tot)%}</td>
+				<td style="text-align: right"><b>{%=format_currency(data[i].parent_department_tot)%}</b></td></tr>
+			{% } } %}
+
+
+		{% } %}
+	</tbody>
+</table>
+<div style="width:100%;margin-top:100px;padding-bottom: 100px;">
+	<div style="text-align:center;width:24%;float:left;font-weight: bold;">HR Department</div>
+	<div style="text-align:center;width:24%;float:left;font-weight: bold;"> Financial Accountant</div>
+	<div style="text-align:center;width:24%;float:left;font-weight: bold;">Financial Controller</div>
+	<div style="text-align:center;width:24%;float:left;font-weight: bold;">General Manager</div>
+</div>
