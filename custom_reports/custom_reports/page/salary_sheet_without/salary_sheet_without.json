@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2023-03-06 12:27:40.924429",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2023-03-06 12:27:40.924429",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "salary-sheet-without",
+ "owner": "Administrator",
+ "page_name": "salary-sheet-without",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Salary Sheet Without Over Time"
+}

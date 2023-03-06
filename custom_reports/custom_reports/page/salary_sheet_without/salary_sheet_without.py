@@ -59,14 +59,16 @@ def get_report(payroll_entry=None):
             emp_count+=1
             emp_count_pare_dept+=1
             emp_count_dept+=1
+            gross_pay=slp.gross_pay
+            net_pay=slp.net_pay
             dt={}
             dt.update({'slip':slp.name})
             dt.update({'employee':slp.employee})
             dt.update({'employee_name':slp.employee_name})
             dt.update({'department':department_name})
             dt.update({'parent_department':parent_department_name})
-            dt.update({'gross_pay':slp.gross_pay})
-            dt.update({'net_pay':slp.net_pay})
+            dt.update({'gross_pay':gross_pay})
+            dt.update({'net_pay':net_pay})
             dt.update({'total_deduction':slp.total_deduction})
             dt.update({'leave_without_pay':slp.leave_without_pay})				
             dt.update({'payment_days':slp.payment_days})
@@ -76,21 +78,7 @@ def get_report(payroll_entry=None):
             dt.update({'over_time':slp.over_time})
             dt.update({'holiday_over_time':slp.holiday_over_time})
 
-            parent_department_tot+=float(slp.net_pay or 0)
-            parent_department_ern_tot+=float(slp.gross_pay or 0)
-            parent_department_ded_tot+=float(slp.total_deduction or 0)
-            department_tot+=float(slp.net_pay or 0)
-            department_ern_tot+=float(slp.gross_pay or 0)
-            department_ded_tot+=float(slp.total_deduction or 0)
-            dt.update({'emp_count':emp_count})
-            dt.update({'emp_count_pare_dept':emp_count_pare_dept})
-            dt.update({'emp_count_dept':emp_count_dept})
-            dt.update({'parent_department_tot':parent_department_tot})
-            dt.update({'parent_department_ern_tot':parent_department_ern_tot})
-            dt.update({'parent_department_ded_tot':parent_department_ded_tot})
-            dt.update({'department_tot':department_tot})
-            dt.update({'department_ern_tot':department_ern_tot})
-            dt.update({'department_ded_tot':department_ded_tot})
+            
 
             base=frappe.db.get_value('Salary Structure Assignment',{'salary_structure':slp.salary_structure,'employee':slp.employee},'base') or 0
             dt.update({'basic':base})
@@ -103,6 +91,14 @@ def get_report(payroll_entry=None):
                 salary_structure=sal_stru
                 earn_tot=sum(d.get('amount') for d in sal_stru)
 
+            compres=frappe.db.sql(""" select GROUP_CONCAT(rmc.salary_component) as salary_component from `tabSalary Sheet Report Settings` re left join `tabSalary Report Removed Components` rmc on re.name=rmc.parent where re.company='{0}' group by rmc.label order by rmc.display_order """.format(payro.company),as_dict=1,debug=0)	
+            compo=[]
+            if compres:
+                for comp in compres:
+                    cmplist=comp.get("salary_component")
+                    cmplistar=cmplist.split(",")
+                    compo+=cmplistar
+
             earnin=frappe.db.sql(""" select salary_component,amount from `tabSalary Detail` where parentfield='earnings' and parent ='{0}'  order by idx""".format(slp.name),as_dict=1,debug=0)
             basic_paid=0
             if earnin:
@@ -110,7 +106,13 @@ def get_report(payroll_entry=None):
                     if 'Basic' in str(ern.salary_component):
                         basic_paid=ern.amount 
                     else:
-                        earnings.append(ern)
+                        if ern.salary_component in compo:
+                            gross_pay-=ern.amount
+                            net_pay-=ern.amount
+                            dt.update({'gross_pay':gross_pay})
+                            dt.update({'net_pay':net_pay})
+                        else:
+                            earnings.append(ern)
 
             dt.update({'earnings':earnings})
             deduct=frappe.db.sql(""" select salary_component,amount from `tabSalary Detail` where parentfield='deductions' and parent ='{0}' order by idx""".format(slp.name),as_dict=1,debug=0)
@@ -134,6 +136,22 @@ def get_report(payroll_entry=None):
             dt.update({'parent_department_basic_tot':parent_department_basic_tot})
             dt.update({'parent_department_basic_pay_tot':parent_department_basic_pay_tot})
             dt.update({'parent_department_allowance_tot':parent_department_allowance_tot})
+            parent_department_tot+=float(net_pay or 0)
+            department_tot+=float(net_pay or 0)           
+            department_ern_tot+=float(gross_pay or 0)
+            parent_department_ern_tot+=float(gross_pay or 0)
+            parent_department_ded_tot+=float(slp.total_deduction or 0)           
+            
+            department_ded_tot+=float(slp.total_deduction or 0)
+            dt.update({'emp_count':emp_count})
+            dt.update({'emp_count_pare_dept':emp_count_pare_dept})
+            dt.update({'emp_count_dept':emp_count_dept})
+            dt.update({'parent_department_tot':parent_department_tot})
+            dt.update({'parent_department_ern_tot':parent_department_ern_tot})
+            dt.update({'parent_department_ded_tot':parent_department_ded_tot})
+            dt.update({'department_tot':department_tot})
+            dt.update({'department_ern_tot':department_ern_tot})
+            dt.update({'department_ded_tot':department_ded_tot})
             slips.append(dt)
 
         dt={}

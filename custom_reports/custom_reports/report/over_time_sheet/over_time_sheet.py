@@ -115,9 +115,7 @@ def get_data(conditions,filters):
 		if slip:
 			
 			for slp in slip:
-				emp_count+=1
-				emp_count_pare_dept+=1
-				emp_count_dept+=1
+				
 				dt={}
 				dt.update({'slip':slp.name})
 				dt.update({'employee':slp.employee})
@@ -125,10 +123,7 @@ def get_data(conditions,filters):
 				dt.update({'department':department_name})
 				dt.update({'parent_department':parent_department_name})
 				dt.update({'over_time':slp.over_time})				
-				dt.update({'holiday_over_time':slp.holiday_over_time})
-				dt.update({'emp_count':emp_count})
-				dt.update({'emp_count_pare_dept':emp_count_pare_dept})
-				dt.update({'emp_count_dept':emp_count_dept})
+				dt.update({'holiday_over_time':slp.holiday_over_time})				
 							
 				earnin=frappe.db.sql(""" select salary_component,amount from `tabSalary Detail` where parentfield='earnings' and parent ='{0}' """.format(slp.name),as_dict=1,debug=0)
 				paid=0
@@ -162,6 +157,13 @@ def get_data(conditions,filters):
 				dt.update({'department_tot':department_tot})
 				dt.update({'parent_department_tot':parent_department_tot})
 				if paid:
+					emp_count+=1
+					emp_count_pare_dept+=1
+					emp_count_dept+=1
+					dt.update({'emp_count':emp_count})
+					dt.update({'emp_count_pare_dept':emp_count_pare_dept})
+					dt.update({'emp_count_dept':emp_count_dept})
+
 					data.append(dt)
 				
 	#frappe.msgprint(str(data))
