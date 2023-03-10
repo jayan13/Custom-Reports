@@ -170,8 +170,8 @@ def get_data(conditions,filters):
 				dt.update({'department':department_name})
 				dt.update({'parent_department':parent_department_name})
 				dt.update({'over_time':slp.over_time})				
-				dt.update({'holiday_over_time':slp.holiday_over_time})				
-				dt.update({'leave_without_pay':slp.leave_without_pay})			
+				dt.update({'holiday_over_time':slp.holiday_over_time})			
+						
 				paid_leaves=get_paid_leave(slp.employee,date_to)
 				dt.update({'paid_leaves':paid_leaves})				
 				start_date=get_first_day(getdate(date_to))
@@ -196,6 +196,9 @@ def get_data(conditions,filters):
 				m1=leave_count(slp.employee,date_to,'Maternity leave - Full Pay')
 				m2=leave_count(slp.employee,date_to,'Maternity leave - Half Pay')
 				maternity_leave=float(m1)+float(m2)
+				
+				leave_without_pay=leave_count(slp.employee,date_to,'Leave Without Pay')
+				dt.update({'leave_without_pay':slp.leave_without_pay})	
 				dt.update({'compensatory_off':compensatory_off})
 				other=spl_leave(slp.employee,start_date,end_date)
 				dt.update({'absent':absent})
@@ -204,11 +207,11 @@ def get_data(conditions,filters):
 				dt.update({'maternity_leave':maternity_leave})
 				dt.update({'other':other})
 				
-				presnt=float(totdays)-float(holiday)-float(weekly_off)-float(absent)-float(annual_leave)-float(sick_leave)-float(maternity_leave)-float(other)-float(compensatory_off)
+				presnt=float(totdays)-float(holiday)-float(weekly_off)-float(absent)-float(annual_leave)-float(sick_leave)-float(maternity_leave)-float(other)-float(compensatory_off)-float(leave_without_pay)
 				dt.update({'presnt':presnt})
-				paid=0
-				department_tot+=float(paid or 0)
-				parent_department_tot+=float(paid or 0)
+				
+				department_tot+=float(presnt or 0)
+				parent_department_tot+=float(presnt or 0)
 				dt.update({'department_tot':department_tot})
 				dt.update({'parent_department_tot':parent_department_tot})
 
@@ -302,12 +305,12 @@ def spl_leave(emp,start_date,end_date):
 	
 	absent=0
 	sal5=frappe.db.sql(""" select count(*) as absent FROM `tabAttendance` where docstatus=1 and status='On Leave' and employee='{0}' 
-	and attendance_date between '{1}' and  '{2}' and leave_type not in ('Annual Leave','Sick Leave','Maternity leave - Full Pay','Maternity leave - Half Pay','Compensatory Off') """.format(emp,start_date,end_date),as_dict=1,debug=0)
+	and attendance_date between '{1}' and  '{2}' and leave_type not in ('Annual Leave','Sick Leave','Maternity leave - Full Pay','Maternity leave - Half Pay','Compensatory Off','Leave Without Pay') """.format(emp,start_date,end_date),as_dict=1,debug=0)
 	if sal5:
 		absent+=sal5[0].absent
 
 	sal6=frappe.db.sql(""" select count(*) as absent FROM `tabAttendance` where docstatus=1 and status='Half Day' and employee='{0}' 
-	and attendance_date between '{1}' and  '{2}' and leave_type not in ('Annual Leave','Sick Leave','Maternity leave - Full Pay','Maternity leave - Half Pay','Compensatory Off') """.format(emp,start_date,end_date),as_dict=1,debug=0)
+	and attendance_date between '{1}' and  '{2}' and leave_type not in ('Annual Leave','Sick Leave','Maternity leave - Full Pay','Maternity leave - Half Pay','Compensatory Off','Leave Without Pay') """.format(emp,start_date,end_date),as_dict=1,debug=0)
 	if sal6:
 		absent+=float(sal6[0].absent)/2	
 		
