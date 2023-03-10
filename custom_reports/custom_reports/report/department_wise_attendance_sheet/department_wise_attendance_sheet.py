@@ -66,7 +66,7 @@ def get_columns(filters):
 		"width": 100
 		},
 		{
-		"fieldname": "annual_leave",
+		"fieldname": "annual_leave", 
 		"fieldtype": "Float",
 		"label": "Annual Leave",	
 		"width": 100
@@ -95,6 +95,12 @@ def get_columns(filters):
 		"label": "Unpaid Leaves",	
 		"width": 100
 		},		
+		{
+		"fieldname": "absent",
+		"fieldtype": "Float",
+		"label": "Absent",	
+		"width": 100
+		},
 		{
 		"fieldname": "over_time",
 		"fieldtype": "Float",
@@ -140,13 +146,33 @@ def get_data(conditions,filters):
 			parent_department_name=parent_department
 			parent_department_tot=0		
 			emp_count_pare_dept=0
-			
+			parent_department_holi=0
+			parent_department_off=0
+
+			parent_department_compensatory_off=0
+			parent_department_annual_leave=0
+			parent_department_sick_leave=0
+			parent_department_maternity_leave=0
+			parent_department_other=0
+			parent_department_leave_without_pay=0
+			parent_department_absent=0
 
 		if department != department_name:
 			department_name=department
 			department_tot=0
 			emp_count_dept=0
-			
+			department_holi=0
+			department_off=0
+
+			department_compensatory_off=0
+			department_annual_leave=0
+			department_sick_leave=0
+			department_maternity_leave=0
+			department_other=0
+			department_leave_without_pay=0
+			department_absent=0
+			 	
+			    
 		empqry=''
 		if filters.get("employee"):
 			emps=filters.get("employee")
@@ -220,7 +246,51 @@ def get_data(conditions,filters):
 				emp_count_dept+=1
 				dt.update({'emp_count':emp_count})
 				dt.update({'emp_count_pare_dept':emp_count_pare_dept})
-				dt.update({'emp_count_dept':emp_count_dept})	
+				dt.update({'emp_count_dept':emp_count_dept})
+				department_holi+=holiday
+				department_off+=weekly_off
+				parent_department_holi+=holiday
+				parent_department_off+=weekly_off
+				dt.update({'department_holi':department_holi})
+				dt.update({'department_off':department_off})
+				dt.update({'parent_department_holi':parent_department_holi})
+				dt.update({'parent_department_off':parent_department_off})
+
+				department_compensatory_off+=compensatory_off
+				parent_department_compensatory_off+=compensatory_off
+				dt.update({'department_compensatory_off':department_compensatory_off})
+				dt.update({'parent_department_compensatory_off':parent_department_compensatory_off})	
+				
+				department_annual_leave+=annual_leave
+				parent_department_annual_leave+=annual_leave
+				dt.update({'department_annual_leave':department_annual_leave})
+				dt.update({'parent_department_annual_leave':parent_department_annual_leave})
+
+				department_sick_leave+=sick_leave
+				parent_department_sick_leave+=sick_leave
+				dt.update({'department_sick_leave':department_sick_leave})
+				dt.update({'parent_department_sick_leave':parent_department_sick_leave})
+				
+				department_maternity_leave+=maternity_leave
+				parent_department_maternity_leave+=maternity_leave
+				dt.update({'department_maternity_leave':department_maternity_leave})
+				dt.update({'parent_department_maternity_leave':parent_department_maternity_leave})
+
+				department_other+=other
+				parent_department_other+=other
+				dt.update({'department_other':department_other})
+				dt.update({'parent_department_other':parent_department_other})
+
+				department_absent+=absent
+				parent_department_absent+=absent
+				dt.update({'department_absent':department_absent})
+				dt.update({'parent_department_absent':parent_department_absent})
+
+				department_leave_without_pay+=leave_without_pay
+				parent_department_leave_without_pay+=leave_without_pay
+				dt.update({'department_leave_without_pay':department_leave_without_pay})
+				dt.update({'parent_department_leave_without_pay':parent_department_leave_without_pay})
+				     
 
 				data.append(dt)
 				

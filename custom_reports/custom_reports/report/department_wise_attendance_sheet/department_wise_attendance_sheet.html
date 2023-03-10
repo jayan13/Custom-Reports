@@ -3,6 +3,8 @@
 		border-color: black !important;
 		border-left:none !important;
 		border-right:none !important;
+		line-height: 1 !important;
+		padding: 2px !important;
 	}
 	.table-bordered{
 		border:none !important;
@@ -47,14 +49,29 @@
 		{% } } %}
 		{% if(i+1==l) { %}
 		<tr>			
-			<td colspan="{%=cols-2%}" style="text-align: right;font-size:14px;">
+			<td colspan="3" style="text-align: right;font-size:14px;">
 				<b># Employee {%=data[i-1].emp_count%} Grand Total : </b>
 			</td>
 			
 			
 			<td style="text-align: right;font-size:14px;">
-				<b>{%=format_currency(data[i].net_pay) %}</b>
+				<b>{%=format_currency(data[i].presnt) %}</b>
 			</td>
+			<td style="text-align: right;font-size:14px;">
+				<b>{%=format_currency(data[i].weekly_off) %}</b>
+			</td>
+			<td style="text-align: right;font-size:14px;">
+				<b>{%=format_currency(data[i].holiday) %}</b>
+			</td>
+			<td style="text-align: right;font-size:14px;"><b>{%=format_currency(data[i].compensatory_off) %}</b></td>
+			<td style="text-align: right;font-size:14px;"><b>{%=format_currency(data[i].annual_leave) %}</b></td>
+			<td style="text-align: right;font-size:14px;"><b>{%=format_currency(data[i].sick_leave) %}</b></td>
+			<td style="text-align: right;font-size:14px;"><b>{%=format_currency(data[i].maternity_leave) %}</b></td>
+			<td style="text-align: right;font-size:14px;"><b>{%=format_currency(data[i].other) %}</b></td>
+			<td style="text-align: right;font-size:14px;"><b>{%=format_currency(data[i].leave_without_pay) %}</b></td>
+			<td style="text-align: right;font-size:14px;"><b>{%=format_currency(data[i].absent) %}</b></td>
+			<td style="text-align: right;font-size:14px;"></td>
+			<td style="text-align: right;font-size:14px;"></td>
 
 		</tr>
 		{% } else { %}
@@ -83,16 +100,42 @@
 			
 			{% } else if (i >=0){  
 				if(data[i].department!=data[i+1].department){ %} 
-				<tr><td  style="text-align: right" colspan="{%=cols-2%}"># Employee {%=data[i].emp_count_dept%} <b>Department Total :</b></td>
+				<tr><td  style="text-align: right" colspan="3"># Employee {%=data[i].emp_count_dept%} <b>Department Total :</b></td>
 
 					
-					<td style="text-align: right"><b>{%=format_currency(data[i].department_tot)%}</b></td></tr>
+					<td style="text-align: right"><b>{%=format_currency(data[i].department_tot)%}</b></td>
+					<td style="text-align: right"><b>{%=format_currency(data[i].department_off)%}</b></td>
+					<td style="text-align: right"><b>{%=format_currency(data[i].department_holi)%}</b></td>
+					<td style="text-align: right"><b>{%=format_currency(data[i].department_compensatory_off)%}</b></td>
+				<td style="text-align: right"><b>{%=format_currency(data[i].department_annual_leave)%}</b></td>
+				<td style="text-align: right"><b>{%=format_currency(data[i].department_sick_leave)%}</b></td>
+				<td style="text-align: right"><b>{%=format_currency(data[i].department_maternity_leave)%}</b></td>
+				<td style="text-align: right"><b>{%=format_currency(data[i].department_other)%}</b></td>
+				<td style="text-align: right"><b>{%=format_currency(data[i].department_leave_without_pay)%}</b></td>
+				<td style="text-align: right"><b>{%=format_currency(data[i].department_absent)%}</b></td>
+				<td style="text-align: right"></td>
+				<td style="text-align: right"></td>
+				</tr>
 				{% }
 				if(data[i].parent_department!=data[i+1].parent_department){ %}
-			<tr><td  style="text-align: right" colspan="{%=cols-2%}"># Employee {%=data[i].emp_count_pare_dept%} <b>Main Department Total :</b></td>
+			<tr><td  style="text-align: right" colspan="3"># Employee {%=data[i].emp_count_pare_dept%} <b>Main Department Total :</b></td>
 				
-				
-				<td style="text-align: right"><b>{%=format_currency(data[i].parent_department_tot)%}</b></td></tr>
+				     
+				<td style="text-align: right"><b>{%=format_currency(data[i].parent_department_tot)%}</b></td>
+				<td style="text-align: right"><b>{%=format_currency(data[i].parent_department_off)%}</b></td>
+				<td style="text-align: right"><b>{%=format_currency(data[i].parent_department_holi)%}</b></td>
+
+				<td style="text-align: right"><b>{%=format_currency(data[i].parent_department_compensatory_off)%}</b></td>
+				<td style="text-align: right"><b>{%=format_currency(data[i].parent_department_annual_leave)%}</b></td>
+				<td style="text-align: right"><b>{%=format_currency(data[i].parent_department_sick_leave)%}</b></td>
+				<td style="text-align: right"><b>{%=format_currency(data[i].parent_department_maternity_leave)%}</b></td>
+				<td style="text-align: right"><b>{%=format_currency(data[i].parent_department_other)%}</b></td>
+				<td style="text-align: right"><b>{%=format_currency(data[i].parent_department_leave_without_pay)%}</b></td>
+				<td style="text-align: right"><b>{%=format_currency(data[i].parent_department_absent)%}</b></td>
+				<td style="text-align: right"></td>
+				<td style="text-align: right"></td>
+			
+			</tr>
 			{% } } %}
 
 
