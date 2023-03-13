@@ -34,9 +34,9 @@
 				<td style="width: 29%;font-weight: bold;border-bottom: solid 1px #000;">{%= __("Employee") %}</td>	
 				
 				<td style="width: 5%; text-align: right;font-weight: bold;border-bottom: solid 1px #000;" >{%= __("Nor @1.25") %}</td>
-				<td style="width: 5%; text-align: right;font-weight: bold;border-bottom: solid 1px #000;" >{%= __("Holi @1.50") %}</td>
-				<td style="width: 5%; text-align: right;font-weight: bold;border-bottom: solid 1px #000;" >{%= __("Normal Incentive") %}</td>
-				<td style="width: 5%; text-align: right;font-weight: bold;border-bottom: solid 1px #000;" >{%= __("Holi Incentive") %}</td>
+				<td style="width: 5%; text-align: right;font-weight: bold;border-bottom: solid 1px #000;" >{%= __("Normal Incentive hr") %}</td>
+				<td style="width: 5%; text-align: right;font-weight: bold;border-bottom: solid 1px #000;" >{%= __("Holi @1.50") %}</td>				
+				<td style="width: 5%; text-align: right;font-weight: bold;border-bottom: solid 1px #000;" >{%= __("Holi Incentive hr") %}</td>
 				{% for(var k=0,m=compn.length; k< m; k++) { %}
 				<td style="width: 10%; text-align: right;font-weight: bold;border-bottom: solid 1px #000;" >{%=compn[k].label%}</td>
 				{% } %}
@@ -62,8 +62,9 @@
 					<b># Employee {%=i%} Grand Total : </b>
 				</td>
 				<td style="text-align: right;font-size:14px;border-bottom: solid 1px #000;"><b>{%=format_currency(data[i].over_time_hr) %}</b></td>
-				<td style="text-align: right;font-size:14px;border-bottom: solid 1px #000;"><b>{%=format_currency(data[i].holiday_over_time_hr) %}</b></td>
 				<td style="text-align: right;font-size:14px;border-bottom: solid 1px #000;"><b>{%=format_currency(data[i].over_time_incentive) %}</b></td>
+				<td style="text-align: right;font-size:14px;border-bottom: solid 1px #000;"><b>{%=format_currency(data[i].holiday_over_time_hr) %}</b></td>
+				
 				<td style="text-align: right;font-size:14px;border-bottom: solid 1px #000;"><b>{%=format_currency(data[i].holiday_over_time_incentive) %}</b></td>
 				<td style="text-align: right;font-size:14px;border-bottom: solid 1px #000;" colspan="{%=cc+1%}">
 					<b>{%=format_currency(data[i].net_pay) %}</b>
@@ -84,11 +85,12 @@
 						{%=format_currency(data[i].over_time_hr) %}
 					</td>
 					<td style="text-align: right;border-bottom: solid 1px #000;border-top: solid 1px #000;">
-						{%=format_currency(data[i].holiday_over_time_hr) %}
-					</td>
-					<td style="text-align: right;border-bottom: solid 1px #000;border-top: solid 1px #000;">
 						{%=format_currency(data[i].over_time_incentive) %}
 					</td>
+					<td style="text-align: right;border-bottom: solid 1px #000;border-top: solid 1px #000;">
+						{%=format_currency(data[i].holiday_over_time_hr) %}
+					</td>
+					
 					<td style="text-align: right;border-bottom: solid 1px #000;border-top: solid 1px #000;">
 						{%=format_currency(data[i].holiday_over_time_incentive) %}
 					</td>
@@ -116,8 +118,9 @@
 					<tr>
 						<td  style="text-align: right;border-bottom:solid 1px #000;" colspan="2"># Employee {%=data[i].emp_count_dept%} <b>Department Total :</b></td>
 						<td style="text-align: right;border-bottom:solid 1px #000;"><b>{%=format_currency(data[i].department_ovr)%}</b></td>
-						<td style="text-align: right;border-bottom:solid 1px #000;"><b>{%=format_currency(data[i].department_holi)%}</b></td>
 						<td style="text-align: right;border-bottom:solid 1px #000;"><b>{%=format_currency(data[i].department_ovr_inc)%}</b></td>
+						<td style="text-align: right;border-bottom:solid 1px #000;"><b>{%=format_currency(data[i].department_holi)%}</b></td>
+						
 						<td style="text-align: right;border-bottom:solid 1px #000;"><b>{%=format_currency(data[i].department_holi_inc)%}</b></td> 
 						<td style="text-align: right;border-bottom:solid 1px #000;" colspan="{%=cc+1%}"><b>{%=format_currency(data[i].department_tot)%}</b></td>
 						
@@ -127,8 +130,9 @@
 				<tr>
 					<td  style="text-align: right;border-bottom:solid 1px #000;" colspan="2"># Employee {%=data[i].emp_count_pare_dept%} <b>Main Department Total :</b></td>
 					<td style="text-align: right;border-bottom:solid 1px #000;"><b>{%=format_currency(data[i].parent_department_ovr)%}</b></td>
-					<td style="text-align: right;border-bottom:solid 1px #000;"><b>{%=format_currency(data[i].parent_department_holi)%}</b></td>
 					<td style="text-align: right;border-bottom:solid 1px #000;"><b>{%=format_currency(data[i].parent_department_ovr_inc)%}</b></td>
+					<td style="text-align: right;border-bottom:solid 1px #000;"><b>{%=format_currency(data[i].parent_department_holi)%}</b></td>
+					
 					<td style="text-align: right;border-bottom:solid 1px #000;"><b>{%=format_currency(data[i].parent_department_holi_inc)%}</b></td>
 					<td style="text-align: right;border-bottom:solid 1px #000;" colspan="{%=cc+1%}"><b>{%=format_currency(data[i].parent_department_tot)%}</b></td></tr>
 				{% } } %}

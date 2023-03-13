@@ -63,24 +63,30 @@ def get_report(payroll_entry=None):
             dt.update({'employee_name':slp.employee_name})
             dt.update({'department':department_name})
             dt.update({'parent_department':parent_department_name})
-            dt.update({'over_time_hr':slp.over_time})				
-            dt.update({'holiday_over_time_hr':slp.holiday_over_time})
+           
             over_time_incentive=0
+            over_time=slp.over_time
             if float(slp.over_time) > 48:
                 over_time_incentive=float(slp.over_time)-48
+                over_time=48
             holiday_over_time_incentive=0
+            holiday_over_time=slp.holiday_over_time
             if float(slp.holiday_over_time)>16:
                 holiday_over_time_incentive=float(slp.holiday_over_time)-16
+                holiday_over_time=16
+
+            dt.update({'over_time_hr':over_time})				
+            dt.update({'holiday_over_time_hr':holiday_over_time})
             dt.update({'over_time_incentive':over_time_incentive})				
             dt.update({'holiday_over_time_incentive':holiday_over_time_incentive})
 
-            parent_department_ovr+=slp.over_time
+            parent_department_ovr+=over_time
             parent_department_ovr_inc+=over_time_incentive
-            parent_department_holi+=slp.holiday_over_time
+            parent_department_holi+=holiday_over_time
             parent_department_holi_inc+=holiday_over_time_incentive
-            department_ovr+=slp.over_time
+            department_ovr+=over_time
             department_ovr_inc+=over_time_incentive
-            department_holi+=slp.holiday_over_time
+            department_holi+=holiday_over_time
             department_holi_inc+=holiday_over_time_incentive
 
             dt.update({'parent_department_ovr':parent_department_ovr})            	
