@@ -36,23 +36,34 @@
 		
 		{% for(var i=0,l=data.length; i<l; i++) { 
 			 if(i==0 && data[i].department){ %}
-		<tr><td colspan="{%=cols-1%}" style="font-size:14px;"><b>{%=data[i].parent_department%}</b></td></tr>
-		<tr><td colspan="{%=cols-1%}"><b>{%=data[i].department%}</b></td></tr>
+		<tr><td colspan="{%=cols%}" style="font-size:14px;"><b>{%=data[i].parent_department%}</b></td></tr>
+		<tr><td colspan="{%=cols%}"><b>{%=data[i].department%}</b></td></tr>
 		{% } else if (i >0 && data[i].department){  
 			if(data[i-1].parent_department!=data[i].parent_department){ %} 
-			<tr><td colspan="{%=cols-1%}" style="font-size:14px;"><b>{%=data[i].parent_department%}</b></td></tr>
+			<tr><td colspan="{%=cols%}" style="font-size:14px;"><b>{%=data[i].parent_department%}</b></td></tr>
 			{% }
 			if(data[i-1].department!=data[i].department){ %}
-		<tr><td colspan="{%=cols-1%}"><b>{%=data[i].department%}</b></td></tr>
+		<tr><td colspan="{%=cols%}"><b>{%=data[i].department%}</b></td></tr>
 		{% } } %}
 		{% if(i+1==l) { %}
 		<tr>			
-			<td colspan="{%=cols-2%}" style="text-align: right;font-size:14px;">
+			<td colspan="3" style="text-align: right;font-size:14px;">
 				<b># Employee {%=data[i-1].emp_count%} Grand Total : </b>
 			</td>
-			
-			
 			<td style="text-align: right;font-size:14px;">
+				<b>{%=format_currency(data[i].over_time_hr) %}</b>
+			</td>
+			<td style="text-align: right;font-size:14px;">
+				<b>{%=format_currency(data[i].holiday_over_time_hr) %}</b>
+			</td>
+			<td style="text-align: right;font-size:14px;">
+				<b>{%=format_currency(data[i].over_time_incentive) %}</b>
+			</td>
+			<td style="text-align: right;font-size:14px;">
+				<b>{%=format_currency(data[i].holiday_over_time_incentive) %}</b>
+			</td>
+			
+			<td colspan="{%=cols-7%}" style="text-align: right;font-size:14px;">
 				<b>{%=format_currency(data[i].net_pay) %}</b>
 			</td>
 
@@ -65,7 +76,7 @@
 				</td>
 				{% for(var j=0,m=columns.length; j<m; j++) {  
 					var key=columns[j].fieldname %}	
-					{% if(j>3){ var cls='style="text-align:right;"'}else{ cls='' } %}
+					{% if(j>2){ var cls='style="text-align:right;"'}else{ cls='' } %}
 					{% if(key!='department' && key!='parent_department') { %}
 						
 							<td {%=cls%}>
@@ -83,16 +94,24 @@
 			
 			{% } else if (i >=0){  
 				if(data[i].department!=data[i+1].department){ %} 
-				<tr><td  style="text-align: right" colspan="{%=cols-2%}"># Employee {%=data[i].emp_count_dept%} <b>Department Total :</b></td>
+				<tr><td  style="text-align: right" colspan="3"># Employee {%=data[i].emp_count_dept%} <b>Department Total :</b></td>
 
-					
-					<td style="text-align: right"><b>{%=format_currency(data[i].department_tot)%}</b></td></tr>
+					<td style="text-align: right"><b>{%=format_currency(data[i].department_ovr)%}</b></td>
+					<td style="text-align: right"><b>{%=format_currency(data[i].department_ovr_inc)%}</b></td>
+					<td style="text-align: right"><b>{%=format_currency(data[i].department_holi)%}</b></td>
+					<td style="text-align: right"><b>{%=format_currency(data[i].department_holi_inc)%}</b></td>
+
+					<td style="text-align: right" colspan="{%=cols-4%}"><b>{%=format_currency(data[i].department_tot)%}</b></td></tr>
 				{% }
 				if(data[i].parent_department!=data[i+1].parent_department){ %}
-			<tr><td  style="text-align: right" colspan="{%=cols-2%}"># Employee {%=data[i].emp_count_pare_dept%} <b>Main Department Total :</b></td>
+			<tr><td  style="text-align: right" colspan="3"># Employee {%=data[i].emp_count_pare_dept%} <b>Main Department Total :</b></td>
 				
-				
-				<td style="text-align: right"><b>{%=format_currency(data[i].parent_department_tot)%}</b></td></tr>
+				<td style="text-align: right"><b>{%=format_currency(data[i].parent_department_ovr)%}</b></td>
+				<td style="text-align: right"><b>{%=format_currency(data[i].parent_department_ovr_inc)%}</b></td>
+				<td style="text-align: right"><b>{%=format_currency(data[i].parent_department_holi)%}</b></td>
+				<td style="text-align: right"><b>{%=format_currency(data[i].parent_department_holi_inc)%}</b></td>
+
+				<td style="text-align: right" colspan="{%=cols-4%}"><b>{%=format_currency(data[i].parent_department_tot)%}</b></td></tr>
 			{% } } %}
 
 
