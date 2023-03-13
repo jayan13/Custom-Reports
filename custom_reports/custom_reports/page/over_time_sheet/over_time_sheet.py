@@ -9,7 +9,7 @@ def get_report(payroll_entry=None):
     data['start_date']=frappe.utils.formatdate(payro.start_date, "MMMM yyyy")
     data['end_date']=frappe.utils.formatdate(payro.end_date, "MMMM yyyy")    
     
-    slip=frappe.db.sql(""" select s.name,s.employee,s.salary_structure,s.employee_name,s.gross_pay,s.net_pay,s.total_deduction,s.leave_without_pay,s.payment_days,
+    slip=frappe.db.sql(""" select s.name,s.employee,s.salary_structure,s.employee_name,s.gross_pay,s.net_pay,s.total_deduction,s.leave_without_pay,s.payment_days,s.over_time,s.holiday_over_time,
     d.name as department,IF(d.parent_department='All Departments',d.name,d.parent_department) as parent_department 
     from `tabSalary Slip` s left join `tabEmployee` e on e.name=s.employee 
     left join `tabDepartment` d on d.name=e.department where  s.docstatus in (0,1) and s.payroll_entry='{0}'  order by d.parent_department,d.name """.format(payroll_entry),as_dict=1,debug=0)
@@ -41,11 +41,19 @@ def get_report(payroll_entry=None):
                 parent_department_name=parent_department
                 parent_department_tot=0		
                 emp_count_pare_dept=0
+                parent_department_ovr=0
+                parent_department_ovr_inc=0
+                parent_department_holi=0
+                parent_department_holi_inc=0
 
             if department != department_name:
                 department_name=department
                 department_tot=0                			
                 emp_count_dept=0
+                department_ovr=0
+                department_ovr_inc=0
+                department_holi=0
+                department_holi_inc=0
                 
 
             
@@ -55,8 +63,34 @@ def get_report(payroll_entry=None):
             dt.update({'employee_name':slp.employee_name})
             dt.update({'department':department_name})
             dt.update({'parent_department':parent_department_name})
-            dt.update({'over_time':slp.over_time})				
-            dt.update({'holiday_over_time':slp.holiday_over_time})
+            dt.update({'over_time_hr':slp.over_time})				
+            dt.update({'holiday_over_time_hr':slp.holiday_over_time})
+            over_time_incentive=0
+            if float(slp.over_time) > 48:
+                over_time_incentive=float(slp.over_time)-48
+            holiday_over_time_incentive=0
+            if float(slp.holiday_over_time)>16:
+                holiday_over_time_incentive=float(slp.holiday_over_time)-16
+            dt.update({'over_time_incentive':over_time_incentive})				
+            dt.update({'holiday_over_time_incentive':holiday_over_time_incentive})
+
+            parent_department_ovr+=slp.over_time
+            parent_department_ovr_inc+=over_time_incentive
+            parent_department_holi+=slp.holiday_over_time
+            parent_department_holi_inc+=holiday_over_time_incentive
+            department_ovr+=slp.over_time
+            department_ovr_inc+=over_time_incentive
+            department_holi+=slp.holiday_over_time
+            department_holi_inc+=holiday_over_time_incentive
+
+            dt.update({'parent_department_ovr':parent_department_ovr})            	
+            dt.update({'parent_department_holi':parent_department_holi})
+            dt.update({'parent_department_ovr_inc':parent_department_ovr_inc})	
+            dt.update({'parent_department_holi_inc':parent_department_holi_inc})	
+            dt.update({'department_ovr':department_ovr})
+            dt.update({'department_holi':department_holi})	
+            dt.update({'department_ovr_inc':department_ovr_inc})            	
+            dt.update({'department_holi_inc':department_holi_inc})	
             
 							
             earnin=frappe.db.sql(""" select salary_component,amount from `tabSalary Detail` where parentfield='earnings' and parent ='{0}' """.format(slp.name),as_dict=1,debug=0)
@@ -100,6 +134,19 @@ def get_report(payroll_entry=None):
         dt={}
         net_pay=sum(d.get("net_pay") for d in slips)
         dt.update({'net_pay':net_pay})
+
+        over_time_hr=sum(d.get("over_time_hr") for d in slips)
+        dt.update({'over_time_hr':over_time_hr})
+
+        holiday_over_time_hr=sum(d.get("holiday_over_time_hr") for d in slips)
+        dt.update({'holiday_over_time_hr':holiday_over_time_hr})
+
+        over_time_incentive=sum(d.get("over_time_incentive") for d in slips)
+        dt.update({'over_time_incentive':over_time_incentive})
+
+        holiday_over_time_incentive=sum(d.get("holiday_over_time_incentive") for d in slips)
+        dt.update({'holiday_over_time_incentive':holiday_over_time_incentive})
+        
         slips.append(dt)
 
     data['data']=slips
