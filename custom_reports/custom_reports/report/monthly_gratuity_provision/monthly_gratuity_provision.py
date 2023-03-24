@@ -186,7 +186,7 @@ def get_data(conditions,filters):
 			accrued=round(accrued,2)-round(accrued2,2)		
 			balance=accrued-paid
 			balance=round(balance,2)
-			accr_d=round(accured_days1,4)-round(accured_days2,4)
+			accr_d=accured_days1-accured_days2
 			accr_d=round(accr_d,4)
 			parent_department_tot+=balance
 			department_name_tot+=balance
