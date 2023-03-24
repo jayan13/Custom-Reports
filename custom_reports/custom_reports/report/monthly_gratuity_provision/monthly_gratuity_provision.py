@@ -156,7 +156,7 @@ def get_data(conditions,filters):
 
 		date_from=filters.get("date_from")
 		if date_from:
-			date_from=getdate(date_from)
+			date_from=add_days(getdate(date_from),-1)
 			total_days=date_diff(processing_month,emp.date_of_joining)+1			
 			applicable_earnings_component = get_applicable_components(gratuity_rule)
 			total_applicable_components_amount = get_total_applicable_component_amount(
@@ -178,7 +178,7 @@ def get_data(conditions,filters):
 			total_days2=date_diff(date_from,emp.date_of_joining)+1
 			absents2=get_nonworking_days(emp.name,openabs,start_date,date_from)
 			actual_worked2=total_days2-absents2
-			actual_worked=(actual_worked-actual_worked2)+1
+			actual_worked=(actual_worked-actual_worked2)
 			accrued2=calculate_work_experience_and_amount(emp.name,gratuity_rule,date_from,openabs)['amount']
 			accured_days2=accured_days
 			
