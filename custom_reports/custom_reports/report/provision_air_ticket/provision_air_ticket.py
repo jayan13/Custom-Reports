@@ -212,7 +212,7 @@ def get_data(conditions,filters):
 				balance+=float(emp.opening_ticket_balance)
 				#amount_balance+=float(emp.opening_ticket_balance_amount)
 				#amount_balance+=float(balance)*float(currentticketprice)
-				accrued+=round(float(emp.opening_ticket_balance)+float(emp.used_tickets),3)
+				accrued+=round(float(emp.opening_ticket_balance)+float(emp.used_tickets),4)
 				#amount_accrued+=round(emp.opening_ticket_amount_used+emp.opening_ticket_balance_amount,2)
 				amount_accrued+=float(accrued)*float(currentticketprice)
 				used+=float(emp.used_tickets)
@@ -256,7 +256,7 @@ def get_data(conditions,filters):
 					accru=0
 					if float(ticket.periodical) > 0 and ticket.no_of_ticket_eligible:
 						accru=(year/float(ticket.periodical))*float(ticket.no_of_ticket_eligible)
-					
+					accru=round(accru,4)
 					bal=accru-float(usedno)
 					accrued+=accru 
 					balance+=bal
@@ -293,7 +293,7 @@ def get_data(conditions,filters):
 				accru=0
 				if float(emp.ticket_period) > 0 and emp.no_of_tickets_eligible:
 					accru=(year/float(emp.ticket_period))*float(emp.no_of_tickets_eligible)
-				
+				accru=round(accru,4)
 				bal=accru-float(usedno)
 				accrued+=accru 
 				balance+=bal
@@ -328,7 +328,7 @@ def get_data(conditions,filters):
 				accru=0
 				if float(emp.ticket_period) > 0 and emp.no_of_tickets_eligible:
 					accru=(year/float(emp.ticket_period))*float(emp.no_of_tickets_eligible)
-				
+				accru=round(accru,4)
 				bal=accru-float(usedno)
 				accrued+=accru 
 				balance+=bal
@@ -338,16 +338,16 @@ def get_data(conditions,filters):
 				#amount_used+=float(usedno)*emp.ticket_price
 				#amount_balance+=bal*emp.ticket_price
 						
-		accrued=round(accrued,3)
+		accrued=round(accrued,4)
 		#balance=round(balance,3) 
-		balance=round(accrued-used,3)
+		balance=round(accrued-used,4)
 		#amount_accrued=round(amount_accrued,2)
 		#amount_used=round(amount_used,2)
-		amount_accrued=round(accrued*currentticketprice,2)
-		amount_used=round(used*currentticketprice,2)
+		amount_accrued=round(accrued*currentticketprice,4)
+		amount_used=round(used*currentticketprice,4)
 		#amount_balance=round(amount_balance,2)
 		#amount_balance=round(amount_accrued-amount_used,2)
-		amount_balance=round(balance*currentticketprice,2)
+		amount_balance=round(balance*currentticketprice,4)
 		#frappe.msgprint(str(accrued)+' '+str(balance)+' '+str(used))
 		#years+=round((actual_worked/365),3)
 		years=round(years,3)

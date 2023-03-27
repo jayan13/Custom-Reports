@@ -23,4 +23,3 @@ frappe.query_reports["Provision Air Ticket"] = {
 	}
 	]
 };
-
