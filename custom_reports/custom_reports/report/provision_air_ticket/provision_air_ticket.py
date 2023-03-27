@@ -208,7 +208,7 @@ def get_data(conditions,filters):
 			if total_days > 0:
 				absents+=float(emp.opening_absent)
 				actual_worked+=total_days-absents
-				years+=round((actual_worked/365),3)				
+				years+=round((actual_worked/365),4)				
 				balance+=float(emp.opening_ticket_balance)
 				#amount_balance+=float(emp.opening_ticket_balance_amount)
 				#amount_balance+=float(balance)*float(currentticketprice)
@@ -251,7 +251,7 @@ def get_data(conditions,filters):
 					
 					actualworked=totaldays-absent
 					actual_worked+=actualworked
-					year=round(actualworked/365,3)
+					year=round(actualworked/365,4)
 					years+=year
 					accru=0
 					if float(ticket.periodical) > 0 and ticket.no_of_ticket_eligible:
@@ -288,7 +288,7 @@ def get_data(conditions,filters):
 					
 				actualworked=totaldays-absent
 				actual_worked+=actualworked
-				year=round(actualworked/365,3)
+				year=round(actualworked/365,4)
 				years+=year
 				accru=0
 				if float(emp.ticket_period) > 0 and emp.no_of_tickets_eligible:
@@ -323,7 +323,7 @@ def get_data(conditions,filters):
 					
 				actualworked=totaldays-absent
 				actual_worked+=actualworked
-				year=round(actualworked/365,3)
+				year=round(actualworked/365,4)
 				years+=year
 				accru=0
 				if float(emp.ticket_period) > 0 and emp.no_of_tickets_eligible:
@@ -350,7 +350,7 @@ def get_data(conditions,filters):
 		amount_balance=round(balance*currentticketprice,4)
 		#frappe.msgprint(str(accrued)+' '+str(balance)+' '+str(used))
 		#years+=round((actual_worked/365),3)
-		years=round(years,3)
+		years=round(years,4)
 
 		parent_department_tot+=amount_balance
 		department_name_tot+=amount_balance
