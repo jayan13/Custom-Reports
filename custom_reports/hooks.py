@@ -109,9 +109,9 @@ override_doctype_class = {
 #	}
 # }
 doc_events = {
-	"Employee Checkin":{
-		"on_update": "custom_reports.custom_reports.employee.mailalert.send_mail",
-	},
+	#"Employee Checkin":{
+	#	"on_update": "custom_reports.custom_reports.employee.mailalert.send_mail",
+	#},
 	"Sales Invoice": {        
         "before_insert": "custom_reports.api.update_cost_acc",
     },
