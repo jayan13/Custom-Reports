@@ -13,7 +13,7 @@ class ShiftRoster(Document):
 		import json
 		aList = json.loads(self.employee_list_data)
 		for lst in aList:
-			
+			frappe.db.delete("Employee Shift Roster", {"shift_roster": ("!=", self.name),"employee": lst.get('employee'),'day':lst.get('day')})
 			doc = frappe.get_doc({
     				'doctype': 'Employee Shift Roster',
     				'shift_roster': self.name,
@@ -30,7 +30,7 @@ class ShiftRoster(Document):
 		import json
 		aList = json.loads(self.employee_list_data)
 		for lst in aList:
-			
+			frappe.db.delete("Employee Shift Roster", {"shift_roster": ("!=", self.name),"employee": lst.get('employee'),'day':lst.get('day')})
 			doc = frappe.get_doc({
     				'doctype': 'Employee Shift Roster',
     				'shift_roster': self.name,
