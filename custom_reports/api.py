@@ -738,7 +738,20 @@ def get_applicable_components(gratuity_rule):
 
 def get_total_applicable_component_amount(employee, applicable_earnings_component, processing_month):
 	sal_slip = get_last_salary_slip(employee)
-	if not sal_slip:
+	component_and_amounts=''
+	#if sal_slip:
+	#	component_and_amounts = frappe.get_all(
+	#	"Salary Detail",
+	#	filters={
+	#		"docstatus": 1,
+	#		"parent": sal_slip,
+	#		"parentfield": "earnings",
+	#		"salary_component": ("in", applicable_earnings_component),
+	#	},
+	#	fields=["amount"],
+	#	)
+
+	if not component_and_amounts:
 		salary_structure=frappe.db.get_value("Salary Structure Assignment",{'employee':employee,'from_date':['<=',processing_month]},'salary_structure',debug=0)
 		component_and_amounts = frappe.get_all(
 		"Salary Detail",
@@ -750,17 +763,7 @@ def get_total_applicable_component_amount(employee, applicable_earnings_componen
 		},
 		fields=["amount"],
 		)
-	else:
-		component_and_amounts = frappe.get_all(
-		"Salary Detail",
-		filters={
-			"docstatus": 1,
-			"parent": sal_slip,
-			"parentfield": "earnings",
-			"salary_component": ("in", applicable_earnings_component),
-		},
-		fields=["amount"],
-		)
+	
 	total_applicable_components_amount = 0
 	if not len(component_and_amounts):
 		frappe.throw(_("No Applicable Component is present in last month salary slip"))
