@@ -37,6 +37,10 @@ frappe.ui.form.on('Shift Roster', {
 				frappe.throw("From date Must be Less than or equal to To date")
 			}
 		}
+		if(frm.doc.department && frm.doc.date_from && frm.doc.date_to)
+		{
+			frm.trigger('get_employees');
+		}
 	},
 	date_to:function(frm)
 	{
@@ -47,9 +51,15 @@ frappe.ui.form.on('Shift Roster', {
 					frappe.throw("To date Must be grater than or equal to From date")
 				}
 			}
+
+		if(frm.doc.department && frm.doc.date_from && frm.doc.date_to)
+		{
+			frm.trigger('get_employees');
+		} 
 	},
 	get_employees:function(frm)
 	{
+		
 		if(frm.doc.department=='')
 		{
 			frappe.throw(" Please select department")
@@ -98,6 +108,7 @@ frappe.ui.form.on('Shift Roster', {
 	},
 	before_save:function(frm)
 	{
+
 		//var html=$('div[data-fieldname="employee_list"]').html();
 		var html=frm.fields_dict.employee_list.$wrapper.html();
 		frm.doc.employee_list_html=html;

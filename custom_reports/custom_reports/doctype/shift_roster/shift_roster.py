@@ -8,6 +8,12 @@ from frappe.model.document import Document
 
 
 class ShiftRoster(Document):
+	def validate(self):		
+		rs=frappe.db.sql("""select * from `tabShift Roster` where department='{0}' and ('{1}' BETWEEN date_from AND date_to OR '{2}' BETWEEN date_from AND date_to OR ('{1}' >= date_from AND '{2}' <= date_to)) """.format(self.department,self.date_from,self.date_to),as_dict=1)
+		if rs:
+			frappe.throw("The Roster already exists for the same department for the same date range. "+str(rs[0].name))
+
+
 	def on_update(self):
 		frappe.db.delete("Employee Shift Roster", {"shift_roster": self.name})
 		import json
