@@ -77,6 +77,7 @@ class ShiftRoster(Document):
 				doc = frappe.get_doc('Shift Assignment', at.name)
 				doc.cancel()
 
+	
 	def on_trash(self):
 		frappe.db.delete("Employee Shift Roster", {"shift_roster": self.name})
 
@@ -84,18 +85,21 @@ class ShiftRoster(Document):
 		if att:
 			for at in att:
 				doc = frappe.get_doc('Attendance', at.name)
-				doc.cancel()
+				if doc.docstatus!=2:
+					doc.cancel()
 		
 		comp=frappe.db.get_all('Compensatory Leave Request',filters={'shift_roster':self.name},fields=['name'])
 		if comp:
 			for at in comp:
 				doc = frappe.get_doc('Compensatory Leave Request', at.name)
-				doc.cancel()
+				if doc.docstatus!=2:
+					doc.cancel()
 		shift=frappe.db.get_all('Shift Assignment',filters={'shift_roster':self.name},fields=['name'])
 		if shift:
 			for at in shift:
 				doc = frappe.get_doc('Shift Assignment', at.name)
-				doc.cancel()
+				if doc.docstatus!=2:
+					doc.cancel()
 		
 		
 
