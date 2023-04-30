@@ -305,7 +305,7 @@ def get_data(conditions,filters):
 						gross_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
 						sal=gross_salary
 					#-----------------------------------------
-
+					frappe.msgprint(str(end_date)+'-'+str(start_date))
 					totaldays=date_diff(end_date,start_date)+1
 					total_days+=totaldays
 					totleave=get_leave_no(emp.name,processing_month)
