@@ -284,7 +284,8 @@ def get_data(conditions,filters):
 					leave_provision_date=emp.leave_provision_date or emp.date_of_joining
 					applicable_earnings_component=get_applicable_components(rul.name)
 					sal=0
-					end_date=nowdate()
+					end_date=processing_month
+					totaldays=0
 					if rul.date_from==None and rul.date_to!=None and getdate(leave_provision_date)<=getdate(rul.date_to):
 						start_date=leave_provision_date
 						if getdate(rul.date_to) < getdate(processing_month):
@@ -295,6 +296,7 @@ def get_data(conditions,filters):
 						sal=basic_salary
 						if getdate(processing_month)>getdate('2022-12-31'):
 							basic_salary=0
+						totaldays=date_diff(end_date,start_date)+1
 					if rul.date_from!=None and rul.date_to==None:
 						if getdate(rul.date_from) > getdate(leave_provision_date):
 							start_date=rul.date_from
@@ -304,9 +306,10 @@ def get_data(conditions,filters):
 						end_date=processing_month
 						gross_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
 						sal=gross_salary
+						totaldays=date_diff(end_date,start_date)+1
 					#-----------------------------------------
 					
-					totaldays=date_diff(end_date,start_date)+1
+					
 					
 					total_days+=totaldays
 					#frappe.msgprint(str(end_date)+'-'+str(start_date)+'-'+str(totaldays)+'-'+str(total_days))
