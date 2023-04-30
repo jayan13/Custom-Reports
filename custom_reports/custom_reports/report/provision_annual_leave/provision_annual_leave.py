@@ -309,7 +309,7 @@ def get_data(conditions,filters):
 					totaldays=date_diff(end_date,start_date)+1
 					
 					total_days+=totaldays
-					frappe.msgprint(str(end_date)+'-'+str(start_date)+'-'+str(totaldays)+'-'+str(total_days))
+					#frappe.msgprint(str(end_date)+'-'+str(start_date)+'-'+str(totaldays)+'-'+str(total_days))
 					totleave=get_leave_no(emp.name,processing_month)
 					leaves_per_year=emp.leaves_per_year
 					if totleave:
