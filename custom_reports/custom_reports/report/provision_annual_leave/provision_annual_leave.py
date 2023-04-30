@@ -7,6 +7,7 @@ from frappe.utils import (
 	cint,
 	cstr,
 	date_diff,
+	nowdate,
 	flt,
 	formatdate,
 	get_first_day,
@@ -283,6 +284,7 @@ def get_data(conditions,filters):
 					leave_provision_date=emp.leave_provision_date or emp.date_of_joining
 					applicable_earnings_component=get_applicable_components(rul.name)
 					sal=0
+					end_date=nowdate()
 					if rul.date_from==None and rul.date_to!=None and getdate(leave_provision_date)<=getdate(rul.date_to):
 						start_date=leave_provision_date
 						if getdate(rul.date_to) < getdate(processing_month):
