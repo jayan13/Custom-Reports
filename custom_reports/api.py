@@ -297,7 +297,13 @@ def getabsents(emp,opn,start_date,end_date):
 @frappe.whitelist()
 def get_year_month_day(emp,date_from,date_to):
 	empy=frappe.db.get_value('Employee',{'name':emp},['opening_absent'],debug=0)
-	absent=getabsents(emp,empy,date_from,date_to)
+	opnentry_date=frappe.db.get_value('Employee',{'name':emp},['openning_entry_date'],debug=0)
+	if opnentry_date:
+		atten_from=add_days(getdate(opnentry_date), 1)
+	else:
+		atten_from=date_from
+
+	absent=getabsents(emp,empy,atten_from,date_to)
 	totaldays=frappe.utils.date_diff(date_to,date_from)+1
 	
 	from dateutil import relativedelta
