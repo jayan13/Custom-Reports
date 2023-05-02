@@ -1368,18 +1368,25 @@ class SalarySlipCustom(SalarySlip):
 				else:
 					amount=0
 			else:
-				if pay_days > 0:	
-					amount = (
-						flt(
-							(flt(row.default_amount) * flt(pay_days) / cint(total_days_in_month)),
-							row.precision("amount"),
-						)
-						+ additional_amount
-					)
+				
+				if row.salary_component not in provcompo: # fix 02-04-2023 coponents not in provision settings
+					amount =flt(row.default_amount)+ row.additional_amount
 				else:
-					amount=flt(additional_amount)
 
+					if pay_days > 0:	
+						amount = (
+							flt(
+								(flt(row.default_amount) * flt(pay_days) / cint(total_days_in_month)),
+								row.precision("amount"),
+							)
+							+ additional_amount
+						)
+					else:
+						amount=flt(additional_amount)
+				
+				
 			amount=amount-prev_paid
+			
 					#------ custom end --------
 		elif (
 			not self.payment_days
