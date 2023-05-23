@@ -33,28 +33,10 @@ def get_columns(filters):
 		"width": 150
 		},
 		{
-		"fieldname": "over_time_hr",
+		"fieldname": "department",
 		"fieldtype": "Data",
-		"label": "Nor @1.25",	
-		"width": 100
-		},
-		{
-		"fieldname": "holiday_over_time_hr",
-		"fieldtype": "Data",
-		"label": "Normal Incentive hr",	
-		"width": 100
-		},
-		{
-		"fieldname": "over_time_incentive",
-		"fieldtype": "Data",
-		"label": "Holi @1.50",	
-		"width": 100
-		},
-		{
-		"fieldname": "holiday_over_time_incentive",
-		"fieldtype": "Data",
-		"label": "Holi Incentive hr",	
-		"width": 100
+		"label": "Department",	
+		"width": 150
 		},						
  	 ]
 	compres=frappe.db.sql(""" select rmc.label,GROUP_CONCAT(rmc.salary_component) as salary_component from `tabSalary Sheet Report Settings` re left join `tabSalary Report Removed Components` rmc on re.name=rmc.parent where re.company='{0}' group by rmc.label order by rmc.display_order """.format(company),as_dict=1,debug=0)	
@@ -111,20 +93,12 @@ def get_data(conditions,filters):
 			parent_department_name=parent_department
 			parent_department_tot=0		
 			emp_count_pare_dept=0
-			parent_department_ovr=0
-			parent_department_ovr_inc=0
-			parent_department_holi=0
-			parent_department_holi_inc=0
 			
 
 		if department != department_name:
 			department_name=department
 			department_tot=0
 			emp_count_dept=0
-			department_ovr=0
-			department_ovr_inc=0
-			department_holi=0
-			department_holi_inc=0
 			
 		empqry=''
 		if filters.get("employee"):
@@ -141,47 +115,20 @@ def get_data(conditions,filters):
 		if slip:
 			
 			for slp in slip:
-				
+				emp_count+=1
+				emp_count_pare_dept+=1
+				emp_count_dept+=1
 				dt={}
 				dt.update({'slip':slp.name})
 				dt.update({'employee':slp.employee})
 				dt.update({'employee_name':slp.employee_name})
 				dt.update({'department':department_name})
 				dt.update({'parent_department':parent_department_name})
-
-				over_time_incentive=0
-				over_time=slp.over_time
-				if float(slp.over_time) > 48:
-					over_time_incentive=float(slp.over_time)-48
-					over_time=48
-				holiday_over_time_incentive=0
-				holiday_over_time=slp.holiday_over_time
-				if float(slp.holiday_over_time)>16:
-					holiday_over_time_incentive=float(slp.holiday_over_time)-16
-					holiday_over_time=16
-
-				dt.update({'over_time_hr':over_time})				
-				dt.update({'holiday_over_time_hr':holiday_over_time})
-				dt.update({'over_time_incentive':over_time_incentive})				
-				dt.update({'holiday_over_time_incentive':holiday_over_time_incentive})
-
-				parent_department_ovr+=over_time
-				parent_department_ovr_inc+=over_time_incentive
-				parent_department_holi+=holiday_over_time
-				parent_department_holi_inc+=holiday_over_time_incentive
-				department_ovr+=over_time
-				department_ovr_inc+=over_time_incentive
-				department_holi+=holiday_over_time
-				department_holi_inc+=holiday_over_time_incentive
-
-				dt.update({'parent_department_ovr':parent_department_ovr})            	
-				dt.update({'parent_department_holi':parent_department_holi})
-				dt.update({'parent_department_ovr_inc':parent_department_ovr_inc})	
-				dt.update({'parent_department_holi_inc':parent_department_holi_inc})	
-				dt.update({'department_ovr':department_ovr})
-				dt.update({'department_holi':department_holi})	
-				dt.update({'department_ovr_inc':department_ovr_inc})            	
-				dt.update({'department_holi_inc':department_holi_inc})				
+				dt.update({'over_time':slp.over_time})				
+				dt.update({'holiday_over_time':slp.holiday_over_time})
+				dt.update({'emp_count':emp_count})
+				dt.update({'emp_count_pare_dept':emp_count_pare_dept})
+				dt.update({'emp_count_dept':emp_count_dept})
 							
 				earnin=frappe.db.sql(""" select salary_component,amount from `tabSalary Detail` where parentfield='earnings' and parent ='{0}' """.format(slp.name),as_dict=1,debug=0)
 				paid=0
@@ -215,13 +162,6 @@ def get_data(conditions,filters):
 				dt.update({'department_tot':department_tot})
 				dt.update({'parent_department_tot':parent_department_tot})
 				if paid:
-					emp_count+=1
-					emp_count_pare_dept+=1
-					emp_count_dept+=1
-					dt.update({'emp_count':emp_count})
-					dt.update({'emp_count_pare_dept':emp_count_pare_dept})
-					dt.update({'emp_count_dept':emp_count_dept})
-
 					data.append(dt)
 				
 	#frappe.msgprint(str(data))
