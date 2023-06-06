@@ -2,18 +2,20 @@ import frappe
 from frappe.utils import formatdate, getdate, date_diff, flt,get_first_day,get_last_day,add_days
 
 @frappe.whitelist()
-def get_report(company=None):
+def get_report(payroll_entry=None):
     data = {}
-    payro={}
-    payrosql=frappe.db.get_all("Payroll Entry", filters={'company':company,'docstatus':'1'}, fields=['start_date','end_date','name','company'], order_by='start_date desc', start=0, page_length=1,debug=0)
+    #payro={}
+    payro=frappe.db.get_value("Payroll Entry",payroll_entry,['start_date','end_date','company'], as_dict=1)
     
-    if payrosql:
-        payro=payrosql[0]
-    else:
-        return data
+    #payrosql=frappe.db.get_all("Payroll Entry", filters={'company':company,'docstatus':'1'}, fields=['start_date','end_date','name','company'], order_by='start_date desc', start=0, page_length=1,debug=0)
+    
+    #if payrosql:
+     #   payro=payrosql[0]
+    #else:
+    #    return data
 
     months=[]
-    payroll_entry=payro.name
+    #payroll_entry=payro.name
     data['company']=payro.company
     data['start_date']=frappe.utils.formatdate(payro.start_date, "MMMM yyyy")
     data['end_date']=frappe.utils.formatdate(payro.end_date, "MMMM yyyy")    

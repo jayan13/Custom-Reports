@@ -18,10 +18,10 @@ frappe.pages['salary-comparison'].on_page_load = function(wrapper) {
 			{
 				frappe.get_route()[1]
 				let field = this.page.add_field({
-					label: 'Company',
+					label: 'Payroll Entry',
 					fieldtype: 'Link',
-					fieldname: 'company',
-					options: 'Company',
+					fieldname: 'payroll_entry',
+					options: 'Payroll Entry',
 					change() {
 						get_report();
 					}
@@ -33,7 +33,7 @@ frappe.pages['salary-comparison'].on_page_load = function(wrapper) {
 				field.set_value(frappe.get_route()[1]);
 				get_report();
 			}
-			
+
 			function get_report()
 			{
 				$('#report_eggs').remove();
@@ -45,7 +45,7 @@ frappe.pages['salary-comparison'].on_page_load = function(wrapper) {
 						freeze: 1,
 						freeze_message: 'Data loading ...please waite',
 						args: {							  
-							company: field.get_value(),
+							payroll_entry: field.get_value(),
 						},					
 						callback: function (r) {
 						if (r.message) {							
