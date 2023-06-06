@@ -20,20 +20,23 @@ def get_report(payroll_entry=None):
     data['start_date']=frappe.utils.formatdate(payro.start_date, "MMMM yyyy")
     data['end_date']=frappe.utils.formatdate(payro.end_date, "MMMM yyyy")    
     
+    mth=getdate(payro.start_date)
     prvmth=add_days(get_first_day(getdate(payro.start_date)),-1)
     pprvmth=add_days(get_first_day(getdate(prvmth)),-1)
-
+    
     months.append(frappe.utils.formatdate(payro.start_date, "MMM yy"))
     months.append(frappe.utils.formatdate(prvmth, "MMM yy"))
     months.append(frappe.utils.formatdate(pprvmth, "MMM yy"))
     data['months']=months
     
-    slip=frappe.db.sql(""" select s.name,s.employee,s.salary_structure,s.employee_name,s.gross_pay,s.net_pay,s.total_deduction,s.leave_without_pay,s.payment_days,s.over_time,s.holiday_over_time,
+    slip=frappe.db.sql(""" select s.name,s.employee,s.salary_structure,s.employee_name,
     d.name as department,IF(d.parent_department='All Departments',d.name,d.parent_department) as parent_department 
     from `tabSalary Slip` s 
-    left join `tabDepartment` d on d.name=s.department where  s.docstatus in (0,1) and s.payroll_entry='{0}'  order by d.parent_department,d.name,s.employee """.format(payroll_entry),as_dict=1,debug=0)
+    left join `tabDepartment` d on d.name=s.department where  s.docstatus in (0,1) and s.company='{0}' and ( ( MONTH(start_date)=MONTH('{1}') and YEAR(start_date)=YEAR('{1}') ) OR ( MONTH(start_date)=MONTH('{2}') and YEAR(start_date)=YEAR('{2}') ) OR ( MONTH(start_date)=MONTH('{3}') and YEAR(start_date)=YEAR('{3}') ) ) group by s.employee order by d.parent_department,d.name,s.employee """.format(payro.company,mth,prvmth,pprvmth),as_dict=1,debug=0)
     
-    compres=frappe.db.sql(""" select rmc.label,GROUP_CONCAT(rmc.salary_component) as salary_component from `tabSalary Sheet Report Settings` re left join `tabSalary Report Removed Components` rmc on re.name=rmc.parent where re.company='{0}' group by rmc.label order by rmc.display_order """.format(payro.company),as_dict=1,debug=0)	
+    compres=frappe.db.sql(""" select rmc.label,GROUP_CONCAT(rmc.salary_component) as salary_component from `tabSalary Sheet Report Settings` re 
+    left join `tabSalary Report Removed Components` rmc on re.name=rmc.parent where re.company='{0}' 
+    group by rmc.label order by rmc.display_order """.format(payro.company),as_dict=1,debug=0)	
     
     slips=[]
 
@@ -87,42 +90,50 @@ def get_report(payroll_entry=None):
                 o3_department_tot=0
                 
             dt={}
-            dt.update({'slip':slp.name})
+            
             dt.update({'employee':slp.employee})
             dt.update({'employee_name':slp.employee_name})
             dt.update({'department':department_name})
             dt.update({'parent_department':parent_department_name})
 							
-            earnin=frappe.db.sql(""" select salary_component,amount from `tabSalary Detail` where parentfield='earnings' and parent ='{0}' """.format(slp.name),as_dict=1,debug=0)
+            
+            overtime=0
+            sal=0            
+            p=frappe.db.sql(""" select name,net_pay from `tabSalary Slip` where  docstatus in (0,1) and employee='{0}' and MONTH(start_date)=MONTH('{1}') and YEAR(start_date)=YEAR('{1}') and company='{2}' """.format(slp.employee,mth,payro.company),as_dict=1,debug=0)
+            if p:
+                earnin=frappe.db.sql(""" select salary_component,amount from `tabSalary Detail` where parentfield='earnings' and parent ='{0}' """.format(p[0].name),as_dict=1,debug=0)
+
+                if compres:
+                    for comp in compres:
+                        cmplist=comp.get("salary_component")
+                        cmplistar=cmplist.split(",")
+                        if earnin:
+                            for ern in earnin:
+                                if ern.salary_component in cmplistar:
+                                    overtime+=ern.amount
+                                
+                sal=p[0].net_pay-overtime                    
+                #sal=flt(sal,2)
+                #overtime=flt(overtime,2)
+                dt.update({'overtime':overtime})
+                dt.update({'sal':sal})
+                s1_parent_department+=sal
+                s1_department_tot+=sal
+                o1_parent_department+=overtime
+                o1_department_tot+=overtime
+                s1_gtot+=sal
+                o1_gtot+=overtime
+
+            else:
+                dt.update({'overtime':0})
+                dt.update({'sal':0})
+
             overtime=0
             sal=0
-            if compres:
-                for comp in compres:
-                    cmplist=comp.get("salary_component")
-                    cmplistar=cmplist.split(",")
-                    if earnin:
-                        for ern in earnin:
-                            if ern.salary_component in cmplistar:
-                                overtime+=ern.amount
-                            
-            sal=slp.net_pay-overtime                    
-            #sal=flt(sal,2)
-            #overtime=flt(overtime,2)
-            
-            dt.update({'overtime':overtime})
-            dt.update({'sal':sal})
-            s1_parent_department+=sal
-            s1_department_tot+=sal
-            o1_parent_department+=overtime
-            o1_department_tot+=overtime
-            s1_gtot+=sal
-            o1_gtot+=overtime
-
-            p1=frappe.db.sql(""" select name,net_pay from `tabSalary Slip` where  docstatus in (0,1) and employee='{0}' and MONTH(start_date)=MONTH('{1}') and YEAR(start_date)=YEAR('{1}') """.format(slp.employee,prvmth),as_dict=1,debug=0)
+            p1=frappe.db.sql(""" select name,net_pay from `tabSalary Slip` where  docstatus in (0,1) and employee='{0}' and MONTH(start_date)=MONTH('{1}') and YEAR(start_date)=YEAR('{1}') and company='{2}'  """.format(slp.employee,prvmth,payro.company),as_dict=1,debug=0)
             if p1:
                 earnin=frappe.db.sql(""" select salary_component,amount from `tabSalary Detail` where parentfield='earnings' and parent ='{0}' """.format(p1[0].name),as_dict=1,debug=0)
-                overtime=0
-                sal=0
+
                 if compres:
                     for comp in compres:
                         cmplist=comp.get("salary_component")
@@ -148,11 +159,12 @@ def get_report(payroll_entry=None):
                 dt.update({'overtimep':0})
                 dt.update({'salp':0})
 
-            p2=frappe.db.sql(""" select name,net_pay from `tabSalary Slip` where  docstatus in (0,1) and employee='{0}' and MONTH(start_date)=MONTH('{1}') and YEAR(start_date)=YEAR('{1}')  """.format(slp.employee,pprvmth),as_dict=1,debug=0)
+            overtime=0
+            sal=0
+            p2=frappe.db.sql(""" select name,net_pay from `tabSalary Slip` where  docstatus in (0,1) and employee='{0}' and MONTH(start_date)=MONTH('{1}') and YEAR(start_date)=YEAR('{1}') and company='{2}'  """.format(slp.employee,pprvmth,payro.company),as_dict=1,debug=0)
             if p2:
                 earnin=frappe.db.sql(""" select salary_component,amount from `tabSalary Detail` where parentfield='earnings' and parent ='{0}' """.format(p2[0].name),as_dict=1,debug=0)
-                overtime=0
-                sal=0
+
                 if compres:
                     for comp in compres:
                         cmplist=comp.get("salary_component")
