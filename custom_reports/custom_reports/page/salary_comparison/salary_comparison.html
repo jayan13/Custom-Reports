@@ -105,7 +105,18 @@
 				
 				{% } %}
 				{% if(i==(l-1)) { %}
-				
+				<tr>			
+					<td colspan="2" style="text-align: right;font-size:14px;border-bottom: solid 1px #000;">
+						<b># Employee {%=i%} Grand Total : </b>
+					</td>
+					<td style="text-align: right;font-size:14px;border-bottom: solid 1px #000;"><b>{%=format_currency(data[i].s1_department_tot) %}</b></td>
+					<td style="text-align: right;font-size:14px;border-bottom: solid 1px #000;"><b>{%=format_currency(data[i].s2_department_tot) %}</b></td>
+					<td style="text-align: right;font-size:14px;border-bottom: solid 1px #000;"><b>{%=format_currency(data[i].s3_department_tot) %}</b></td>
+					<td style="text-align: right;font-size:14px;border-bottom: solid 1px #000;"><b>{%=format_currency(data[i].o1_department_tot) %}</b></td>
+					<td style="text-align: right;font-size:14px;border-bottom: solid 1px #000;"><b>{%=format_currency(data[i].o2_department_tot) %}</b></td>
+					<td style="text-align: right;font-size:14px;border-bottom: solid 1px #000;"><b>{%=format_currency(data[i].o3_department_tot) %}</b></td>
+					
+				</tr>
 				{% } else if (i >=0){  
 					if(data[i].department!=data[i+1].department){ %} 
 					<tr>

@@ -54,6 +54,13 @@ def get_report(payroll_entry=None):
     o3_parent_department=0
     parent_department_name=''
     department_name=''
+
+    s1_gtot=0
+    s2_gtot=0
+    s3_gtot=0
+    o1_gtot=0
+    o2_gtot=0
+    o3_gtot=0
     
     if slip:
         for slp in slip:
@@ -108,6 +115,8 @@ def get_report(payroll_entry=None):
             s1_department_tot+=sal
             o1_parent_department+=overtime
             o1_department_tot+=overtime
+            s1_gtot+=sal
+            o1_gtot+=overtime
 
             p1=frappe.db.sql(""" select name,net_pay from `tabSalary Slip` where  docstatus in (0,1) and employee='{0}' and MONTH(start_date)=MONTH('{1}') and YEAR(start_date)=YEAR('{1}') """.format(slp.employee,prvmth),as_dict=1,debug=0)
             if p1:
@@ -132,6 +141,8 @@ def get_report(payroll_entry=None):
                 s2_department_tot+=sal
                 o2_parent_department+=overtime
                 o2_department_tot+=overtime
+                s2_gtot+=sal
+                o2_gtot+=overtime
 
             else:
                 dt.update({'overtimep':0})
@@ -160,6 +171,8 @@ def get_report(payroll_entry=None):
                 s3_department_tot+=sal
                 o3_parent_department+=overtime
                 o3_department_tot+=overtime
+                s3_gtot+=sal
+                o3_gtot+=overtime
 
             else:
                 dt.update({'overtimepp':0})
@@ -187,22 +200,16 @@ def get_report(payroll_entry=None):
 
             slips.append(dt)
         
-        """"
+        
         dt={}
-        basic=sum(d.get('basic') for d in slips)
-        dt.update({'basic':basic})
-        basic_paid=sum(d.get('basic_paid') for d in slips)
-        dt.update({'basic_paid':basic_paid})
-        allowance=sum(d.get('allowance') for d in slips)
-        dt.update({'allowance':allowance})
-        gross_pay=sum(d.get('gross_pay') for d in slips)
-        dt.update({'gross_pay':gross_pay})
-        total_deduction=sum(d.get('total_deduction') for d in slips)
-        dt.update({'total_deduction':total_deduction})
-        net_pay=sum(d.get("net_pay") for d in slips)
-        dt.update({'net_pay':net_pay})
+        dt.update({'s1_department_tot':s1_gtot})
+        dt.update({'s2_department_tot':s2_gtot})
+        dt.update({'s3_department_tot':s3_gtot})
+        dt.update({'o1_department_tot':o1_gtot})
+        dt.update({'o2_department_tot':o2_gtot})
+        dt.update({'o3_department_tot':o3_gtot})
         slips.append(dt)
-        """
+        
 
     data['data']=slips
     #frappe.throw(str(data))
