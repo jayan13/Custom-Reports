@@ -31,7 +31,7 @@ def get_report(payroll_entry=None):
     slip=frappe.db.sql(""" select s.name,s.employee,s.salary_structure,s.employee_name,s.gross_pay,s.net_pay,s.total_deduction,s.leave_without_pay,s.payment_days,s.over_time,s.holiday_over_time,
     d.name as department,IF(d.parent_department='All Departments',d.name,d.parent_department) as parent_department 
     from `tabSalary Slip` s 
-    left join `tabDepartment` d on d.name=s.department where  s.docstatus in (0,1) and s.payroll_entry='{0}'  order by d.parent_department,d.name """.format(payroll_entry),as_dict=1,debug=0)
+    left join `tabDepartment` d on d.name=s.department where  s.docstatus in (0,1) and s.payroll_entry='{0}'  order by d.parent_department,d.name,s.employee """.format(payroll_entry),as_dict=1,debug=0)
     
     compres=frappe.db.sql(""" select rmc.label,GROUP_CONCAT(rmc.salary_component) as salary_component from `tabSalary Sheet Report Settings` re left join `tabSalary Report Removed Components` rmc on re.name=rmc.parent where re.company='{0}' group by rmc.label order by rmc.display_order """.format(payro.company),as_dict=1,debug=0)	
     
