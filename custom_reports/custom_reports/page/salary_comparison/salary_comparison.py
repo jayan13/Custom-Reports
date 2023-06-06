@@ -5,7 +5,7 @@ from frappe.utils import formatdate, getdate, date_diff, flt,get_first_day,get_l
 def get_report(company=None):
     data = {}
     payro={}
-    payrosql=frappe.db.get_all("Payroll Entry", filters={'company':company}, fields=['start_date','end_date','name','company'], order_by='start_date desc', start=0, page_length=1,debug=0)
+    payrosql=frappe.db.get_all("Payroll Entry", filters={'company':company,'docstatus':'1'}, fields=['start_date','end_date','name','company'], order_by='start_date desc', start=0, page_length=1,debug=0)
     
     if payrosql:
         payro=payrosql[0]
