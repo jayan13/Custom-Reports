@@ -106,8 +106,8 @@ def get_report(payroll_entry=None):
                                 overtime+=ern.amount
                             
             sal=slp.net_pay-overtime                    
-            sal=flt(sal,2)
-            overtime=flt(overtime,2)
+            #sal=flt(sal,2)
+            #overtime=flt(overtime,2)
             
             dt.update({'overtime':overtime})
             dt.update({'sal':sal})
@@ -133,8 +133,8 @@ def get_report(payroll_entry=None):
                                     overtime+=ern.amount
                                 
                 sal=p1[0].net_pay-overtime                    
-                sal=flt(sal,2)
-                overtime=flt(overtime,2)
+                #sal=flt(sal,2)
+                #overtime=flt(overtime,2)
                 dt.update({'overtimep':overtime})
                 dt.update({'salp':sal})
                 s2_parent_department+=sal
@@ -163,8 +163,8 @@ def get_report(payroll_entry=None):
                                     overtime+=ern.amount
                                 
                 sal=p2[0].net_pay-overtime                    
-                sal=flt(sal,2)
-                overtime=flt(overtime,2)
+                #sal=flt(sal,2)
+                #overtime=flt(overtime,2)
                 dt.update({'overtimepp':overtime})
                 dt.update({'salpp':sal})
                 s3_parent_department+=sal
