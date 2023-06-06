@@ -110,26 +110,26 @@
 					if(data[i].department!=data[i+1].department){ %} 
 					<tr>
 						<td style="text-align: right;border-bottom:solid 1px #000;"></td>
-						<td  style="border-bottom:solid 1px #000;" >Department Employee # {%=data[i].emp_count_dept%} </td>
-						<td style="text-align: right;border-bottom:solid 1px #000;"></td>
-						<td style="text-align: right;border-bottom:solid 1px #000;"></td>
-						<td style="text-align: right;border-bottom:solid 1px #000;"></td>
-						<td style="text-align: right;border-bottom:solid 1px #000;"></td>
-						<td style="text-align: right;border-bottom:solid 1px #000;"></td>
-						<td style="text-align: right;border-bottom:solid 1px #000;"></td>
+						<td  style="border-bottom:solid 1px #000;" ># Employee {%=data[i].emp_count_dept%} <b>Department Total :</b> </td>
+						<td style="text-align: right;border-bottom:solid 1px #000;"><b>{%=format_currency(data[i].s1_department_tot)%}</b></td>
+						<td style="text-align: right;border-bottom:solid 1px #000;"><b>{%=format_currency(data[i].s2_department_tot)%}</b></td>
+						<td style="text-align: right;border-bottom:solid 1px #000;"><b>{%=format_currency(data[i].s3_department_tot)%}</b></td>
+						<td style="background-color: #e7e2e2;text-align: right;border-bottom:solid 1px #000;"><b>{%=format_currency(data[i].o1_department_tot)%}</b></td>
+						<td style="background-color: #e7e2e2;text-align: right;border-bottom:solid 1px #000;"><b>{%=format_currency(data[i].o2_department_tot)%}</b></td>
+						<td style="background-color: #e7e2e2;text-align: right;border-bottom:solid 1px #000;"><b>{%=format_currency(data[i].o3_department_tot)%}</b></td>
 						
 					</tr>
 					{% }
 					if(data[i].parent_department!=data[i+1].parent_department){ %}
 				<tr>
 					<td style="text-align: right;border-bottom:solid 1px #000;"></td>
-					<td  style="border-bottom:solid 1px #000;" >Main Department Employee # {%=data[i].emp_count_pare_dept%} </td>
-					<td style="text-align: right;border-bottom:solid 1px #000;"></td>
-					<td style="text-align: right;border-bottom:solid 1px #000;"></td>
-					<td style="text-align: right;border-bottom:solid 1px #000;"></td>
-					<td style="text-align: right;border-bottom:solid 1px #000;"></td>
-					<td style="text-align: right;border-bottom:solid 1px #000;"></td>
-					<td style="text-align: right;border-bottom:solid 1px #000;"></td>
+					<td  style="border-bottom:solid 1px #000;" ># Employee {%=data[i].emp_count_pare_dept%} <b>Main Department Total :</td>
+					<td style="text-align: right;border-bottom:solid 1px #000;"><b>{%=format_currency(data[i].s1_parent_department)%}</b></td>
+					<td style="text-align: right;border-bottom:solid 1px #000;"><b>{%=format_currency(data[i].s2_parent_department)%}</b></td>
+					<td style="text-align: right;border-bottom:solid 1px #000;"><b>{%=format_currency(data[i].s3_parent_department)%}</b></td>
+					<td style="background-color: #e7e2e2;text-align: right;border-bottom:solid 1px #000;"><b>{%=format_currency(data[i].o1_parent_department)%}</b></td>
+					<td style="background-color: #e7e2e2;text-align: right;border-bottom:solid 1px #000;"><b>{%=format_currency(data[i].o2_parent_department)%}</b></td>
+					<td style="background-color: #e7e2e2;text-align: right;border-bottom:solid 1px #000;"><b>{%=format_currency(data[i].o3_parent_department)%}</b></td>
 				
 				</tr>
 				{% } } %}

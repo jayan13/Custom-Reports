@@ -19,12 +19,13 @@ def get_report(payroll_entry=None):
     data['company']=payro.company
     data['start_date']=frappe.utils.formatdate(payro.start_date, "MMMM yyyy")
     data['end_date']=frappe.utils.formatdate(payro.end_date, "MMMM yyyy")    
-    months.append(frappe.utils.formatdate(payro.start_date, "MMMM yyyy"))
+    
     prvmth=add_days(get_first_day(getdate(payro.start_date)),-1)
     pprvmth=add_days(get_first_day(getdate(prvmth)),-1)
 
-    months.append(frappe.utils.formatdate(prvmth, "MMMM yyyy"))
-    months.append(frappe.utils.formatdate(pprvmth, "MMMM yyyy"))
+    months.append(frappe.utils.formatdate(payro.start_date, "MMM yy"))
+    months.append(frappe.utils.formatdate(prvmth, "MMM yy"))
+    months.append(frappe.utils.formatdate(pprvmth, "MMM yy"))
     data['months']=months
     
     slip=frappe.db.sql(""" select s.name,s.employee,s.salary_structure,s.employee_name,s.gross_pay,s.net_pay,s.total_deduction,s.leave_without_pay,s.payment_days,s.over_time,s.holiday_over_time,
@@ -39,6 +40,18 @@ def get_report(payroll_entry=None):
     emp_count=0
     emp_count_dept=0
     emp_count_pare_dept=0
+    s1_department_tot=0
+    s2_department_tot=0
+    s3_department_tot=0
+    o1_department_tot=0
+    o2_department_tot=0
+    o3_department_tot=0
+    s1_parent_department=0
+    s2_parent_department=0
+    s3_parent_department=0
+    o1_parent_department=0
+    o2_parent_department=0
+    o3_parent_department=0
     parent_department_name=''
     department_name=''
     
@@ -49,10 +62,22 @@ def get_report(payroll_entry=None):
             if parent_department != parent_department_name:
                 parent_department_name=parent_department               	
                 emp_count_pare_dept=0
+                s1_parent_department=0
+                s2_parent_department=0
+                s3_parent_department=0
+                o1_parent_department=0
+                o2_parent_department=0
+                o3_parent_department=0
 
             if department != department_name:
                 department_name=department                              			
                 emp_count_dept=0
+                s1_department_tot=0
+                s2_department_tot=0
+                s3_department_tot=0
+                o1_department_tot=0
+                o2_department_tot=0
+                o3_department_tot=0
                 
             dt={}
             dt.update({'slip':slp.name})
@@ -79,6 +104,11 @@ def get_report(payroll_entry=None):
             
             dt.update({'overtime':overtime})
             dt.update({'sal':sal})
+            s1_parent_department+=sal
+            s1_department_tot+=sal
+            o1_parent_department+=overtime
+            o1_department_tot+=overtime
+
             p1=frappe.db.sql(""" select name,net_pay from `tabSalary Slip` where  docstatus in (0,1) and employee='{0}' and MONTH(start_date)=MONTH('{1}') and YEAR(start_date)=YEAR('{1}') """.format(slp.employee,prvmth),as_dict=1,debug=0)
             if p1:
                 earnin=frappe.db.sql(""" select salary_component,amount from `tabSalary Detail` where parentfield='earnings' and parent ='{0}' """.format(p1[0].name),as_dict=1,debug=0)
@@ -98,6 +128,10 @@ def get_report(payroll_entry=None):
                 overtime=flt(overtime,2)
                 dt.update({'overtimep':overtime})
                 dt.update({'salp':sal})
+                s2_parent_department+=sal
+                s2_department_tot+=sal
+                o2_parent_department+=overtime
+                o2_department_tot+=overtime
 
             else:
                 dt.update({'overtimep':0})
@@ -122,6 +156,10 @@ def get_report(payroll_entry=None):
                 overtime=flt(overtime,2)
                 dt.update({'overtimepp':overtime})
                 dt.update({'salpp':sal})
+                s3_parent_department+=sal
+                s3_department_tot+=sal
+                o3_parent_department+=overtime
+                o3_department_tot+=overtime
 
             else:
                 dt.update({'overtimepp':0})
@@ -133,9 +171,38 @@ def get_report(payroll_entry=None):
             dt.update({'emp_count':emp_count})
             dt.update({'emp_count_pare_dept':emp_count_pare_dept})
             dt.update({'emp_count_dept':emp_count_dept})
+            
+            dt.update({'s1_parent_department':s1_parent_department})
+            dt.update({'s2_parent_department':s2_parent_department})
+            dt.update({'s3_parent_department':s3_parent_department})
+            dt.update({'o1_parent_department':o1_parent_department})
+            dt.update({'o2_parent_department':o2_parent_department})
+            dt.update({'o3_parent_department':o3_parent_department})
+            dt.update({'s1_department_tot':s1_department_tot})
+            dt.update({'s2_department_tot':s2_department_tot})
+            dt.update({'s3_department_tot':s3_department_tot})
+            dt.update({'o1_department_tot':o1_department_tot})
+            dt.update({'o2_department_tot':o2_department_tot})
+            dt.update({'o3_department_tot':o3_department_tot})
+
             slips.append(dt)
         
-        
+        """"
+        dt={}
+        basic=sum(d.get('basic') for d in slips)
+        dt.update({'basic':basic})
+        basic_paid=sum(d.get('basic_paid') for d in slips)
+        dt.update({'basic_paid':basic_paid})
+        allowance=sum(d.get('allowance') for d in slips)
+        dt.update({'allowance':allowance})
+        gross_pay=sum(d.get('gross_pay') for d in slips)
+        dt.update({'gross_pay':gross_pay})
+        total_deduction=sum(d.get('total_deduction') for d in slips)
+        dt.update({'total_deduction':total_deduction})
+        net_pay=sum(d.get("net_pay") for d in slips)
+        dt.update({'net_pay':net_pay})
+        slips.append(dt)
+        """
 
     data['data']=slips
     #frappe.throw(str(data))
