@@ -31,28 +31,28 @@
 		<thead>
 			<tr>
 				<td style="width: 1%;border-bottom: solid 1px #000;"></td>
-				<td style="width: 29%;font-weight: bold;border-bottom: solid 1px #000;"></td>	
+				<td style="width: 29%;font-weight: bold;border-bottom: solid 1px #000;">{%= __("Employee") %}</td>	
 				
-				<td colspan="2" style="width: 5%; text-align: center;font-weight: bold;border-bottom: solid 1px #000;" >{%=months[0]%}</td>
-				<td colspan="2" style="background-color: #e7e2e2;width: 5%; text-align: center;font-weight: bold;border-bottom: solid 1px #000;" >{%=months[1]%}</td>
-				<td colspan="2" style="width: 5%; text-align: center;font-weight: bold;border-bottom: solid 1px #000;" >{%=months[2]%}</td>
+				<td colspan="3" style="width: 5%; text-align: center;font-weight: bold;border-bottom: solid 1px #000;" >{%= __("Salary Without Overtime") %}</td>
+				<td colspan="3" style="background-color: #e7e2e2;width: 5%; text-align: center;font-weight: bold;border-bottom: solid 1px #000;" >{%= __("Over Time") %}</td>
+
 				
 				
 			</tr>
 			<tr>
 				<td style="width: 1%;border-bottom: solid 1px #000;"></td>
-				<td style="width: 29%;font-weight: bold;border-bottom: solid 1px #000;">{%= __("Employee") %}</td>	
+				<td style="width: 29%;font-weight: bold;border-bottom: solid 1px #000;"></td>	
 				
-				<td style="width: 5%; text-align: right;font-weight: bold;border-bottom: solid 1px #000;" >{%= __("Salary Without Overtime") %}</td>
-				<td style="width: 5%; text-align: right;font-weight: bold;border-bottom: solid 1px #000;" >{%= __("Over Time") %}</td>
-
-				<td style="background-color: #e7e2e2;width: 5%; text-align: right;font-weight: bold;border-bottom: solid 1px #000;" >{%= __("Salary Without Overtime") %}</td>
-				<td style="background-color: #e7e2e2;width: 5%; text-align: right;font-weight: bold;border-bottom: solid 1px #000;" >{%= __("Over Time") %}</td>
-
-				<td style="width: 5%; text-align: right;font-weight: bold;border-bottom: solid 1px #000;" >{%= __("Salary Without Overtime") %}</td>
-				<td style="width: 5%; text-align: right;font-weight: bold;border-bottom: solid 1px #000;" >{%= __("Over Time") %}</td>
+				<td  style="width: 5%; text-align: center;font-weight: bold;border-bottom: solid 1px #000;" >{%=months[0]%}</td>
+				<td  style="width: 5%; text-align: center;font-weight: bold;border-bottom: solid 1px #000;" >{%=months[1]%}</td>
+				<td  style="width: 5%; text-align: center;font-weight: bold;border-bottom: solid 1px #000;" >{%=months[2]%}</td>
+				<td  style="background-color: #e7e2e2;width: 5%; text-align: center;font-weight: bold;border-bottom: solid 1px #000;" >{%=months[0]%}</td>
+				<td  style="background-color: #e7e2e2;width: 5%; text-align: center;font-weight: bold;border-bottom: solid 1px #000;" >{%=months[1]%}</td>
+				<td  style="background-color: #e7e2e2;width: 5%; text-align: center;font-weight: bold;border-bottom: solid 1px #000;" >{%=months[2]%}</td>
+				
 				
 			</tr>
+			
 			
 		</thead>
 		<tbody>
@@ -84,20 +84,18 @@
 						{%=format_currency(data[i].sal) %}
 					</td>
 					<td style="text-align: right;border-bottom: solid 1px #000;border-top: solid 1px #000;">
-						{%=format_currency(data[i].overtime) %}
-					</td>
-
-					<td style="background-color: #e7e2e2;text-align: right;border-bottom: solid 1px #000;border-top: solid 1px #000;">
 						{%=format_currency(data[i].salp) %}
+					</td>
+					<td style="text-align: right;border-bottom: solid 1px #000;border-top: solid 1px #000;">
+						{%=format_currency(data[i].salpp) %}
+					</td>
+					<td style="background-color: #e7e2e2;text-align: right;border-bottom: solid 1px #000;border-top: solid 1px #000;">
+						{%=format_currency(data[i].overtime) %}
 					</td>
 					<td style="background-color: #e7e2e2;text-align: right;border-bottom: solid 1px #000;border-top: solid 1px #000;">
 						{%=format_currency(data[i].overtimep) %}
 					</td>
-
-					<td style="text-align: right;border-bottom: solid 1px #000;border-top: solid 1px #000;">
-						{%=format_currency(data[i].salpp) %}
-					</td>
-					<td style="text-align: right;border-bottom: solid 1px #000;border-top: solid 1px #000;">
+					<td style="background-color: #e7e2e2;text-align: right;border-bottom: solid 1px #000;border-top: solid 1px #000;">
 						{%=format_currency(data[i].overtimepp) %}
 					</td>
 					
