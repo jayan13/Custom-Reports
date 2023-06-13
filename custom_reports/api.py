@@ -1075,3 +1075,10 @@ def update_pro_pay_cancel(doc,event):
 @frappe.whitelist()
 def update_pro(pro):
 	frappe.db.set_value('PRO Expense Request', pro, 'workflow_state', 'Paid')
+
+@frappe.whitelist()
+def update_material_req_pay(mt_req,paid_to):
+	frappe.db.set_value('Material Request', mt_req, 'workflow_state', 'Paid')
+	if paid_to:
+		frappe.db.set_value('Material Request', mt_req, 'paid_to', paid_to)
+	return "updated"
