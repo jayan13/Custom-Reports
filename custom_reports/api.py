@@ -1082,3 +1082,30 @@ def update_material_req_pay(mt_req,paid_to):
 	if paid_to:
 		frappe.db.set_value('Material Request', mt_req, 'paid_to', paid_to)
 	return "updated"
+
+@frappe.whitelist()
+def get_value_from_jv(name):
+	amount=0
+	jv=frappe.db.get_all("Journal Entry Account",filters={'reference_type':'Material Request','reference_name':name,'docstatus':1},fields=['sum(debit) as amount'],group_by='reference_name')
+	if jv:
+		amount=jv[0].amount
+	
+	return amount
+
+@frappe.whitelist()
+def update_material_transfer(doc,event):
+	balance=0
+	jv=frappe.db.get_all("Journal Entry Account",filters={'reference_type':'Material Request','parent':doc.name},fields=['sum(debit) as amount,reference_name'],group_by='reference_name')
+	if jv:
+		if jv[0].amount > 0:
+			mr=frappe.db.get_value('Material Request',jv[0].reference_name,['total','is_it_for_asset_maintenance'],as_dict=1)
+			if mr.is_it_for_asset_maintenance:				
+				balance=mr.total-jv[0].amount
+				frappe.db.set_value('Material Request',jv[0].reference_name,{'actual_rate':jv[0].amount,'balance':balance})
+
+@frappe.whitelist()
+def cancel_material_transfer(doc,event):
+	jv=frappe.db.get_all("Journal Entry Account",filters={'reference_type':'Material Request','parent':doc.name},fields=['reference_name'])
+	if jv:
+		if jv[0].reference_name:
+			frappe.db.set_value('Material Request',jv[0].reference_name,{'actual_rate':0,'balance':0})
