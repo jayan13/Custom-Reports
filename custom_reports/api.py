@@ -1100,7 +1100,7 @@ def update_material_transfer(doc,event):
 		if jv[0].amount > 0:
 			mr=frappe.db.get_value('Material Request',jv[0].reference_name,['total','is_it_for_asset_maintenance'],as_dict=1)
 			if mr.is_it_for_asset_maintenance:				
-				balance=mr.total-jv[0].amount
+				balance=float(mr.total)-float(jv[0].amount)
 				frappe.db.set_value('Material Request',jv[0].reference_name,{'actual_rate':jv[0].amount,'balance':balance})
 
 @frappe.whitelist()
