@@ -152,109 +152,183 @@ def get_ticket_issued(emp,from_date,to_date):
 
 @frappe.whitelist()
 def get_ticket_given(emp,from_date,to_date):
-	empy=frappe.db.get_value('Employee',{'name':emp},['openning_entry_date','date_of_joining','ticket_period','ticket_price','opening_ticket_balance','opening_ticket_balance_amount','used_tickets','opening_ticket_amount_used','no_of_tickets_eligible','ticket_provision_date','opening_absent'],as_dict=1,debug=0)
-	ticket_per_month=0
-	amount_balance=0
-	usedno=0
-	usedpri=0
-	amount_used=0
-	amount_accrued=0
-	balance=0
-	accrued=0
+	to_date=add_days(getdate(to_date),-1)
+	emp=frappe.db.get_value('Employee',{'name':emp},['relieving_date','openning_entry_date','date_of_joining','ticket_period','ticket_price','opening_ticket_balance','opening_ticket_balance_amount','used_tickets','opening_ticket_amount_used','no_of_tickets_eligible','ticket_provision_date','opening_absent'],as_dict=1,debug=0)
 	
-	years=0
-	actual_worked=0
-	total_days=0
-	absents=0
-	used=0
-	ticket_price=0
-	processing_month=to_date
-	if empy.openning_entry_date:
-		ticket_provision_date=empy.ticket_provision_date or empy.date_of_joining			
-		total_days=frappe.utils.date_diff(empy.openning_entry_date,ticket_provision_date)+1
-		if total_days > 0:
-			absents+=float(empy.opening_absent)
-			actual_worked+=total_days-absents
-			balance+=float(empy.opening_ticket_balance)
-			amount_balance+=float(empy.opening_ticket_balance_amount)
-			accrued+=round(float(empy.opening_ticket_balance)+float(empy.used_tickets),3)
-			amount_accrued+=round(empy.opening_ticket_amount_used+empy.opening_ticket_balance_amount,2)
-			used+=float(empy.used_tickets)
-			amount_used+=float(empy.opening_ticket_amount_used)
-			ticket_price=empy.ticket_price
-			#frappe.msgprint(str(accrued))
-	tickets=get_tickect_setting(emp)
-	if tickets:
-		for ticket in tickets:
-			totaldays=0				
-			if ticket.from_date!=None and ticket.to_date!=None and getdate(processing_month) >= ticket.to_date:
-				totaldays=frappe.utils.date_diff(ticket.to_date,ticket.from_date)+1					
-				total_days+=totaldays
-				date_from=ticket.from_date
-				date_to=ticket.to_date
-			elif ticket.from_date!=None and ticket.to_date==None and getdate(processing_month) >= ticket.from_date:
-				totaldays=frappe.utils.date_diff(processing_month,ticket.from_date)+1					
-				total_days+=totaldays
-				date_from=ticket.from_date
-				date_to=processing_month
+	if emp:
+		processing_month=to_date
+		if emp.relieving_date and emp.relieving_date < getdate(processing_month):
+			processing_month=emp.relieving_date
+		perodical=''
+		ticket_per_month=0
+		amount_balance=0
+		usedno=0
+		usedpri=0
+		amount_used=0
+		amount_accrued=0
+		balance=0
+		accrued=0
+		eligible=0
+		years=0
+		actual_worked=0
+		total_days=0
+		absents=0
+		used=0
+		ticket_price=0
+		perodical=str(emp.no_of_tickets_eligible)+"'s in a "+emp.ticket_period+' Years'
+		eligible=emp.no_of_tickets_eligible
+		#ticket_provision_date
+		tickets=get_tickect_setting(emp.name)
+		currentticketprice=0
+		if tickets:
+			for ticket in tickets:
+				currentticketprice=ticket.ticket_fare
+
+		currentticketprice=currentticketprice or emp.ticket_price
+
+		if emp.openning_entry_date:
+			openabs=0
+			ticket_provision_date=emp.ticket_provision_date or emp.date_of_joining			
+			total_days+=frappe.utils.date_diff(emp.openning_entry_date,ticket_provision_date)+1
+							
+			if total_days > 0:
+				absents+=float(emp.opening_absent)
+				actual_worked+=total_days-absents
+				years+=round((actual_worked/365),4)				
+				balance+=float(emp.opening_ticket_balance)
+				#amount_balance+=float(emp.opening_ticket_balance_amount)
+				#amount_balance+=float(balance)*float(currentticketprice)
+				accrued+=round(float(emp.opening_ticket_balance)+float(emp.used_tickets),4)
+				#amount_accrued+=round(emp.opening_ticket_amount_used+emp.opening_ticket_balance_amount,2)
+				amount_accrued+=float(accrued)*float(currentticketprice)
+				used+=float(emp.used_tickets)
+				#amount_used+=float(emp.opening_ticket_amount_used)
+				amount_used+=float(used)*float(currentticketprice)
+				ticket_price=currentticketprice
+				
+		
+		if tickets:
+			
+			for ticket in tickets:
+				totaldays=0				
+				if ticket.from_date!=None and ticket.to_date!=None and getdate(processing_month) >= ticket.to_date:
+					totaldays=frappe.utils.date_diff(ticket.to_date,ticket.from_date)+1					
+					total_days+=totaldays
+					date_from=ticket.from_date
+					date_to=ticket.to_date
+				elif ticket.from_date!=None and ticket.to_date==None and getdate(processing_month) >= ticket.from_date:
+					date_from=ticket.from_date
+					if getdate(emp.date_of_joining)>getdate(ticket.from_date):
+						date_from=emp.date_of_joining
+					totaldays=frappe.utils.date_diff(processing_month,date_from)+1								
+					total_days+=totaldays					
+					date_to=processing_month
+				
+				if totaldays:
+					openabs=0
+					perodical=str(ticket.no_of_ticket_eligible)+"'s in a "+str(ticket.periodical)+' Years'
+					eligible=ticket.no_of_ticket_eligible
+					absent=getabsents(emp.name,openabs,date_from,date_to)
+					absents+=absent
+					usedtickt=get_ticket_issued(emp.name,date_from,date_to)
+					usedno=0					
+					if usedtickt:
+						usedno=usedtickt or 0
+					
+					actualworked=totaldays-absent
+					actual_worked+=actualworked
+					year=round(actualworked/365,4)
+					years+=year
+					accru=0
+					if float(ticket.periodical) > 0 and ticket.no_of_ticket_eligible:
+						accru=(year/float(ticket.periodical))*float(ticket.no_of_ticket_eligible)
+					accru=round(accru,4)
+					bal=accru-float(usedno)
+					accrued+=accru 
+					balance+=bal
+					used+=usedno
+					ticket_price=currentticketprice
+					#amount_accrued+=accru*currentticketprice
+					#amount_used+=float(usedno)*currentticketprice
+					#amount_balance+=bal*ticket.ticket_fare
+
+		elif(emp.openning_entry_date!=None and getdate(processing_month)>emp.openning_entry_date):
+			totaldays=0
+			
+			totaldays=frappe.utils.date_diff(processing_month,emp.openning_entry_date)	
+						
+			total_days+=totaldays
+			#date_from=emp.openning_entry_date
+			day = getdate(emp.openning_entry_date)
+			date_from = add_days(day, 1)
+			date_to=getdate(processing_month)
+			
 			if totaldays:
 				openabs=0
-				absent=getabsents(emp,openabs,date_from,date_to)
+				absent=getabsents(emp.name,openabs,date_from,date_to)
 				absents+=absent
-				usedtickt=get_ticket_issued(emp,date_from,date_to)
+				usedtickt=get_ticket_issued(emp.name,date_from,date_to)
 				usedno=0					
 				if usedtickt:
-					usedno=usedtickt.ticket_no or 0
+					usedno=usedtickt or 0
 					
 				actualworked=totaldays-absent
 				actual_worked+=actualworked
-				year=actualworked/365
+				year=round(actualworked/365,4)
 				years+=year
 				accru=0
-				if float(ticket.periodical) > 0 and ticket.no_of_ticket_eligible:
-					accru=(year/float(ticket.periodical))*float(ticket.no_of_ticket_eligible)
-
-				bal=round(accru-float(usedno),3)
+				if float(emp.ticket_period) > 0 and emp.no_of_tickets_eligible:
+					accru=(year/float(emp.ticket_period))*float(emp.no_of_tickets_eligible)
+				accru=round(accru,4)
+				bal=accru-float(usedno)
 				accrued+=accru 
 				balance+=bal
 				used+=usedno
-				ticket_price=ticket.ticket_fare
-				amount_accrued+=accru*ticket.ticket_fare
-				amount_used+=float(usedno)*ticket.ticket_fare
-				amount_balance+=bal*ticket.ticket_fare
-	elif(empy.openning_entry_date!=None and getdate(processing_month)>empy.openning_entry_date):
-		totaldays=0
+				ticket_price=emp.ticket_price
+				#amount_accrued+=accru*emp.ticket_price
+				#amount_used+=float(usedno)*emp.ticket_price
+				#amount_balance+=bal*emp.ticket_price
+		elif emp.openning_entry_date==None and not tickets:
 			
-		totaldays=frappe.utils.date_diff(processing_month,empy.openning_entry_date)+1					
-		total_days+=totaldays
-		date_from=empy.openning_entry_date
-		date_to=getdate(processing_month)
+			totaldays=0
+			ticket_provision_date=emp.ticket_provision_date or emp.date_of_joining
+			totaldays=frappe.utils.date_diff(processing_month,ticket_provision_date)+1	
+						
+			total_days+=totaldays
+			date_from=getdate(ticket_provision_date)			
+			date_to=getdate(processing_month)
 			
-		if totaldays:
-			openabs=0
-			absent=getabsents(emp,openabs,date_from,date_to)
-			absents+=absent
-			usedtickt=get_ticket_issued(emp,date_from,date_to)
-			usedno=0					
-			if usedtickt:
-				usedno=usedtickt.ticket_no or 0
+			if totaldays:
+				openabs=0
+				absent=getabsents(emp.name,openabs,date_from,date_to)
+				absents+=absent
+				usedtickt=get_ticket_issued(emp.name,date_from,date_to)
+				usedno=0					
+				if usedtickt:
+					usedno=usedtickt or 0
 					
-			actualworked=totaldays-absent
-			actual_worked+=actualworked
-			year=actualworked/365
-			years+=year
-			accru=0
-			if float(empy.ticket_period) > 0 and empy.no_of_tickets_eligible:
-				accru=(year/float(empy.ticket_period))*float(empy.no_of_tickets_eligible)
-
-			bal=round(accru-float(usedno),3)
-			accrued+=accru 
-			balance+=bal
-			used+=usedno
-			ticket_price=empy.ticket_price
-			amount_accrued+=accru*empy.ticket_price
-			amount_used+=float(usedno)*empy.ticket_price
-			amount_balance+=bal*empy.ticket_price
+				actualworked=totaldays-absent
+				actual_worked+=actualworked
+				year=round(actualworked/365,4)
+				years+=year
+				accru=0
+				if float(emp.ticket_period) > 0 and emp.no_of_tickets_eligible:
+					accru=(year/float(emp.ticket_period))*float(emp.no_of_tickets_eligible)
+				accru=round(accru,4)
+				bal=accru-float(usedno)
+				accrued+=accru 
+				balance+=bal
+				used+=usedno
+				ticket_price=emp.ticket_price
+				#amount_accrued+=accru*emp.ticket_price
+				#amount_used+=float(usedno)*emp.ticket_price
+				#amount_balance+=bal*emp.ticket_price
+						
+		accrued=round(accrued,4)		
+		balance=round(accrued-used,4)
+		amount_accrued=round(accrued*currentticketprice,4)
+		amount_used=round(used*currentticketprice,4)		
+		amount_balance=round(balance*currentticketprice,4)
 	return {'balance':balance,'used':used,'amount_balance':amount_balance,'amount_used':amount_used}
 def get_tickect_setting(emp):
 	sal=frappe.db.sql(""" select * from `tabEmployee Ticket Settings` where employee='%s' and docstatus='1'  order by from_date"""% (emp),as_dict=1,debug=0)
@@ -337,7 +411,7 @@ def get_annual_leaveamount(emp,reval_date):
 		ticket_period=tick[0].periodical
 		ticket_eligible=employee.no_of_ticket_eligible
 	
-	used_leaves=getused(emp,employee.opening_used_leaves.replace(',',''),reval_date,employee.date_of_joining)
+	used_leaves=getused(emp,employee.opening_used_leaves.replace(',',''),employee.date_of_joining,reval_date)
 	salary_structure=get_salary_structure(emp)
 	base_salary=0
 	#salcomp=frappe.db.get_all('Salary Detail',filters={'parent':salary_structure,'depends_on_payment_days':'1','amount':['>','0'],'salary_component':['in',('Basic(A)','Basic')]},fields=['salary_component','amount','parentfield'])
@@ -726,18 +800,13 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 
 
 def get_applicable_components(gratuity_rule):
-	applicable_earnings_component = frappe.get_all(
-		"Gratuity Applicable Component", filters={"parent": gratuity_rule}, fields=["salary_component"]
-	)
-	if len(applicable_earnings_component) == 0:
-		frappe.throw(
-			_("No Applicable Earnings Component found for Gratuity Rule: {0}").format(
-				bold(get_link_to_form("Gratuity Rule", gratuity_rule))
-			)
-		)
-	applicable_earnings_component = [
-		component.salary_component for component in applicable_earnings_component
-	]
+	applicable_earnings_components = frappe.get_all(
+		"Provision Applicable Component", filters={"parent": gratuity_rule}, fields=["salary_component"],debug=0)
+	applicable_earnings_component = []
+	if len(applicable_earnings_components):		
+		applicable_earnings_component = [
+		component.salary_component for component in applicable_earnings_components
+		]
 
 	return applicable_earnings_component
 
@@ -909,20 +978,235 @@ def get_worked_days(emp,start_date,end_date):
 	return nwdays
 
 @frappe.whitelist()
+def get_leave_balance_on(employee,date,to_date):
+	#from erpnext.hr.doctype.leave_application.leave_application import get_leave_balance_on
+	leave_type= 'Annual Leave'
+	consider_all_leaves_in_the_allocation_period= 1	
+	date=add_days(getdate(date),-1)
+	#frappe.msgprint(str(date))
+	to_date=''
+	if employee:
+		empy=frappe.db.sql(""" select * from `tabEmployee` where employee='{0}' """.format(employee),as_dict=1,debug=0)
+		if empy:
+			emp=empy[0]
+		alrules=get_provision_rule(emp.company)
+		company=emp.company
+		processing_month=date
+		if emp.relieving_date and emp.relieving_date < getdate(processing_month):
+			processing_month=emp.relieving_date
+			
+		#leave_provision_date
+		start_date=emp.date_of_joining
+		openabs=0
+		opnused=0
+		leave_code='0d'
+		gross_salary=0
+		usedleave=0
+		accrued=0
+		balance=0
+		absents=0
+		basic_salary=0
+		amount_balance=0
+		opening_balance_amount=0
+		total_days=0
+		actual_worked=0
+		amount_accrued=0
+		amount_used=0
+		
+
+		if alrules:
+			for rul in alrules:
+				if emp.openning_entry_date:
+					if (rul.date_from==None or (rul.date_from!=None and getdate(rul.date_from) <= emp.openning_entry_date)) and rul.date_to!=None and getdate(rul.date_to)>=emp.openning_entry_date:
+						leave_provision_date=emp.leave_provision_date or emp.date_of_joining
+						totaldays=date_diff(emp.openning_entry_date,leave_provision_date)+1
+						total_days+=totaldays
+						applicable_earnings_component=get_applicable_components(rul.name)
+						sal=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
+						actualworked=totaldays-float(emp.opening_absent)
+						absents+=float(emp.opening_absent)
+						actual_worked+=actualworked
+						if emp.opening_leaves_accrued > 0:
+							accru=emp.opening_leaves_accrued
+						else:
+							#accru=round((actualworked/365)*emp.leaves_per_year,4)
+							accru=round(round(emp.leaves_per_year/365,4)*actualworked,4)
+
+						accrued+=accru
+						leave_code=str(emp.leaves_per_year)+'D'
+						usedleaves=float(emp.opening_used_leaves.replace(',',''))
+						usedleave+=usedleaves
+						bala=round(accru-float(emp.opening_used_leaves.replace(',','')),4)
+						balance+=bala
+						if getdate(processing_month)<=getdate('2022-12-31'):
+							basic_salary=sal
+						opening_balance_amount=emp.opening_balance_amount
+						#amountbalance=round(((sal*12)/365)*bala,2)
+						#amount_balance+=amountbalance
+						if company=='GRAND CONTINENTAL FLAMINGO HOTEL' and getdate(processing_month)<=getdate('2022-12-31'):
+							ondaydalary=round(sal/30,4)
+						else:
+							ondaydalary=(sal*12)/365
+						
+						
+						amountused=round(ondaydalary*usedleaves,2)
+						amount_used+=amountused
+
+						#if emp.opening_balance_amount > 0:
+						#	amountaccrued=emp.opening_balance_amount+amountused
+						#else:
+						#	amountaccrued=round(ondaydalary*accru,2)
+
+						amountaccrued=round(ondaydalary*accru,2)
+						amount_accrued+=amountaccrued
+						#frappe.msgprint(str(amountaccrued))
+
+						if emp.opening_balance_amount > 0 and getdate(processing_month)<=getdate('2022-12-31'):
+							amount_balance+=emp.opening_balance_amount
+						else:
+							amount_balance+=round(amountaccrued-amountused,2)
+
+					elif getdate(processing_month) > emp.openning_entry_date and getdate(rul.date_from) <= getdate(processing_month):
+						
+						totleave=emp.leaves_per_year
+						tot_leave=get_leave_no(emp.name,processing_month)
+						if tot_leave:
+							totleave=tot_leave
+						day = getdate(emp.openning_entry_date)
+						start_date = add_days(day, 1)
+						openabs=0
+						opnused=0
+						totaldays=date_diff(processing_month,emp.openning_entry_date)						
+						total_days+=totaldays
+						applicable_earnings_component=get_applicable_components(rul.name)
+						gross_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
+						absent=getabsents(emp.name,openabs,start_date,processing_month)
+						absents+=absent
+						usedleaves=getused(emp.name,opnused,start_date,processing_month)
+						usedleave+=usedleaves
+						leave_code=str(totleave)+'D'
+						actualworked=totaldays-absent
+						actual_worked+=actualworked
+						#accru=round((actualworked/365)*float(totleave),4)
+						accru=round(round(float(totleave)/365,4)*actualworked,4)										
+						accrued+=accru
+						bala=round(accru-usedleaves,4)
+						balance+=bala
+						amountaccrued=round(((gross_salary*12)/365)*accru,2)
+						amount_accrued+=amountaccrued
+						amountused=round(((gross_salary*12)/365)*usedleaves,2)
+						amount_used+=amountused
+						amount_balance+=round(amountaccrued-amountused,2)
+						#frappe.msgprint(str(amountaccrued))
+						#amountbalance=round(((gross_salary*12)/365)*balance,2)
+						#amount_balance+=amountbalance
+				else:
+					leave_provision_date=emp.leave_provision_date or emp.date_of_joining
+					applicable_earnings_component=get_applicable_components(rul.name)
+					sal=0
+					end_date=processing_month
+					totaldays=0
+					if rul.date_from==None and rul.date_to!=None and getdate(leave_provision_date)<=getdate(rul.date_to):
+						start_date=leave_provision_date
+						if getdate(rul.date_to) < getdate(processing_month):
+							end_date=rul.date_to
+						else:
+							end_date=processing_month
+						basic_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
+						sal=basic_salary
+						if getdate(processing_month)>getdate('2022-12-31'):
+							basic_salary=0
+						totaldays=date_diff(end_date,start_date)+1
+					if rul.date_from!=None and rul.date_to==None:
+						if getdate(rul.date_from) > getdate(leave_provision_date):
+							start_date=rul.date_from
+						else:
+							start_date=leave_provision_date
+
+						end_date=processing_month
+						gross_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
+						sal=gross_salary
+						totaldays=date_diff(end_date,start_date)+1
+					#-----------------------------------------
+					
+					
+					
+					total_days+=totaldays
+					#frappe.msgprint(str(end_date)+'-'+str(start_date)+'-'+str(totaldays)+'-'+str(total_days))
+					totleave=get_leave_no(emp.name,processing_month)
+					leaves_per_year=emp.leaves_per_year
+					if totleave:
+						leaves_per_year=totleave	
+					
+					absent=getabsents(emp.name,openabs,start_date,end_date)
+					absents+=absent
+					usedleaves=getused(emp.name,opnused,start_date,end_date)
+					usedleave+=usedleaves
+					leave_code=str(leaves_per_year)+'D'
+					actualworked=totaldays-absent
+					actual_worked+=actualworked
+					accru=round(round(float(leaves_per_year)/365,4)*actualworked,4)										
+					accrued+=accru
+					bala=round(accru-usedleaves,4)
+					balance+=bala
+					amountaccrued=round(((sal*12)/365)*accru,2)
+					amount_accrued+=amountaccrued
+					amountused=round(((sal*12)/365)*usedleaves,2)
+					amount_used+=amountused
+					amount_balance+=round(amountaccrued-amountused,2)	
+
+		else:
+			totleave=get_leave_no(emp.name,processing_month)
+			leaves_per_year=emp.leaves_per_year
+			if totleave:
+				leaves_per_year=totleave
+
+			day = getdate(emp.openning_entry_date)
+			start_date = add_days(day, 1)
+			openabs=emp.opening_absent
+			opnused=emp.opening_used_leaves.replace(',','')
+			leave_provision_date=emp.leave_provision_date or emp.date_of_joining
+			total_days=date_diff(processing_month,leave_provision_date)+1
+			applicable_earnings_component=[]
+			gross_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
+			absents=getabsents(emp.name,openabs,start_date,processing_month)
+			usedleave=getused(emp.name,opnused,start_date,processing_month)
+			leave_code=str(leaves_per_year)+'D'
+			actual_worked=total_days-absents
+			#accrued=round((actual_worked/365)*leaves_per_year,4)
+			accrued=round(round(leaves_per_year/365,4)*actual_worked,4)			
+			balance=round(accrued-usedleave,4)
+			amount_accrued=round(((gross_salary*12)/365)*accrued,2)
+			#frappe.msgprint(str(amount_accrued))
+			amount_used=round(((gross_salary*12)/365)*usedleave,2)
+			amount_balance=round(amount_accrued-amount_used,2)
+			
+			
+		accrued=round(accrued,3)
+		balance=round(balance,3)
+		amount_accrued=round(amount_accrued,2)
+		amount_used=round(amount_used,2)
+		amount_balance=round(amount_balance,2)
+	#return get_leave_balance_on(employee,leave_type,date,to_date,consider_all_leaves_in_the_allocation_period)
+	return accrued
+
+@frappe.whitelist()
 def get_emp_details(emp,start_date,end_date):
+	start_date=add_days(getdate(start_date),-1)
 	employee=frappe.db.get_value('Employee',{'name':emp},['company','used_tickets','opening_ticket_balance','openning_entry_date','ticket_period','opening_used_leaves','date_of_joining','no_of_tickets_eligible'],as_dict=1,debug=0)
 	
 	ticket_period=employee.ticket_period
 	ticket_eligible=employee.no_of_tickets_eligible
-	leave_in_year=get_this_year_annual_leave(emp,end_date) or 0
+	leave_in_year=get_this_year_annual_leave(emp,start_date) or 0
 
-	gross_salary=get_gross_salary(emp,end_date)
+	gross_salary=get_gross_salary(emp,start_date)
 	tick=frappe.db.sql(""" select periodical,no_of_ticket_eligible from `tabEmployee Ticket Settings` where employee='%s' and docstatus='1'  order by from_date desc"""% (emp),as_dict=1,debug=0)
 	if tick:
 		ticket_period=tick[0].periodical
-		ticket_eligible=employee.no_of_ticket_eligible
-	
-	used_leaves=getused(emp,employee.opening_used_leaves.replace(',',''),end_date,employee.date_of_joining)
+		ticket_eligible=tick[0].no_of_ticket_eligible or employee.no_of_tickets_eligible
+	st=employee.openning_entry_date or employee.date_of_joining
+
+	used_leaves=getused(emp,employee.opening_used_leaves.replace(',',''),st,start_date)
 	salary_structure=get_salary_structure(emp)
 	#salcomp=frappe.db.get_all('Salary Detail',filters={'parent':salary_structure,'depends_on_payment_days':'1','amount':['>','0'],'salary_component':['in',('Basic(A)','Basic')]},fields=['salary_component','amount','parentfield'])
 	base_salary=0
@@ -931,13 +1215,13 @@ def get_emp_details(emp,start_date,end_date):
 	base=frappe.db.get_value("Salary Structure Assignment",{'employee':emp,'salary_structure':salary_structure},'base',debug=0)
 	if base:
 		base_salary=base
-	leave_entitled=get_leave_no(emp,end_date)
+	leave_entitled=get_leave_no(emp,start_date)
 	ticket_issued=0
 	opnusedtick=employee.used_tickets or 0
 	if employee.openning_entry_date!=None:
-		ticket_issued=get_ticket_issued(emp,employee.openning_entry_date,end_date)
+		ticket_issued=get_ticket_issued(emp,employee.openning_entry_date,start_date)
 	else:
-		ticket_issued=get_ticket_issued(emp,employee.date_of_joining,end_date)
+		ticket_issued=get_ticket_issued(emp,employee.date_of_joining,start_date)
 
 	ticket_issued+=float(opnusedtick)
 	
@@ -946,7 +1230,7 @@ def get_emp_details(emp,start_date,end_date):
 
 def get_this_year_annual_leave(emp,end_date):
 	res=frappe.db.sql(""" select count(*) as used FROM `tabAttendance` a left join `tabLeave Type` l on l.name=a.leave_type 
-	where a.docstatus=1 and a.status='On Leave' and a.employee='{0}' and year(a.attendance_date)=year('{1}') and a.leave_type='Annual Leave' """.format(emp,end_date),as_dict=1,debug=0)
+	where a.docstatus=1 and a.status='On Leave' and a.employee='{0}' and year(a.attendance_date)=year('{1}') and a.attendance_date<='{1}' and a.leave_type='Annual Leave' """.format(emp,end_date),as_dict=1,debug=0)
 	if res:
 		return res[0].used
 	return 

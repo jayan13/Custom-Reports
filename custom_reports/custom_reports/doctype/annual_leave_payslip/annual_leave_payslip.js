@@ -22,13 +22,11 @@ frappe.ui.form.on('Annual Leave Payslip', {
 
 		if (frm.doc.docstatus === 0 && frm.doc.employee  && frm.doc.date_of_joining && frm.doc.ending_date) {
 			return frappe.call({
-				method: "erpnext.hr.doctype.leave_application.leave_application.get_leave_balance_on",
+				method: "custom_reports.api.get_leave_balance_on",
 				args: {
 					employee: frm.doc.employee,
 					date: frm.doc.starting_date,
 					to_date: frm.doc.ending_date,
-					leave_type: 'Annual Leave',
-					consider_all_leaves_in_the_allocation_period: 1
 				},
 				callback: function (r) {
 					if (r.message) {
@@ -53,23 +51,21 @@ frappe.ui.form.on('Annual Leave Payslip', {
 				callback: function (r) {
 					if (r.message) {						
 						frm.set_value('leaves_taken_during_this_year',r.message.leave_in_year);						
-						frm.set_value('ticket_given',r.message.ticket_issued);
+						frm.set_value('ticket_given',r.message.ticket_issued);						
 						frm.set_value('ticket_period',r.message.ticket_period);
 						frm.set_value('used_leaves',r.message.used_leaves);
 						frm.set_value('leave_entitled',r.message.leave_entitled);
-						frm.set_value('salary_structure',r.message.salary_structure);
-						frm.set_value('ticket_used',r.message.ticket_issued);
+						frm.set_value('salary_structure',r.message.salary_structure);						
 						frm.set_value('ticket_eligible',r.message.ticket_eligible);
 						frm.set_value('gross_salary',r.message.gross_salary);
 						frm.set_value('base_salary',r.message.base_salary);
 					} else {
 						frm.set_value('leaves_taken_during_this_year',"0");
-						frm.set_value('ticket_balance',"0");						
+						frm.set_value('ticket_given',"0");												
 						frm.set_value('ticket_period',"0");
 						frm.set_value('used_leaves',"0");
 						frm.set_value('leave_entitled',"0");
-						frm.set_value('salary_structure',"0");
-						frm.set_value('ticket_used',"0");
+						frm.set_value('salary_structure',"0");						
 						frm.set_value('ticket_eligible',"0");
 						frm.set_value('gross_salary',"0");
 						frm.set_value('base_salary',"0");
@@ -86,7 +82,7 @@ frappe.ui.form.on('Annual Leave Payslip', {
 				args: {					
 					emp: frm.doc.employee,
 					from_date: frm.doc.date_of_joining,
-					to_date: frm.doc.ending_date,		
+					to_date: frm.doc.starting_date,		
 				},
 				callback: function(p) {
 					if(p.message) {					
@@ -147,7 +143,12 @@ frappe.ui.form.on('Annual Leave Payslip', {
 		if(frm.doc.allowance_and_deducts){
 			frm.doc.allowance_and_deducts.forEach(function(d) { 
 				
+				if(d.payment_type=='Deduction')
+				{
+				    tot-=Math.round(d.currency_amt,2);
+				}else{
 					tot+=Math.round(d.currency_amt,2);
+				}
 				
 			});
 		}
@@ -171,7 +172,12 @@ frappe.ui.form.on('Allowance And Deducts', {
 		if(frm.doc.allowance_and_deducts){
 			frm.doc.allowance_and_deducts.forEach(function(d) { 
 				
+				if(d.payment_type=='Deduction')
+				{
+				    tot-=Math.round(d.currency_amt,2);
+				}else{
 					tot+=Math.round(d.currency_amt,2);
+				}
 				
 			});
 		}
@@ -195,7 +201,12 @@ frappe.ui.form.on('Settlement Details', {
 		if(frm.doc.allowance_and_deducts){
 			frm.doc.allowance_and_deducts.forEach(function(d) { 
 				
+				if(d.payment_type=='Deduction')
+				{
+				    tot-=Math.round(d.currency_amt,2);
+				}else{
 					tot+=Math.round(d.currency_amt,2);
+				}
 				
 			});
 		}
@@ -214,7 +225,12 @@ frappe.ui.form.on('Settlement Details', {
 		if(frm.doc.allowance_and_deducts){
 			frm.doc.allowance_and_deducts.forEach(function(d) { 
 				
+				if(d.payment_type=='Deduction')
+				{
+				    tot-=Math.round(d.currency_amt,2);
+				}else{
 					tot+=Math.round(d.currency_amt,2);
+				}
 				
 			});
 		}
