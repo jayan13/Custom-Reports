@@ -1370,7 +1370,9 @@ def update_material_req_pay(mt_req,paid_to):
 @frappe.whitelist()
 def get_value_from_jv(name):
 	amount=0
-	jv=frappe.db.get_all("Journal Entry Account",filters={'reference_type':'Material Request','reference_name':name,'docstatus':1},fields=['sum(debit) as amount'],group_by='reference_name')
+	#jv=frappe.db.get_all("Journal Entry Account",filters={'reference_type':'Material Request','reference_name':name,'docstatus':1},fields=['sum(debit) as amount'],group_by='reference_name')
+	jv=frappe.db.sql(""" select sum(j.debit) as amount,j.reference_name from `tabJournal Entry Account` j left join `tabAccount` a on a.name=j.account 
+		where a.root_type='Expense' and j.debit > 0 and j.reference_type='Material Request' and j.reference_name='{0}' group by j.reference_name""".format(name),as_dict=1)
 	if jv:
 		amount=jv[0].amount
 	
@@ -1379,17 +1381,21 @@ def get_value_from_jv(name):
 @frappe.whitelist()
 def update_material_transfer(doc,event):
 	balance=0
-	jv=frappe.db.get_all("Journal Entry Account",filters={'reference_type':'Material Request','parent':doc.name},fields=['sum(debit) as amount,reference_name'],group_by='reference_name')
-	if jv:
-		if jv[0].amount > 0:
-			mr=frappe.db.get_value('Material Request',jv[0].reference_name,['total','is_it_for_asset_maintenance'],as_dict=1)
+	#jv=frappe.db.get_all("Journal Entry Account",filters={'reference_type':'Material Request','parent':doc.name},fields=['sum(debit) as amount,reference_name'],group_by='reference_name')
+	jvsql=frappe.db.sql(""" select sum(j.debit) as amount,j.reference_name from `tabJournal Entry Account` j left join `tabAccount` a on a.name=j.account 
+		where a.root_type='Expense' and j.debit > 0 and j.reference_type='Material Request' and j.parent='{0}' group by j.reference_name""".format(doc.name),as_dict=1)
+	if jvsql:
+		for jv in jvsql:		
+			mr=frappe.db.get_value('Material Request',jv.reference_name,['total','is_it_for_asset_maintenance'],as_dict=1)
 			if mr.is_it_for_asset_maintenance:				
-				balance=float(mr.total)-float(jv[0].amount)
-				frappe.db.set_value('Material Request',jv[0].reference_name,{'actual_rate':jv[0].amount,'balance':balance})
+				balance=float(mr.total)-float(jv.amount)
+				frappe.db.set_value('Material Request',jv.reference_name,{'actual_rate':jv.amount,'balance':balance})
 
 @frappe.whitelist()
 def cancel_material_transfer(doc,event):
-	jv=frappe.db.get_all("Journal Entry Account",filters={'reference_type':'Material Request','parent':doc.name},fields=['reference_name'])
-	if jv:
-		if jv[0].reference_name:
-			frappe.db.set_value('Material Request',jv[0].reference_name,{'actual_rate':0,'balance':0})
+	#jv=frappe.db.get_all("Journal Entry Account",filters={'reference_type':'Material Request','parent':doc.name},fields=['reference_name'])
+	jvsql=frappe.db.sql(""" select sum(j.debit) as amount,j.reference_name from `tabJournal Entry Account` j left join `tabAccount` a on a.name=j.account 
+		where a.root_type='Expense' and j.debit > 0 and j.reference_type='Material Request' and j.parent='{0}' group by j.reference_name""".format(doc.name),as_dict=1)
+	if jvsql:
+		for jv in jvsql:
+			frappe.db.set_value('Material Request',jv.reference_name,{'actual_rate':0,'balance':0})
