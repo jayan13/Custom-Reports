@@ -31,34 +31,36 @@ def get_report(company):
     billedpro=sett.bill_settled_status_pro
     tot_cash=0
     html+='<table class="table table-bordered" >'
-    html+='<tr class="table-secondary"><th>UN-SETTELED CASH BALANCE</th><th>BALANCE AMOUNT</th><th></th></tr>'
+    html+='<tr class="table-secondary"><th colspan="2">UNSETTLED CASH BALANCE</th><th>BALANCE AMOUNT</th></tr>'
 
     cash_amt=0
     cash_sql=frappe.db.sql(""" select IFNULL(sum(debit)-sum(credit), 0) as amt from `tabGL Entry` where docstatus=1 and account='{0}' and company='{1}' """.format(cash_acc,company),as_dict=1)
     if cash_sql:
         cash_amt=cash_sql[0].amt
         tot_cash+=float(cash_amt)
-    html+='<tr><td>CASH BALANCE WITH CASIER - Material Req</td> <td class="text-right">'+str(flt(cash_amt,2))+'</td><td></td></tr>'
+        cash_amt=frappe.utils.fmt_money(cash_amt)
+    html+='<tr><td colspan="2">CASH BALANCE WITH CASHIER - Material Req</td> <td class="text-right">'+str(cash_amt)+'</td></tr>'
     cash_amt_pro=0
     cash_pro_sql=frappe.db.sql(""" select IFNULL(sum(debit)-sum(credit), 0) as amt from `tabGL Entry` where docstatus=1 and account='{0}' and company='{1}' """.format(cash_acc_pro,company),as_dict=1)
     if cash_pro_sql:
         cash_amt_pro=cash_pro_sql[0].amt
         tot_cash+=float(cash_amt_pro)
+    cash_amt_pro=frappe.utils.fmt_money(cash_amt_pro)    
+    html+='<tr><td colspan="2">CASH BALANCE WITH CASHIER - PRO Req</td> <td class="text-right">'+str(cash_amt_pro)+'</td></tr>'
 
-    html+='<tr><td>CASH BALANCE WITH CASIER - PRO Req</td> <td class="text-right">'+str(flt(cash_amt_pro,2))+'</td><td></td></tr>'
-
-
-    tot_cash=0
     iou_employee=frappe.db.sql(""" select IFNULL(sum(debit)-sum(credit), 0) as amt,party from `tabGL Entry` where docstatus=1 and party_type='Employee' and account='{0}' and company='{1}' group by party""".format(iou_cash_acc,company),as_dict=1)
     
     if iou_employee:
-        html+='<tr class="table-secondary"><td><b>EMPLOYEE IOU BALANCE</b></td> <td class="text-right"></td><td></td></tr>'
+        
         for emp in iou_employee:
             tot_cash+=float(emp.amt)
-            html+='<tr><td><b>'+str(emp.party)+'</b></td> <td class="text-right">'+str(flt(emp.amt,2))+'</td><td></td></tr>'
-
-    html+='<tr><td><b>TOTAL CASH BALANCE</b></td> <td class="text-right">'+str(flt(tot_cash,2))+'</td><td></td></tr>'
+            amt=frappe.utils.fmt_money(emp.amt)
+            empname=frappe.db.get_value('Employee',emp.party,'employee_name')
+            html+='<tr><td colspan="2">IOU Balance - '+str(empname)+'</td> <td class="text-right">'+str(amt)+'</td></tr>'
     
+    tot_cash=frappe.utils.fmt_money(tot_cash)
+    html+='<tr class="table-secondary"><td colspan="2"><b>TOTAL CASH BALANCE</b></td> <td class="text-right">'+str(tot_cash)+'</td></tr>'
+    html+='<tr ><td><b>&nbsp;</b></td> <td class="text-right"></td><td></td></tr>'
     html+='<tr class="table-secondary"><th>MATERIAL REQUEST</th> <th>Count</th> <th>Total Amount</th> </tr>'
     totsettle=0
     settled_amt=0
@@ -77,8 +79,10 @@ def get_report(company):
         unsettled_cnt=unsettled[0].cnt
         totsettle+=float(unsettled[0].amount)
 
-    html+='<tr><td>Material Requests in Settlemet Process</td> <td class="text-right">'+str(settled_cnt)+'</td><td class="text-right">'+str(flt(settled_amt,2))+'</td></tr>'
-    html+='<tr><td>UN Setteled Material Requests</td> <td class="text-right">'+str(unsettled_cnt)+'</td><td class="text-right">'+str(flt(unsettled_amt,2))+'</td></tr>'
+    settled_amt=frappe.utils.fmt_money(settled_amt)
+    unsettled_amt=frappe.utils.fmt_money(unsettled_amt)
+    html+='<tr><td>Material Requests in Settlemet Process</td> <td class="text-right">'+str(settled_cnt)+'</td><td class="text-right">'+str(settled_amt)+'</td></tr>'
+    html+='<tr><td>Unsettled Material Requests</td> <td class="text-right">'+str(unsettled_cnt)+'</td><td class="text-right">'+str(unsettled_amt)+'</td></tr>'
 
     html+='<tr class="table-secondary"><th>PRO EXPENSE REQUEST</th> <th>Count</th> <th>Total Amount</th> </tr>'
     settled_amt=0
@@ -97,10 +101,13 @@ def get_report(company):
         unsettled_cnt=unsettled[0].cnt
         totsettle+=float(unsettled[0].amount)
 
-    html+='<tr><td>PRO Requests in Settlemet Process</td> <td class="text-right">'+str(settled_cnt)+'</td><td class="text-right">'+str(flt(settled_amt,2))+'</td></tr>'
-    html+='<tr><td>UN Setteled PRO Requests</td> <td class="text-right">'+str(unsettled_cnt)+'</td><td class="text-right">'+str(flt(unsettled_amt,2))+'</td></tr>'
+    settled_amt=frappe.utils.fmt_money(settled_amt)
+    unsettled_amt=frappe.utils.fmt_money(unsettled_amt)
+    totsettle=frappe.utils.fmt_money(totsettle)
+    html+='<tr><td>PRO Requests in Settlemet Process</td> <td class="text-right">'+str(settled_cnt)+'</td><td class="text-right">'+str(settled_amt)+'</td></tr>'
+    html+='<tr><td>Unsettled PRO Requests</td> <td class="text-right">'+str(unsettled_cnt)+'</td><td class="text-right">'+str(unsettled_amt)+'</td></tr>'
 
-    html+='<tr class="table-secondary"><td>Total (PRO + MATERIAL REQ)</td> <td class="text-right"></td><td class="text-right">'+str(flt(totsettle,2))+'</td></tr>'
+    html+='<tr class="table-secondary"><td><b>Total (PRO + MATERIAL REQ)</b></td> <td class="text-right"></td><td class="text-right"><b>'+str(totsettle)+'</b></td></tr>'
     
     
     html+='</table>'

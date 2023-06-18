@@ -13,7 +13,7 @@ MyPage =Class.extend({
 	init: function(wrapper){
 			this.page = frappe.ui.make_app_page({
 			parent: wrapper,
-			title: 'Material And Pro Request - Settlement Dashboard',
+			title: 'Material And PRO Request - Settlement Dashboard',
 			single_column: true
 		});
 			this.make();
