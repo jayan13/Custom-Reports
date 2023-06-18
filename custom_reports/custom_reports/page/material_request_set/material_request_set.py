@@ -87,7 +87,7 @@ def get_report(company):
     html+='<tr class="table-secondary"><th>PRO EXPENSE REQUEST</th> <th>Count</th> <th>Total Amount</th> </tr>'
     settled_amt=0
     settled_cnt=0
-    settled=frappe.db.sql(""" select count(total) as cnt,IFNULL(sum(total), 0) as amount from `tabPRO Expense Request` where docstatus=1 and workflow_state!='{0}' and workflow_state!='{1}' and company='{2}' """.format(billedpro,approvedpro,company),as_dict=1)
+    settled=frappe.db.sql(""" select count(total) as cnt,IFNULL(sum(total), 0) as amount from `tabPRO Expense Request` where docstatus=1 and workflow_state!='Paid' and workflow_state!='{0}' and workflow_state!='{1}' and company='{2}' """.format(billedpro,approvedpro,company),as_dict=1)
     if settled:
         settled_amt=settled[0].amount
         settled_cnt=settled[0].cnt
