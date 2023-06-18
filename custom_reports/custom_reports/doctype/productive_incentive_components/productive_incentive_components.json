@@ -1,0 +1,31 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-02-26 09:06:57.357995",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "productive_incentive_component"
+ ],
+ "fields": [
+  {
+   "fieldname": "productive_incentive_component",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Productive Incentive Component",
+   "options": "Salary Component"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-02-26 09:23:15.713363",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "Productive Incentive Components",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

@@ -13,6 +13,7 @@
   "leave_application",
   "employee_name",
   "date_of_joining",
+  "company",
   "column_break_5",
   "posting_date",
   "designation",
@@ -60,7 +61,9 @@
   "hr_department_approval",
   "passport",
   "documents",
-  "amended_from"
+  "amended_from",
+  "workflow_state",
+  "email_notification"
  ],
  "fields": [
   {
@@ -147,43 +150,50 @@
    "default": "0",
    "fieldname": "petty_cash",
    "fieldtype": "Check",
-   "label": "Petty Cash"
+   "label": "Petty Cash",
+   "read_only_depends_on": "eval:doc.__islocal"
   },
   {
    "default": "0",
    "fieldname": "salary_advance",
    "fieldtype": "Check",
-   "label": "Salary Advance"
+   "label": "Salary Advance",
+   "read_only_depends_on": "eval:doc.__islocal"
   },
   {
    "default": "0",
    "fieldname": "computer",
    "fieldtype": "Check",
-   "label": "Computer"
+   "label": "Computer",
+   "read_only_depends_on": "eval:doc.__islocal"
   },
   {
    "default": "0",
    "fieldname": "software_package",
    "fieldtype": "Check",
-   "label": "Software Package"
+   "label": "Software Package",
+   "read_only_depends_on": "eval:doc.__islocal"
   },
   {
    "default": "0",
    "fieldname": "network_account",
    "fieldtype": "Check",
-   "label": "Network Account"
+   "label": "Network Account",
+   "read_only_depends_on": "eval:doc.__islocal"
   },
   {
    "default": "0",
    "fieldname": "passport",
    "fieldtype": "Check",
-   "label": "Passport"
+   "label": "Passport",
+   "read_only_depends_on": "eval:doc.__islocal"
   },
   {
    "default": "0",
    "fieldname": "company_car_key",
    "fieldtype": "Check",
-   "label": "Company Car key"
+   "label": "Company Car key",
+   "read_only_depends_on": "eval:doc.__islocal"
   },
   {
    "fieldname": "amended_from",
@@ -285,12 +295,14 @@
   {
    "fieldname": "petty_cash_procedure",
    "fieldtype": "Data",
-   "label": "Procedure"
+   "label": "Procedure",
+   "read_only_depends_on": "eval:doc.__islocal"
   },
   {
    "fieldname": "salary_advance_procedure",
    "fieldtype": "Data",
-   "label": "Procedure"
+   "label": "Procedure",
+   "read_only_depends_on": "eval:doc.__islocal"
   },
   {
    "default": "0",
@@ -309,7 +321,8 @@
    "description": "Traffic fines/Violation penalty etc",
    "fieldname": "pro_others",
    "fieldtype": "Check",
-   "label": "Others"
+   "label": "Others",
+   "read_only_depends_on": "eval:doc.__islocal"
   },
   {
    "fieldname": "column_break_33",
@@ -319,7 +332,8 @@
    "default": "0",
    "fieldname": "pro_procedure",
    "fieldtype": "Check",
-   "label": "Procedure"
+   "label": "Procedure",
+   "read_only_depends_on": "eval:doc.__islocal"
   },
   {
    "fieldname": "column_break_35",
@@ -336,19 +350,22 @@
    "default": "0",
    "fieldname": "email_and_password_changed",
    "fieldtype": "Check",
-   "label": "Email and password changed"
+   "label": "Email and password changed",
+   "read_only_depends_on": "eval:doc.__islocal"
   },
   {
    "default": "0",
    "fieldname": "passwords",
    "fieldtype": "Check",
-   "label": "Passwords"
+   "label": "Passwords",
+   "read_only_depends_on": "eval:doc.__islocal"
   },
   {
    "default": "0",
    "fieldname": "mobile_sim",
    "fieldtype": "Check",
-   "label": "Mobile & Sim"
+   "label": "Mobile & Sim",
+   "read_only_depends_on": "eval:doc.__islocal"
   },
   {
    "default": "0",
@@ -361,7 +378,8 @@
    "default": "0",
    "fieldname": "documents",
    "fieldtype": "Check",
-   "label": "Documents"
+   "label": "Documents",
+   "read_only_depends_on": "eval:doc.__islocal"
   },
   {
    "default": "0",
@@ -380,12 +398,32 @@
    "fieldtype": "Select",
    "label": "Series",
    "options": "HR-CF-.YY.-"
+  },
+  {
+   "fieldname": "workflow_state",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "workflow state"
+  },
+  {
+   "default": "0",
+   "fieldname": "email_notification",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Email Notification"
+  },
+  {
+   "fetch_from": "employee.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-12-16 10:13:36.961395",
+ "modified": "2023-03-17 09:47:17.335704",
  "modified_by": "Administrator",
  "module": "custom reports",
  "name": "Clearance Form",

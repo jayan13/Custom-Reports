@@ -119,7 +119,14 @@ frappe.ui.form.on('Expense Request Item', {
 			}
 		}
 
-	}
+	},
+	amount:function(frm, cdt, cdn){
+		var d = locals[cdt][cdn];
+		var total = 0;
+		frm.doc.expense.forEach(function(d) { total += d.amount; });
+		frm.set_value("total", total);
+		refresh_field("total");
+			}
 });
 
 

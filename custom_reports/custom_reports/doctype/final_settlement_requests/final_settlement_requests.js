@@ -14,7 +14,12 @@ frappe.ui.form.on('Final Settlement Requests', {
 		if(frm.doc.allowance_and_deducts){
 			frm.doc.allowance_and_deducts.forEach(function(d) { 
 				
+				if(d.payment_type=='Deduction')
+				{
+				    tot-=Math.round(d.currency_amt,2);
+				}else{
 					tot+=Math.round(d.currency_amt,2);
+				}
 				
 			});
 		}

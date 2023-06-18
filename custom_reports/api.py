@@ -1370,24 +1370,26 @@ def update_material_req_pay(mt_req,paid_to):
 @frappe.whitelist()
 def get_value_from_jv(name):
 	amount=0
+	jv_entry=''
 	#jv=frappe.db.get_all("Journal Entry Account",filters={'reference_type':'Material Request','reference_name':name,'docstatus':1},fields=['sum(debit) as amount'],group_by='reference_name')
-	jv=frappe.db.sql(""" select IFNULL(sum(j.debit),0) as amount,j.reference_name from `tabJournal Entry Account` j left join `tabAccount` a on a.name=j.account 
+	jv=frappe.db.sql(""" select IFNULL(sum(j.debit),0) as amount,j.reference_name,j.parent from `tabJournal Entry Account` j left join `tabAccount` a on a.name=j.account 
 		where a.root_type='Expense' and j.debit > 0 and j.reference_type='Material Request' and j.reference_name='{0}' group by j.reference_name""".format(name),as_dict=1)
 	if jv:
 		amount=jv[0].amount
-	
-	return amount
+		jv_entry=jv[0].parent
+	return {'amount':amount,'jv_entry':jv_entry}
 
 @frappe.whitelist()
 def get_value_pro_from_jv(name):
 	amount=0
-	
-	jv=frappe.db.sql(""" select IFNULL(sum(j.debit),0) as amount,j.reference_name from `tabJournal Entry Account` j left join `tabAccount` a on a.name=j.account 
+	jv_entry=''
+	jv=frappe.db.sql(""" select IFNULL(sum(j.debit),0) as amount,j.reference_name,j.parent  from `tabJournal Entry Account` j left join `tabAccount` a on a.name=j.account 
 		where a.root_type='Expense' and j.debit > 0 and j.reference_type='PRO Expense Request' and j.reference_name='{0}' group by j.reference_name""".format(name),as_dict=1)
 	if jv:
 		amount=jv[0].amount
+		jv_entry=jv[0].parent
 	
-	return amount
+	return {'amount':amount,'jv_entry':jv_entry}
 
 
 @frappe.whitelist()

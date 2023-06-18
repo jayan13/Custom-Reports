@@ -1,0 +1,238 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2022-10-18 18:46:54.890081",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "company",
+  "employee",
+  "employee_name",
+  "date",
+  "mark_as_paid",
+  "column_break_4",
+  "remarks",
+  "is_distibuted",
+  "distribution_status",
+  "amended_from",
+  "expense_section",
+  "expense",
+  "total",
+  "settlement_details_section",
+  "actual_rate",
+  "balance",
+  "attachment_1",
+  "attachment_2",
+  "attachment_3",
+  "col_set_bk",
+  "journal_entry",
+  "view_cash_balance",
+  "note",
+  "printing_settings_section",
+  "letter_head"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "EXPREQ-"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Date"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Text",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "PRO Expense Request",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "expense_section",
+   "fieldtype": "Section Break",
+   "label": "Expense"
+  },
+  {
+   "fieldname": "total",
+   "fieldtype": "Currency",
+   "label": "Total",
+   "read_only": 1
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "From Employee",
+   "options": "Employee"
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "label": "Employee Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "expense",
+   "fieldtype": "Table",
+   "label": "Expense",
+   "options": "Expense Request Item"
+  },
+  {
+   "fieldname": "printing_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Printing Settings"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "letter_head",
+   "fieldtype": "Link",
+   "label": "Letter Head",
+   "options": "Letter Head"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_distibuted",
+   "fieldtype": "Check",
+   "label": "Will the expense be distributed to other divisions?"
+  },
+  {
+   "allow_on_submit": 1,
+   "depends_on": "eval:doc.is_distibuted",
+   "fieldname": "distribution_status",
+   "fieldtype": "Select",
+   "label": "Distribution Status",
+   "options": "Payment Not Distibuted\nPayment Distributed"
+  },
+  {
+   "depends_on": "eval:doc.workflow_state==\"Approved\"",
+   "fieldname": "mark_as_paid",
+   "fieldtype": "Button",
+   "label": "Mark As Paid"
+  },
+  {
+   "fieldname": "settlement_details_section",
+   "fieldtype": "Section Break",
+   "label": "Settlement Details"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "actual_rate",
+   "fieldtype": "Float",
+   "label": "Actual Rate"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "balance",
+   "fieldtype": "Float",
+   "label": "Balance"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "attachment_1",
+   "fieldtype": "Attach",
+   "label": "Attachment 1"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "attachment_2",
+   "fieldtype": "Attach",
+   "label": "Attachment 2"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "attachment_3",
+   "fieldtype": "Attach",
+   "label": "Attachment 3"
+  },
+  {
+   "fieldname": "col_set_bk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "note",
+   "fieldtype": "Text",
+   "label": "Note"
+  },
+  {
+   "fieldname": "view_cash_balance",
+   "fieldtype": "Button",
+   "label": "View Cash Balance"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "journal_entry",
+   "fieldtype": "Link",
+   "label": "Journal Entry",
+   "options": "Journal Entry",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [
+  {
+   "link_doctype": "Expense Claim",
+   "link_fieldname": "expense_request"
+  },
+  {
+   "link_doctype": "Employee Advance",
+   "link_fieldname": "expense_request"
+  },
+  {
+   "link_doctype": "Payment Entry",
+   "link_fieldname": "expense_request"
+  },
+  {
+   "link_doctype": "Journal Entry",
+   "link_fieldname": "expense_request"
+  }
+ ],
+ "modified": "2023-06-18 14:46:54.537764",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "PRO Expense Request",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

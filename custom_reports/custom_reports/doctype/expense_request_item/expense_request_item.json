@@ -22,10 +22,10 @@
   },
   {
    "fieldname": "expense_claim_type",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Expense Claim Type",
-   "options": "Visa Expenses\nEID\nMedical\nLabour Permit\nResident Permit\nMedical Insurance\nVisa Related fines\nTrade License renewal\nMunicipality Fees/Charges\nE-Channel Subscription\nE-Dirham Cards\nPOA Related\nDocument Attestation\nChamber of Commerce\nLegal/Court Fees",
+   "options": "Expense Claim Type",
    "reqd": 1
   },
   {
@@ -52,7 +52,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-10-18 18:54:01.069562",
+ "modified": "2022-10-27 11:44:37.549281",
  "modified_by": "Administrator",
  "module": "custom reports",
  "name": "Expense Request Item",
