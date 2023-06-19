@@ -65,7 +65,7 @@ def get_report(company):
     totsettle=0
     settled_amt=0
     settled_cnt=0
-    settled=frappe.db.sql(""" select count(total) as cnt,IFNULL(sum(total), 0) as amount from `tabMaterial Request` where docstatus=1 and is_it_for_asset_maintenance=1 and workflow_state!='Cash Issued' and workflow_state!='{0}' and workflow_state!='{1}' and company='{2}' """.format(billed,approved,company),as_dict=1)
+    settled=frappe.db.sql(""" select count(total) as cnt,IFNULL(sum(total), 0) as amount from `tabMaterial Request` where docstatus=1 and workflow_state!='Cash Issued' and workflow_state!='{0}' and workflow_state!='{1}' and company='{2}' """.format(billed,approved,company),as_dict=1)
     if settled:
         settled_amt=settled[0].amount
         settled_cnt=settled[0].cnt
@@ -73,7 +73,7 @@ def get_report(company):
 
     issued_amt=0
     issued_cnt=0
-    issued=frappe.db.sql(""" select count(total) as cnt,IFNULL(sum(total), 0) as amount from `tabMaterial Request` where docstatus=1 and is_it_for_asset_maintenance=1 and workflow_state='Cash Issued' and company='{0}' """.format(company),as_dict=1)
+    issued=frappe.db.sql(""" select count(total) as cnt,IFNULL(sum(total), 0) as amount from `tabMaterial Request` where docstatus=1 and workflow_state='Cash Issued' and company='{0}' """.format(company),as_dict=1)
     if issued:
         issued_amt=issued[0].amount
         issued_cnt=issued[0].cnt
@@ -81,7 +81,7 @@ def get_report(company):
 
     unsettled_amt=0
     unsettled_cnt=0
-    unsettled=frappe.db.sql(""" select count(total) as cnt,IFNULL(sum(total), 0) as amount from `tabMaterial Request` where docstatus=1 and is_it_for_asset_maintenance=1 and workflow_state='{0}' and company='{1}' """.format(approved,company),as_dict=1)
+    unsettled=frappe.db.sql(""" select count(total) as cnt,IFNULL(sum(total), 0) as amount from `tabMaterial Request` where docstatus=1 and  workflow_state='{0}' and company='{1}' """.format(approved,company),as_dict=1)
     if unsettled:
         unsettled_amt=unsettled[0].amount
         unsettled_cnt=unsettled[0].cnt
