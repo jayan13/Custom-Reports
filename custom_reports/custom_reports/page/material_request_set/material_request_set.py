@@ -65,11 +65,19 @@ def get_report(company):
     totsettle=0
     settled_amt=0
     settled_cnt=0
-    settled=frappe.db.sql(""" select count(total) as cnt,IFNULL(sum(total), 0) as amount from `tabMaterial Request` where docstatus=1 and is_it_for_asset_maintenance=1 and workflow_state!='{0}' and workflow_state!='{1}' and company='{2}' """.format(billed,approved,company),as_dict=1)
+    settled=frappe.db.sql(""" select count(total) as cnt,IFNULL(sum(total), 0) as amount from `tabMaterial Request` where docstatus=1 and is_it_for_asset_maintenance=1 and workflow_state!='Cash Issued' and workflow_state!='{0}' and workflow_state!='{1}' and company='{2}' """.format(billed,approved,company),as_dict=1)
     if settled:
         settled_amt=settled[0].amount
         settled_cnt=settled[0].cnt
         totsettle+=float(settled[0].amount)
+
+    issued_amt=0
+    issued_cnt=0
+    issued=frappe.db.sql(""" select count(total) as cnt,IFNULL(sum(total), 0) as amount from `tabMaterial Request` where docstatus=1 and is_it_for_asset_maintenance=1 and workflow_state='Cash Issued' and company='{0}' """.format(company),as_dict=1)
+    if issued:
+        issued_amt=issued[0].amount
+        issued_cnt=issued[0].cnt
+        totsettle+=float(issued[0].amount)
 
     unsettled_amt=0
     unsettled_cnt=0
@@ -80,18 +88,29 @@ def get_report(company):
         totsettle+=float(unsettled[0].amount)
 
     settled_amt=frappe.utils.fmt_money(settled_amt)
+    issued_amt=frappe.utils.fmt_money(issued_amt)
     unsettled_amt=frappe.utils.fmt_money(unsettled_amt)
+    
     html+='<tr><td>Material Requests in Settlemet Process</td> <td class="text-right">'+str(settled_cnt)+'</td><td class="text-right">'+str(settled_amt)+'</td></tr>'
+    html+='<tr><td>Unsettled Cash Issued Material Requests</td> <td class="text-right">'+str(issued_cnt)+'</td><td class="text-right">'+str(issued_amt)+'</td></tr>'
     html+='<tr><td>Unsettled Material Requests</td> <td class="text-right">'+str(unsettled_cnt)+'</td><td class="text-right">'+str(unsettled_amt)+'</td></tr>'
 
     html+='<tr class="table-secondary"><th>PRO EXPENSE REQUEST</th> <th>Count</th> <th>Total Amount</th> </tr>'
     settled_amt=0
     settled_cnt=0
-    settled=frappe.db.sql(""" select count(total) as cnt,IFNULL(sum(total), 0) as amount from `tabPRO Expense Request` where docstatus=1 and workflow_state!='Paid' and workflow_state!='{0}' and workflow_state!='{1}' and company='{2}' """.format(billedpro,approvedpro,company),as_dict=1)
+    settled=frappe.db.sql(""" select count(total) as cnt,IFNULL(sum(total), 0) as amount from `tabPRO Expense Request` where docstatus=1 and workflow_state!='Paid' and workflow_state!='Cash Issued' and workflow_state!='{0}' and workflow_state!='{1}' and company='{2}' """.format(billedpro,approvedpro,company),as_dict=1)
     if settled:
         settled_amt=settled[0].amount
         settled_cnt=settled[0].cnt
         totsettle+=float(settled[0].amount)
+    
+    issued_amt=0
+    issued_cnt=0
+    issued=frappe.db.sql(""" select count(total) as cnt,IFNULL(sum(total), 0) as amount from `tabPRO Expense Request` where docstatus=1 and workflow_state='Cash Issued' and company='{0}' """.format(company),as_dict=1)
+    if issued:
+        issued_amt=issued[0].amount
+        issued_cnt=issued[0].cnt
+        totsettle+=float(issued[0].amount)
 
     unsettled_amt=0
     unsettled_cnt=0
@@ -102,9 +121,11 @@ def get_report(company):
         totsettle+=float(unsettled[0].amount)
 
     settled_amt=frappe.utils.fmt_money(settled_amt)
+    issued_amt=frappe.utils.fmt_money(issued_amt)
     unsettled_amt=frappe.utils.fmt_money(unsettled_amt)
     totsettle=frappe.utils.fmt_money(totsettle)
     html+='<tr><td>PRO Requests in Settlemet Process</td> <td class="text-right">'+str(settled_cnt)+'</td><td class="text-right">'+str(settled_amt)+'</td></tr>'
+    html+='<tr><td>Unsettled Cash Issued PRO Requests</td> <td class="text-right">'+str(issued_cnt)+'</td><td class="text-right">'+str(issued_amt)+'</td></tr>'
     html+='<tr><td>Unsettled PRO Requests</td> <td class="text-right">'+str(unsettled_cnt)+'</td><td class="text-right">'+str(unsettled_amt)+'</td></tr>'
 
     html+='<tr class="table-secondary"><td><b>Total (PRO + MATERIAL REQ)</b></td> <td class="text-right"></td><td class="text-right"><b>'+str(totsettle)+'</b></td></tr>'
