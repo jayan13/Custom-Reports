@@ -28,7 +28,9 @@
   "attachment_2",
   "attachment_3",
   "col_set_bk",
+  "journal_entry_issue",
   "journal_entry",
+  "prev_workflow_state",
   "view_cash_balance",
   "note",
   "printing_settings_section",
@@ -150,7 +152,7 @@
    "allow_on_submit": 1,
    "fieldname": "balance",
    "fieldtype": "Float",
-   "label": "Balance"
+   "label": "Balance (Estimated Rate - Actual Rate )"
   },
   {
    "allow_on_submit": 1,
@@ -188,10 +190,22 @@
   {
    "allow_on_submit": 1,
    "fieldname": "journal_entry",
-   "fieldtype": "Link",
-   "label": "Journal Entry",
-   "options": "Journal Entry",
+   "fieldtype": "Data",
+   "label": "Journal Entry of Cash Settlement",
    "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "journal_entry_issue",
+   "fieldtype": "Data",
+   "label": "Journal Entry of Cash Issued",
+   "read_only": 1
+  },
+  {
+   "fieldname": "prev_workflow_state",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "prev workflow state"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -214,7 +228,7 @@
    "link_fieldname": "expense_request"
   }
  ],
- "modified": "2023-06-18 14:46:54.537764",
+ "modified": "2023-06-19 18:57:46.900791",
  "modified_by": "Administrator",
  "module": "custom reports",
  "name": "PRO Expense Request",
