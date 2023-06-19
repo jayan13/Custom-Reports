@@ -417,7 +417,7 @@ def get_conditions(filters):
 		conditions += " and d.company= '{0}' ".format(company)
 	if filters.get("processing_month"):
 		processing_month=filters.get("processing_month")
-		conditions += " and (e.status='Active' OR (e.status='Left' and (e.relieving_date >= '{0}' OR (MONTH(e.relieving_date)=MONTH('{0}') and YEAR(e.relieving_date)=YEAR('{0}') ) ))) and e.date_of_joining <= '{0}' ".format(processing_month)
+		conditions += " and (e.status='Active' OR (e.status='Left' and e.relieving_date >= '{0}')) and e.date_of_joining <= '{0}' ".format(processing_month)
 	if filters.get("employee"):
 		employee=filters.get("employee")
 		conditions += "  and e.employee = '{0}'".format(employee)
