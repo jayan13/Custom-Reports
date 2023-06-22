@@ -158,7 +158,7 @@ def get_data(conditions,filters,earnings,deductions):
 							salary_component=str(dedu.salary_component)
 							fldname=salary_component.replace(" ", "_").lower()
 							dt.update({fldname:dedu.amount})
-							de_tot+=float(ern.amount)
+							de_tot+=float(dedu.amount)
 					tot=er_tot-de_tot
 					
 				dt.update({'total':tot})
