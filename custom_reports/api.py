@@ -337,7 +337,11 @@ def get_tickect_setting(emp):
 	return
 
 def get_gross_salary(emp,processing_month):
-	salary_structure=frappe.db.get_value("Salary Structure Assignment",{'employee':emp,'from_date':['<=',processing_month]},'salary_structure',debug=0)
+	#salary_structure=frappe.db.get_value("Salary Structure Assignment",{'employee':emp,'from_date':['<=',processing_month],'docstatus':1},'salary_structure',debug=0)
+	strsql=frappe.db.sql(""" select salary_structure from `tabSalary Structure Assignment` where docstatus=1 and employee='{0}' and from_date <= '{1}' """.format(emp,processing_month),as_dict=1,debug=0)
+	salary_structure=''
+	if strsql:
+		salary_structure=strsql[0].salary_structure
 	gsal=0
 	sal=frappe.db.sql(""" select sum(amount) as gross_salary from `tabSalary Detail` where parent='%s' and parentfield='earnings'  group by parent"""% (salary_structure),as_dict=1,debug=0)
 	if sal:
