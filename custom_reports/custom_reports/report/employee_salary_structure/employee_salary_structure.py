@@ -108,7 +108,7 @@ def get_data(conditions,filters,earnings,deductions):
 			empqry = "  and e.name in ('{0}') ".format(empq)
 
 		
-		employee=frappe.db.sql(""" select e.department as emp_department,e.employee_name,e.name as employee from `tabEmployee` e where e.company='{0}' and e.department='{1}'  {2} """.format(company,dept.name,empqry),as_dict=1,debug=0)
+		employee=frappe.db.sql(""" select e.department as emp_department,e.employee_name,e.name as employee from `tabEmployee` e where e.company='{0}' and e.status='Active' and e.department='{1}'  {2} """.format(company,dept.name,empqry),as_dict=1,debug=0)
 		if employee:
 			for emp in employee:
 				dt={}
