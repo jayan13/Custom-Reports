@@ -21,7 +21,14 @@
 <div id="unit_report" style="background-color:#fff;width:100%; padding:14px;">
     <h3>{{unit_name}}</h3>
     <table>
-        <tr><td>Company : </td><td>{{unit_details.company}}</td></tr>
+        <tr><td>Company : </td><td>{{unit_details.company}}</td> <td rowspan="8" style="vertical-align: top;padding: 0 0 0 60px;">
+            {% if attachments %}
+            <b>Attachments</b><br>
+            {% for file in attachments%}
+                <a href="{{file.file_url}}" target="_blank" style="padding-top: 15px;display: block;">{{file.file_name}}</a> 
+            {% endfor %}
+            {% endif %}  </td>
+        </tr>
         <tr><td>Property Name : </td><td>{{unit_details.property_name}}</td></tr>
         <tr><td>Status : </td><td>{{unit_details.unit_status}}</td></tr>
         <tr><td>Tenant Name : </td><td>{{unit_details.customer_name}}</td></tr>

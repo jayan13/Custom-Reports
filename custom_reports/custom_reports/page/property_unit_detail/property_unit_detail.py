@@ -1,5 +1,6 @@
 import frappe
 from frappe.utils import formatdate, getdate
+from frappe.desk.form.load import get_attachments
 
 @frappe.whitelist()
 def get_report(unit_name):
@@ -11,6 +12,10 @@ def get_report(unit_name):
     unit_details.security_deposit=frappe.format_value(unit_details.security_deposit, {"fieldtype":"Currency"})
 
     data.update({'unit_details':unit_details})
+
+    attachments = get_attachments('Property Unit', unit_name)
+    data.update({'attachments':attachments})
+    
     start=unit_details.contract_start_date
     prevord=frappe.db.sql("select * from `tabSales Invoice` where property_unit='{0}' and docstatus=1 and contract_end_date<='{1}' order by contract_end_date desc limit 0,1".format(unit_name,start),as_dict=1,debug=0)
     
@@ -79,7 +84,7 @@ def get_report(unit_name):
     data.update({'totmain':frappe.format_value(tot, {"fieldtype":"Currency"})})
     return data
 
-       
+     
     
 
     
