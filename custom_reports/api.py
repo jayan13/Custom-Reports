@@ -802,10 +802,10 @@ def calculate_gratuity_amount(employee, gratuity_rule, experience,processing_mon
 #		)
 	return gratuity_amount
 
-
+""""
 def get_applicable_components(gratuity_rule):
 	applicable_earnings_components = frappe.get_all(
-		"Provision Applicable Component", filters={"parent": gratuity_rule}, fields=["salary_component"],debug=0)
+		"Provision Applicable Component", filters={"parent": gratuity_rule}, fields=["salary_component"],debug=1)
 	applicable_earnings_component = []
 	if len(applicable_earnings_components):		
 		applicable_earnings_component = [
@@ -813,10 +813,25 @@ def get_applicable_components(gratuity_rule):
 		]
 
 	return applicable_earnings_component
+"""
+def get_applicable_components(gratuity_rule):
+	applicable_earnings_component = frappe.get_all(
+		"Gratuity Applicable Component", filters={"parent": gratuity_rule}, fields=["salary_component"]
+	)
+	if len(applicable_earnings_component) == 0:
+		frappe.throw(
+			_("No Applicable Earnings Component found for Gratuity Rule: {0}").format(
+				bold(get_link_to_form("Gratuity Rule", gratuity_rule))
+			)
+		)
+	applicable_earnings_component = [
+		component.salary_component for component in applicable_earnings_component
+	]
 
+	return applicable_earnings_component
 
 def get_total_applicable_component_amount(employee, applicable_earnings_component, processing_month):
-	sal_slip = get_last_salary_slip(employee)
+	#sal_slip = get_last_salary_slip(employee)
 	component_and_amounts=''
 	#if sal_slip:
 	#	component_and_amounts = frappe.get_all(
@@ -1025,7 +1040,7 @@ def get_leave_balance_on(employee,date,to_date):
 						leave_provision_date=emp.leave_provision_date or emp.date_of_joining
 						totaldays=date_diff(emp.openning_entry_date,leave_provision_date)+1
 						total_days+=totaldays
-						applicable_earnings_component=get_applicable_components(rul.name)
+						applicable_earnings_component=get_applicable_components_annual(rul.name)
 						sal=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
 						actualworked=totaldays-float(emp.opening_absent)
 						absents+=float(emp.opening_absent)
@@ -1082,7 +1097,7 @@ def get_leave_balance_on(employee,date,to_date):
 						opnused=0
 						totaldays=date_diff(processing_month,emp.openning_entry_date)						
 						total_days+=totaldays
-						applicable_earnings_component=get_applicable_components(rul.name)
+						applicable_earnings_component=get_applicable_components_annual(rul.name)
 						gross_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
 						absent=getabsents(emp.name,openabs,start_date,processing_month)
 						absents+=absent
@@ -1106,7 +1121,7 @@ def get_leave_balance_on(employee,date,to_date):
 						#amount_balance+=amountbalance
 				else:
 					leave_provision_date=emp.leave_provision_date or emp.date_of_joining
-					applicable_earnings_component=get_applicable_components(rul.name)
+					applicable_earnings_component=get_applicable_components_annual(rul.name)
 					sal=0
 					end_date=processing_month
 					totaldays=0
