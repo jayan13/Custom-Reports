@@ -1416,7 +1416,7 @@ def update_material_transfer(doc,event):
 	balance=0
 	#jv=frappe.db.get_all("Journal Entry Account",filters={'reference_type':'Material Request','parent':doc.name},fields=['sum(debit) as amount,reference_name'],group_by='reference_name')
 	jvsql=frappe.db.sql(""" select IFNULL(sum(j.debit),0) as amount,j.reference_name,j.parent from `tabJournal Entry Account` j left join `tabAccount` a on a.name=j.account 
-		where a.root_type='Expense' and j.debit > 0 and j.reference_type='Material Request' and j.parent='{0}' group by j.reference_name""".format(doc.name),as_dict=1)
+		where a.account_type!='Cash' and j.debit > 0 and j.reference_type='Material Request' and j.parent='{0}' group by j.reference_name""".format(doc.name),as_dict=1)
 	if jvsql:
 		for jv in jvsql:		
 			mr=frappe.db.get_value('Material Request',jv.reference_name,['total','is_it_for_asset_maintenance'],as_dict=1)
@@ -1425,7 +1425,7 @@ def update_material_transfer(doc,event):
 			frappe.db.set_value('Material Request',jv.reference_name,{'actual_rate':jv.amount,'balance':balance,'journal_entry':jv.parent})
 	
 	jvsql2=frappe.db.sql(""" select IFNULL(sum(j.debit),0) as amount,j.reference_name,j.parent from `tabJournal Entry Account` j left join `tabAccount` a on a.name=j.account 
-		where a.root_type='Expense' and j.debit > 0 and j.reference_type='PRO Expense Request' and j.parent='{0}' group by j.reference_name""".format(doc.name),as_dict=1)
+		where a.account_type!='Cash' and j.debit > 0 and j.reference_type='PRO Expense Request' and j.parent='{0}' group by j.reference_name""".format(doc.name),as_dict=1)
 	if jvsql2:
 		for jv in jvsql2:		
 			mr=frappe.db.get_value('PRO Expense Request',jv.reference_name,['total'],as_dict=1)	
@@ -1452,13 +1452,13 @@ def update_material_transfer(doc,event):
 def cancel_material_transfer(doc,event):
 	#jv=frappe.db.get_all("Journal Entry Account",filters={'reference_type':'Material Request','parent':doc.name},fields=['reference_name'])
 	jvsql=frappe.db.sql(""" select IFNULL(sum(j.debit),0) as amount,j.reference_name from `tabJournal Entry Account` j left join `tabAccount` a on a.name=j.account 
-		where a.root_type='Expense' and j.debit > 0 and j.reference_type='Material Request' and j.parent='{0}' group by j.reference_name""".format(doc.name),as_dict=1)
+		where a.account_type!='Cash' and j.debit > 0 and j.reference_type='Material Request' and j.parent='{0}' group by j.reference_name""".format(doc.name),as_dict=1)
 	if jvsql:
 		for jv in jvsql:
 			frappe.db.set_value('Material Request',jv.reference_name,{'actual_rate':0,'balance':0,'journal_entry':''})
 	
 	jvsql2=frappe.db.sql(""" select IFNULL(sum(j.debit),0) as amount,j.reference_name from `tabJournal Entry Account` j left join `tabAccount` a on a.name=j.account 
-		where a.root_type='Expense' and j.debit > 0 and j.reference_type='PRO Expense Request' and j.parent='{0}' group by j.reference_name""".format(doc.name),as_dict=1)
+		where a.account_type!='Cash' and j.debit > 0 and j.reference_type='PRO Expense Request' and j.parent='{0}' group by j.reference_name""".format(doc.name),as_dict=1)
 	if jvsql2:
 		for jv in jvsql2:
 			frappe.db.set_value('PRO Expense Request',jv.reference_name,{'actual_rate':0,'balance':0,'journal_entry':''})
