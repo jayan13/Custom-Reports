@@ -431,12 +431,17 @@ def get_annual_leaveamount(emp,reval_date):
 	return {'sal':sal,'gross_salary':gross_salary,'ticket_period':ticket_period,'used_leaves':used_leaves,'base_salary':base_salary,'leave_entitled':leave_entitled,'salary_structure':salary_structure,'ticket_eligible':ticket_eligible}
 
 def get_leave_no(emp,processing_month):
-	
+	new_leaves_allocated=0
 	set = frappe.db.sql(""" select new_leaves_allocated,unused_leaves from `tabLeave Allocation` where employee='{0}' 
 	and '{1}' between from_date and to_date and leave_type='Annual Leave' """.format(emp,processing_month),as_dict=1,debug=0)
-	if not set:
-		return
-	return set[0].new_leaves_allocated
+	if set:
+		new_leaves_allocated=set[0].new_leaves_allocated
+		join_date=frappe.db.get_value('Employee',emp,'date_of_joining')
+		totalday=date_diff(getdate(processing_month),getdate(join_date))+1
+		if set[0].new_leaves_allocated >= 30 and float(totalday) < 365:
+			new_leaves_allocated=24
+			
+	return new_leaves_allocated
 
 def getused(emp,opn,start_date,end_date):
 	used=float(opn)

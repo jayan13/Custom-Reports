@@ -162,6 +162,10 @@ def get_data(conditions,filters):
 		tot_leave=get_leave_no(emp.name,processing_month)
 		if tot_leave:
 			totleave=tot_leave.new_leaves_allocated
+			join_date=frappe.db.get_value('Employee',emp.name,'date_of_joining')
+			totalday=date_diff(getdate(processing_month),getdate(join_date))+1
+			if totleave >= 30 and float(totalday) < 365:
+				totleave=24
 			
 		gross_salary=get_total_applicable_component_amount(emp.name, applicable_earnings_component, date_to)
 		total_days=date_diff(date_to,date_from)+1
