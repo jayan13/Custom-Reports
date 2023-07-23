@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2023-05-12 11:20:44.610972",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2023-05-12 11:20:44.610972",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "m12-26-this",
+ "owner": "Administrator",
+ "page_name": "m12-26-this",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Property Unit Report"
+}

@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2023-07-02 10:59:25.272696",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2023-07-02 10:59:25.272696",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "bz-144-vacant",
+ "owner": "Administrator",
+ "page_name": "bz-144-vacant",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Property Unit Report"
+}

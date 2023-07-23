@@ -15,15 +15,7 @@ def total_units(filters=None):
 	card_name=card.get('card_name')
 	carddata = {}
 	to_date = frappe.utils.today()
-	if 'Musaffah Plot' in card_name:
-		rate=frappe.db.sql(
-		"""
-		select count(*) as cnt from `tabProperty Unit` where  property_name like '%Musaffah Plot%'
-		""",
-		as_dict=1,debug=0
-	)
-	else:
-		rate=frappe.db.sql(
+	rate=frappe.db.sql(
 		"""
 		select count(*) as cnt from `tabProperty Unit` where  property_name='{0}'
 		""".format(card_name),
@@ -42,21 +34,12 @@ def vacant_units(filters=None):
 	card_name=card.get('card_name')
 	carddata = {}
 	to_date = frappe.utils.today()	
-	if 'Musaffah Plot' in card_name:
-		rate=frappe.db.sql(
+	rate=frappe.db.sql(
 		"""
-		select count(*) as cnt from `tabProperty Unit` where (unit_status='Vacant' or unit_status='Vacant - Legal')
-		 and property_name like '%Musaffah Plot%'
-		""",
-		as_dict=1,debug=0
-	)
-	else:
-		rate=frappe.db.sql(
-		"""
-		select count(*) as cnt from `tabProperty Unit` where (unit_status='Vacant' or unit_status='Vacant - Legal') 
+		select count(*) as cnt from `tabProperty Unit` where (unit_status='Vacant' or unit_status='Vacant - Legal' or unit_status='Out Of Service') 
 		and property_name='{0}'
 		""".format(card_name),
-		as_dict=1,debug=0
+		as_dict=1,debug=1
 	)
 	carddata['value']=0
 	if rate:
@@ -72,16 +55,7 @@ def occupied_units(filters=None):
 	carddata = {}
 	to_date = frappe.utils.today()
 	
-	if 'Musaffah Plot' in card_name:
-		rate=frappe.db.sql(
-		"""
-		select count(*) as cnt from `tabProperty Unit` where (unit_status='Occupied' or unit_status='Occupied - Legal')
-		 and property_name like '%Musaffah Plot%'
-		""",
-		as_dict=1,debug=0
-	)
-	else:
-		rate=frappe.db.sql(
+	rate=frappe.db.sql(
 		"""
 		select count(*) as cnt from `tabProperty Unit` where (unit_status='Occupied' or unit_status='Occupied - Legal')
 		and property_name='{0}'
@@ -105,14 +79,7 @@ def this_month_renewal(filters=None):
 	#fromdate=getdate(to_date)
 	#first_day_month=fromdate.replace(day=1)	
 	#first_day_year=fromdate.replace(month=1, day=1)
-	if 'Musaffah Plot' in card_name:
-		rate=frappe.db.sql(
-		"""
-		select count(*) as cnt from `tabProperty Unit` where MONTH('{0}')= MONTH(contract_end_date) and YEAR('{0}')= YEAR(contract_end_date) and property_name like '%Musaffah Plot%'
-		""".format(to_date),as_dict=1,debug=0)
-	
-	else:
-		rate=frappe.db.sql(
+	rate=frappe.db.sql(
 		"""
 		select count(*) as cnt from `tabProperty Unit` where  property_name='{0}' and YEAR('{1}')= YEAR(contract_end_date) and MONTH('{1}')= MONTH(contract_end_date)
 		""".format(card_name,to_date),
@@ -135,14 +102,7 @@ def next_month_renewal(filters=None):
 	#fromdate=getdate(to_date)
 	#first_day_month=fromdate.replace(day=1)	
 	#first_day_year=fromdate.replace(month=1, day=1)
-	if 'Musaffah Plot' in card_name:
-		rate=frappe.db.sql(
-		"""
-		select count(*) as cnt from `tabProperty Unit` where MONTH(DATE_ADD('{0}', INTERVAL 1 MONTH))= MONTH(contract_end_date) and YEAR(DATE_ADD('{0}', INTERVAL 1 MONTH))= YEAR(contract_end_date) and property_name like '%Musaffah Plot%'
-		""".format(to_date),as_dict=1,debug=0)
-	
-	else:
-		rate=frappe.db.sql(
+	rate=frappe.db.sql(
 		"""
 		select count(*) as cnt from `tabProperty Unit` where  property_name='{0}' and MONTH(DATE_ADD('{1}', INTERVAL 1 MONTH))= MONTH(contract_end_date) and YEAR(DATE_ADD('{1}', INTERVAL 1 MONTH))= YEAR(contract_end_date)
 		""".format(card_name,to_date),
