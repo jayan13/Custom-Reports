@@ -1,0 +1,127 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-06-16 20:27:43.304484",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "company",
+  "casier_account",
+  "casier_account_pro",
+  "casier_account_no",
+  "casier_account_no_pro",
+  "iou_cash_account",
+  "iou_cash_account_no",
+  "approved_status",
+  "bill_settled_status",
+  "approved_status_pro",
+  "bill_settled_status_pro"
+ ],
+ "fields": [
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "depends_on": "eval:doc.company!=''",
+   "fieldname": "casier_account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Cashier Account For Material Req",
+   "mandatory_depends_on": "eval:doc.company!=''",
+   "options": "Account"
+  },
+  {
+   "depends_on": "eval:doc.company!=''",
+   "fieldname": "casier_account_pro",
+   "fieldtype": "Link",
+   "label": "Cashier Account For Pro Req",
+   "mandatory_depends_on": "eval:doc.company!=''",
+   "options": "Account"
+  },
+  {
+   "depends_on": "eval:doc.company==''",
+   "fieldname": "casier_account_no",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Cashier Account No For Material Req",
+   "mandatory_depends_on": "eval:doc.company==''"
+  },
+  {
+   "depends_on": "eval:doc.company==''",
+   "fieldname": "casier_account_no_pro",
+   "fieldtype": "Data",
+   "label": "Cashier Account No For Pro Req",
+   "mandatory_depends_on": "eval:doc.company==''"
+  },
+  {
+   "depends_on": "eval:doc.company!=''",
+   "fieldname": "iou_cash_account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "IOU Cash Account",
+   "mandatory_depends_on": "eval:doc.company!=''",
+   "options": "Account"
+  },
+  {
+   "depends_on": "eval:doc.company==''",
+   "fieldname": "iou_cash_account_no",
+   "fieldtype": "Data",
+   "label": "IOU Cash Account No",
+   "mandatory_depends_on": "eval:doc.company==''"
+  },
+  {
+   "fieldname": "approved_status",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Approved Status For Material transfer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "bill_settled_status",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Bill Settled Status For Material transfer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "approved_status_pro",
+   "fieldtype": "Data",
+   "label": "Approved Status For Pro",
+   "reqd": 1
+  },
+  {
+   "fieldname": "bill_settled_status_pro",
+   "fieldtype": "Data",
+   "label": "Bill Settled Status For Pro",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2023-06-16 20:27:43.304484",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "Material And Pro Req  Settlement Dashboard Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

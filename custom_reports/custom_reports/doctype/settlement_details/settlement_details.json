@@ -12,7 +12,11 @@
   "days",
   "paid_amt",
   "gen_amt",
-  "narration"
+  "narration",
+  "slip",
+  "employee",
+  "date_from",
+  "date_to"
  ],
  "fields": [
   {
@@ -58,12 +62,37 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Narration"
+  },
+  {
+   "fieldname": "slip",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Slip"
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "date_from",
+   "fieldtype": "Date",
+   "hidden": 1,
+   "label": "Date From"
+  },
+  {
+   "fieldname": "date_to",
+   "fieldtype": "Date",
+   "hidden": 1,
+   "label": "Date To"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-01-18 15:11:31.039337",
+ "modified": "2023-05-18 09:35:45.036254",
  "modified_by": "Administrator",
  "module": "custom reports",
  "name": "Settlement Details",

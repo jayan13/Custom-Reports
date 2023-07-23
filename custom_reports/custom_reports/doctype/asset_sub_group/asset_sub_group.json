@@ -1,0 +1,59 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:asset_sub_group",
+ "creation": "2022-10-18 10:29:40.912705",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "asset_sub_group",
+  "asset_group",
+  "asset_sub_group_items"
+ ],
+ "fields": [
+  {
+   "fieldname": "asset_sub_group",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Asset Sub Group",
+   "unique": 1
+  },
+  {
+   "fieldname": "asset_group",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Asset Group",
+   "options": "Asset Group"
+  },
+  {
+   "fieldname": "asset_sub_group_items",
+   "fieldtype": "Table MultiSelect",
+   "label": "Asset Sub Group Items",
+   "options": "Asset Sub Group Items"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2022-10-18 10:54:12.134225",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "Asset Sub Group",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

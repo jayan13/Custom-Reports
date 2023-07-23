@@ -85,8 +85,8 @@ def get_data(conditions,filters):
 	data=[]
 	if broiler_batchs:
 		for broilerbatch in broiler_batchs:
-			if broilerbatch.broiler_batch!='640-BROILER-HERZ-24-SHED-2':
-				continue
+			#if broilerbatch.broiler_batch!='640-BROILER-HERZ-24-SHED-1':
+			#	continue
 			vac=0
 			med=0
 			starter=0
@@ -198,6 +198,7 @@ def get_data(conditions,filters):
 								bro_date=medicine.date
 								conversion_factor = get_conversion_factor(medicine.starter_item, medicine.starter_uom).get("conversion_factor")
 								starter+=base_row_rate * float(qty) * float(conversion_factor)
+								#frappe.msgprint(str(base_row_rate * float(qty) * float(conversion_factor)))
 			finsh=frappe.db.sql("""select DISTINCT finisher_item as item from `tabFeed` where parent='{0}' and starter_item is not NULL and starter_item!=''""".format(broiler_batch),as_dict=1,debug=0)
 			if finsh:
 				for md in finsh:
@@ -232,6 +233,7 @@ def get_data(conditions,filters):
 								bro_date=medicine.date
 								conversion_factor = get_conversion_factor(medicine.finisher_item, medicine.finisher_uom).get("conversion_factor")
 								finisher+=base_row_rate * float(qty) * float(conversion_factor)
+								#frappe.msgprint(str(base_row_rate * float(qty) * float(conversion_factor)))
 
 			manu={}
 			manu.update({'posting_date':bro_date})
@@ -272,7 +274,7 @@ def get_data_n(conditions,filters):
 	data=[]
 	if broiler_batchs:
 		for broilerbatch in broiler_batchs:
-			#if broilerbatch.broiler_batch!='640-BROILER-HERZ-24-SHED-2':
+			#if broilerbatch.broiler_batch!='640-BROILER-HERZ-24-SHED-1':
 			#	continue
 			vac=0
 			med=0
@@ -331,7 +333,8 @@ def get_data_n(conditions,filters):
 					bro_date=medicine.date
 					conversion_factor = get_conversion_factor(medicine.starter_item, medicine.starter_uom).get("conversion_factor")
 					starter+=base_row_rate * float(medicine.starter_qty) * float(conversion_factor)
-
+					#if medicine.starter_item=='GM200493':
+						#frappe.msgprint(str(medicine.starter_item)+' '+str(base_row_rate)+' '+ str(medicine.starter_qty)+' '+str(conversion_factor)+' '+str(base_row_rate * float(medicine.starter_qty) * float(conversion_factor)))
 			finishers=frappe.db.sql("""select b.name,b.broiler_shed,m.finisher_item,m.finisher_qty,m.finisher_uom,m.date,TIME(m.creation) as itime from `tabBroiler Batch` b left join `tabFeed`
 			 	m on b.name=m.parent where m.finisher_item is not null and m.finisher_item!='' and b.company='{0}' and m.date >= '{1}' and m.date <= '{2}' and b.name='{3}' """.format(company,date_from,date_to,broiler_batch),as_dict=1,debug=0)
 			if finishers:
@@ -348,7 +351,7 @@ def get_data_n(conditions,filters):
 					bro_date=medicine.date
 					conversion_factor = get_conversion_factor(medicine.finisher_item, medicine.finisher_uom).get("conversion_factor")
 					finisher+=base_row_rate * float(medicine.finisher_qty) * float(conversion_factor)
-
+					#frappe.msgprint(str(medicine.finisher_item)+' '+str(base_row_rate)+' '+ str(medicine.finisher_qty)+' '+str(conversion_factor))
 			manu={}
 			manu.update({'posting_date':batch_date})
 			manu.update({'project':broiler_batch})

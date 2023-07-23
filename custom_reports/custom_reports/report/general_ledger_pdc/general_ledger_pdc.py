@@ -345,7 +345,7 @@ def get_gl_entries(filters, accounting_dimensions):
 							gl.credit=0
 							gl.credit_in_account_currency=0
 
-				if gl.voucher_type=='Journal Entry' and gl.party_type=="Supplier":
+				if gl.voucher_type=='Journal Entry' and gl.party_type in ["Supplier","Employee"]:
 					chestus=frappe.db.get_value('Payable Cheques', {'journal_entry': gl.voucher_no}, ['cheque_status','cheque_no','cheque_date'])
 					cheque_status=''
 					if chestus:						
@@ -395,7 +395,7 @@ def get_gl_entries(filters, accounting_dimensions):
 							gl.credit=0
 							gl.credit_in_account_currency=0
 
-				if gl.voucher_type=='Payment Entry' and gl.party_type=="Supplier":
+				if gl.voucher_type=='Payment Entry' and gl.party_type in ["Supplier","Employee"]:
 					chestus=frappe.db.get_value('Payable Cheques', {'payment_entry': gl.voucher_no}, ['cheque_status','cheque_no','cheque_date'])
 					cheque_status=''
 					if chestus:												
@@ -459,7 +459,7 @@ def get_conditions(filters):
 		conditions.append("voucher_no=%(voucher_no)s")
 
 	if filters.get("group_by") == "Group by Party" and not filters.get("party_type"):
-		conditions.append("party_type in ('Customer', 'Supplier')")
+		conditions.append("party_type in ('Customer', 'Supplier','Employee')")
 
 	if filters.get("party_type"):
 		conditions.append("party_type=%(party_type)s")
@@ -774,7 +774,7 @@ def get_columns(filters):
 			"width": 100
 		}		
 	]
-	if filters.get("party_type") in ['Customer','Supplier']:
+	if filters.get("party_type") in ['Customer','Supplier','Employee']:
 		if not filters.get("exclude_pdc"):
 			columns.extend([
 				{

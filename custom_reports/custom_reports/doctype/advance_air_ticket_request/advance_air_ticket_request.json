@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format:ADV-TIC-{leave_application}-{YY}-{#####}",
  "creation": "2023-01-02 21:23:17.688475",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -23,6 +24,7 @@
   "traval_date",
   "ticket_type",
   "to_and_from",
+  "ticket_available",
   "no_of_ticket_given",
   "total_air_fare",
   "request_date",
@@ -39,6 +41,7 @@
   {
    "fieldname": "employee",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Employee",
    "options": "Employee"
   },
@@ -159,12 +162,19 @@
    "fieldname": "traval_date",
    "fieldtype": "Date",
    "label": "Traval Date"
+  },
+  {
+   "default": "0",
+   "fieldname": "ticket_available",
+   "fieldtype": "Float",
+   "label": "Tickets Available",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-01-03 11:06:18.742673",
+ "modified": "2023-01-08 16:42:40.567721",
  "modified_by": "Administrator",
  "module": "custom reports",
  "name": "Advance Air Ticket Request",

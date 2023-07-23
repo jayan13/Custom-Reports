@@ -150,7 +150,7 @@ def get_data(conditions,filters):
 	
 	processing_month=filters.get("processing_month")
 	company=filters.get("company")
-	conc=frappe.db.sql(""" select e.*,d.parent_department,d.department_name from `tabEmployee` e left join `tabDepartment` d on e.department=d.name where e.status='Active' and   %s  order by d.parent_department,d.name"""% (conditions),as_dict=1,debug=0)
+	conc=frappe.db.sql(""" select e.*,d.parent_department,d.department_name from `tabEmployee` e left join `tabDepartment` d on e.department=d.name where %s  order by d.parent_department,d.name"""% (conditions),as_dict=1,debug=0)
 	
 	data=[]
 	parent_department=''
@@ -163,6 +163,10 @@ def get_data(conditions,filters):
 	alrules=get_provision_rule(company)
 	departmentname=''
 	for emp in conc:
+		processing_month=filters.get("processing_month") #update relaving history
+		if emp.relieving_date and emp.relieving_date < getdate(processing_month):
+			processing_month=emp.relieving_date
+			
 		if emp.parent_department=='All Departments':
 			emp.parent_department=emp.department_name.split('-')[0]
 
@@ -405,7 +409,7 @@ def get_conditions(filters):
 		conditions += " and d.company= '{0}' ".format(company)
 	if filters.get("processing_month"):
 		processing_month=filters.get("processing_month")
-		#conditions += " and DATE(s.posting_date) >= '{0}' ".format(date_from)
+		conditions += " and (e.status='Active' OR (e.status='Left' and e.relieving_date >= '{0}')) and e.date_of_joining <= '{0}' ".format(processing_month)
 	if filters.get("employee"):
 		employee=filters.get("employee")
 		conditions += "  and e.employee = '{0}'".format(employee)
@@ -552,9 +556,14 @@ def get_provision_rule(company,processing_month='',all=1):
 	return val
 
 def get_leave_no(emp,processing_month):
-	
+	new_leaves_allocated=0
 	set = frappe.db.sql(""" select new_leaves_allocated,unused_leaves from `tabLeave Allocation` where employee='{0}' 
 	and '{1}' between from_date and to_date and leave_type='Annual Leave' """.format(emp,processing_month),as_dict=1,debug=0)
-	if not set:
-		return
-	return set[0].new_leaves_allocated
+	if set:
+		new_leaves_allocated=set[0].new_leaves_allocated
+		join_date=frappe.db.get_value('Employee',emp,'date_of_joining')
+		totalday=date_diff(getdate(processing_month),getdate(join_date))+1
+		if set[0].new_leaves_allocated >= 30 and float(totalday) < 365:
+			new_leaves_allocated=24
+			
+	return new_leaves_allocated

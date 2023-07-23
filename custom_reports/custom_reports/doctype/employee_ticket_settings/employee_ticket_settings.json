@@ -1,0 +1,147 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{employee}-{####}",
+ "creation": "2023-01-05 12:24:38.878834",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "employee",
+  "company",
+  "from_date",
+  "to_date",
+  "ticket_fare",
+  "periodical",
+  "no_of_ticket_eligible",
+  "column_break_7",
+  "provision_type",
+  "class",
+  "eligible",
+  "flight_id",
+  "sector_id",
+  "airport_id",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Employee",
+   "options": "Employee",
+   "reqd": 1
+  },
+  {
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "From Date",
+   "reqd": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "To Date"
+  },
+  {
+   "fieldname": "ticket_fare",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Ticket Fare",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "periodical",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Periodical",
+   "reqd": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "no_of_ticket_eligible",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "No of ticket Eligible",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_7",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "provision_type",
+   "fieldtype": "Data",
+   "label": "Provision Type"
+  },
+  {
+   "fieldname": "class",
+   "fieldtype": "Data",
+   "label": "Class"
+  },
+  {
+   "fieldname": "eligible",
+   "fieldtype": "Data",
+   "label": "Eligible"
+  },
+  {
+   "fieldname": "flight_id",
+   "fieldtype": "Data",
+   "label": "Flight Id"
+  },
+  {
+   "fieldname": "sector_id",
+   "fieldtype": "Data",
+   "label": "Sector Id"
+  },
+  {
+   "fieldname": "airport_id",
+   "fieldtype": "Data",
+   "label": "Airport Id"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Employee Ticket Settings",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fetch_from": "employee.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2023-03-16 17:08:15.117362",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "Employee Ticket Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

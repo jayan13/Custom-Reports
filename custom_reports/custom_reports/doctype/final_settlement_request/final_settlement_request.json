@@ -32,6 +32,7 @@
   "allowance_and_deducts",
   "section_break_23",
   "settlement_details",
+  "total_amount",
   "department",
   "nationality",
   "designation",
@@ -45,7 +46,7 @@
   "salary_structure",
   "ticket_used",
   "ticket_eligible",
-  "total_amount"
+  "amended_from"
  ],
  "fields": [
   {
@@ -86,8 +87,9 @@
   },
   {
    "fieldname": "action_taken",
-   "fieldtype": "Data",
-   "label": "Action Taken"
+   "fieldtype": "Select",
+   "label": "Action Taken",
+   "options": "Resigned\nTerminated"
   },
   {
    "fetch_from": "employee.date_of_joining",
@@ -276,13 +278,22 @@
   {
    "fieldname": "total_amount",
    "fieldtype": "Currency",
-   "hidden": 1,
    "label": "Total Amount"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Final Settlement Request",
+   "print_hide": 1,
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
- "modified": "2023-01-20 15:20:19.996205",
+ "modified": "2023-02-09 15:12:38.136914",
  "modified_by": "Administrator",
  "module": "custom reports",
  "name": "Final Settlement Request",

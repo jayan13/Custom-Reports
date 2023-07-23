@@ -124,8 +124,14 @@ doc_events = {
 		"before_insert": "custom_reports.api.update_additional_sal_narration",
 	},
 	"Journal Entry":{
-		"on_submit": "custom_reports.api.update_pro_pay",
-		"on_cancel": "custom_reports.api.update_pro_pay_cancel",
+		"on_submit": [
+			"custom_reports.api.update_pro_pay",
+			"custom_reports.api.update_material_transfer"
+			],
+		"on_cancel":[
+			"custom_reports.api.update_pro_pay_cancel",
+			"custom_reports.api.cancel_material_transfer"
+			],
 	},
 	"Payment Entry":{
 		"on_submit": "custom_reports.api.update_pro_pay",

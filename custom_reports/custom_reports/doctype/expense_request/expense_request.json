@@ -15,7 +15,8 @@
   "remarks",
   "amended_from",
   "expense_section",
-  "expense"
+  "expense",
+  "total"
  ],
  "fields": [
   {
@@ -72,6 +73,12 @@
    "fieldtype": "Select",
    "label": "Naming Series",
    "options": "EXPREQ-"
+  },
+  {
+   "fieldname": "total",
+   "fieldtype": "Currency",
+   "label": "Total",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -86,7 +93,7 @@
    "link_fieldname": "expense_request"
   }
  ],
- "modified": "2022-10-19 09:57:44.452407",
+ "modified": "2022-10-19 12:29:38.711991",
  "modified_by": "Administrator",
  "module": "custom reports",
  "name": "Expense Request",

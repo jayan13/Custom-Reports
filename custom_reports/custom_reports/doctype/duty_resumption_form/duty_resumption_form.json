@@ -1,0 +1,149 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-12-15 08:12:57.991739",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "employee",
+  "leave_application",
+  "employee_name",
+  "designation",
+  "department",
+  "posting_date",
+  "column_break_6",
+  "type_of_leave",
+  "leave_from",
+  "leave_to",
+  "date_of_return",
+  "for_hrd_use_only_section",
+  "document_received_on",
+  "document_received_by",
+  "remark",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Employee",
+   "options": "Employee",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "label": "Employee Name"
+  },
+  {
+   "fetch_from": "employee.designation",
+   "fieldname": "designation",
+   "fieldtype": "Data",
+   "label": "Position"
+  },
+  {
+   "fetch_from": "employee.department",
+   "fieldname": "department",
+   "fieldtype": "Data",
+   "label": "Division /Dept"
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date"
+  },
+  {
+   "fetch_from": "leave_application.leave_type",
+   "fieldname": "type_of_leave",
+   "fieldtype": "Select",
+   "label": "Type of leave",
+   "options": "Emergency Leave\nAnnual Leave\nEnd of Service"
+  },
+  {
+   "fetch_from": "leave_application.from_date",
+   "fieldname": "leave_from",
+   "fieldtype": "Date",
+   "label": "Leave from"
+  },
+  {
+   "fetch_from": "leave_application.to_date",
+   "fieldname": "leave_to",
+   "fieldtype": "Date",
+   "label": "Leave To"
+  },
+  {
+   "fieldname": "date_of_return",
+   "fieldtype": "Date",
+   "label": "Date of Return"
+  },
+  {
+   "fieldname": "for_hrd_use_only_section",
+   "fieldtype": "Section Break",
+   "label": "For HRD use only"
+  },
+  {
+   "fieldname": "document_received_on",
+   "fieldtype": "Date",
+   "label": "Document received on"
+  },
+  {
+   "fieldname": "document_received_by",
+   "fieldtype": "Link",
+   "label": "Document Received by",
+   "options": "User"
+  },
+  {
+   "fieldname": "remark",
+   "fieldtype": "Text",
+   "label": "Remark"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Duty Resumption Form",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "leave_application",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Leave Application",
+   "options": "Leave Application",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2022-12-20 09:57:15.095243",
+ "modified_by": "Administrator",
+ "module": "custom reports",
+ "name": "Duty Resumption Form",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
