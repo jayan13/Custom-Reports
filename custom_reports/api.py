@@ -1047,8 +1047,8 @@ def get_leave_balance_on(employee,date,to_date):
 						total_days+=totaldays
 						applicable_earnings_component=get_applicable_components_annual(rul.name)
 						sal=get_total_applicable_component_amount(emp.name, applicable_earnings_component, processing_month)
-						actualworked=totaldays-float(emp.opening_absent)
-						absents+=float(emp.opening_absent)
+						actualworked=totaldays-float(emp.opening_absent or 0)
+						absents+=float(emp.opening_absent or 0)
 						actual_worked+=actualworked
 						if emp.opening_leaves_accrued > 0:
 							accru=emp.opening_leaves_accrued
