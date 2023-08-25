@@ -192,7 +192,7 @@ def get_ticket_given(emp,from_date,to_date):
 			total_days+=frappe.utils.date_diff(emp.openning_entry_date,ticket_provision_date)+1
 							
 			if total_days > 0:
-				absents+=float(emp.opening_absent)
+				absents+=float(emp.opening_absent or 0)
 				actual_worked+=total_days-absents
 				years+=round((actual_worked/365),4)				
 				balance+=float(emp.opening_ticket_balance)
