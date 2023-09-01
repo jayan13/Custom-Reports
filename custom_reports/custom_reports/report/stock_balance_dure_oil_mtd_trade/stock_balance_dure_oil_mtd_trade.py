@@ -189,11 +189,10 @@ def get_columns(filters):
 			"convertible": "qty",
 		},
 		{
-			"label": _("Out Qty"),
-			"fieldname": "out_qty",
+			"label": _("Out Qty Ton"),
+			"fieldname": "out_qty_ton",
 			"fieldtype": "Float",
 			"width": 80,
-			"convertible": "qty",
 		},
 		{"label": _("Out Value"), "fieldname": "out_val", "fieldtype": "Float", "width": 80},
 		{
