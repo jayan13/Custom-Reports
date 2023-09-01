@@ -141,6 +141,12 @@ def get_columns(filters):
 			"convertible": "qty",
 		},
 		{
+			"label": _("Balance Qty in Ton"),
+			"fieldname": "bal_qty_ton",
+			"fieldtype": "Float",
+			"width": 100,
+		},
+		{
 			"label": _("Balance Value"),
 			"fieldname": "bal_val",
 			"fieldtype": "Currency",
@@ -153,6 +159,12 @@ def get_columns(filters):
 			"fieldtype": "Float",
 			"width": 100,
 			"convertible": "qty",
+		},
+		{
+			"label": _("Opening Qty in Ton"),
+			"fieldname": "opening_qty_ton",
+			"fieldtype": "Float",
+			"width": 100,
 		},
 		{
 			"label": _("Opening Value"),
@@ -169,6 +181,13 @@ def get_columns(filters):
 			"convertible": "qty",
 		},
 		{"label": _("In Value"), "fieldname": "in_val", "fieldtype": "Float", "width": 80},
+		{
+			"label": _("Out Qty"),
+			"fieldname": "out_qty",
+			"fieldtype": "Float",
+			"width": 80,
+			"convertible": "qty",
+		},
 		{
 			"label": _("Out Qty"),
 			"fieldname": "out_qty",
@@ -284,12 +303,15 @@ def get_item_warehouse_map(filters, sle):
 			iwb_map[key] = frappe._dict(
 				{
 					"opening_qty": 0.0,
+					"opening_qty_ton": 0.0,
 					"opening_val": 0.0,
 					"in_qty": 0.0,
 					"in_val": 0.0,
 					"out_qty": 0.0,
+					"out_qty_ton": 0.0,
 					"out_val": 0.0,
 					"bal_qty": 0.0,
+					"bal_qty_ton": 0.0,
 					"bal_val": 0.0,
 					"val_rate": 0.0,
 				}
@@ -310,6 +332,7 @@ def get_item_warehouse_map(filters, sle):
 			and frappe.db.get_value("Stock Reconciliation", d.voucher_no, "purpose") == "Opening Stock"
 		):
 			qty_dict.opening_qty += qty_diff
+			qty_dict.opening_qty_ton+=(float(qty_diff)*.88)/1000 if qty_diff else 0
 			qty_dict.opening_val += value_diff
 
 		elif d.posting_date >= from_date and d.posting_date <= to_date:
@@ -318,10 +341,12 @@ def get_item_warehouse_map(filters, sle):
 				qty_dict.in_val += value_diff
 			else:
 				qty_dict.out_qty += abs(qty_diff)
+				qty_dict.out_qty_ton += (abs(qty_diff)*.88)/1000 if qty_diff else 0
 				qty_dict.out_val += abs(value_diff)
 
 		qty_dict.val_rate = d.valuation_rate
 		qty_dict.bal_qty += qty_diff
+		qty_dict.bal_qty_ton += (qty_diff*.88)/1000  if qty_diff else 0
 		qty_dict.bal_val += value_diff
 
 	iwb_map = filter_items_with_no_transactions(iwb_map, float_precision)
