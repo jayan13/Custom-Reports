@@ -168,6 +168,11 @@ def get_data(conditions,filters):
 	alrules=get_provision_rule(company)
 	departmentname=''
 	for emp in conc:
+		emp.opening_absent			=emp.opening_absent or 0
+		emp.opening_leaves_accrued	=emp.opening_leaves_accrued or 0
+		emp.opening_used_leaves		=emp.opening_used_leaves or 0
+		emp.opening_balance_amount	=emp.opening_balance_amount or 0
+		emp.leaves_per_year			=emp.leaves_per_year or 30
 		if emp.parent_department=='All Departments':
 			emp.parent_department=emp.department_name.split('-')[0]
 

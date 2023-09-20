@@ -163,6 +163,11 @@ def get_data(conditions,filters):
 	alrules=get_provision_rule(company)
 	departmentname=''
 	for emp in conc:
+		emp.opening_absent			=emp.opening_absent or 0
+		emp.opening_leaves_accrued	=emp.opening_leaves_accrued or 0
+		emp.opening_used_leaves		=emp.opening_used_leaves or 0
+		emp.opening_balance_amount	=emp.opening_balance_amount or 0
+		emp.leaves_per_year			=emp.leaves_per_year or 30
 		processing_month=filters.get("processing_month") #update relaving history
 		if emp.relieving_date and emp.relieving_date < getdate(processing_month):
 			processing_month=emp.relieving_date
