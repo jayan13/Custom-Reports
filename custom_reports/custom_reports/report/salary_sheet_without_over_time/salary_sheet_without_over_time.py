@@ -182,7 +182,7 @@ def get_data(conditions,filters):
 				dt.update({'gross_pay':gross_pay})
 				dt.update({'net_pay':net_pay})
 				dt.update({'total_deduction':slp.total_deduction})
-				dt.update({'leave_without_pay':slp.leave_without_pay})				
+				dt.update({'leave_without_pay':slp.leave_without_pay or 0+slp.absent_days or 0})				
 				dt.update({'payment_days':slp.payment_days})
 				
 				paid_leaves=get_paid_leave(slp.employee,date_to)
