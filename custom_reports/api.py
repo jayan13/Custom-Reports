@@ -1483,3 +1483,29 @@ def cancel_material_transfer(doc,event):
 			mr=frappe.db.get_value('PRO Expense Request',jv.reference_name,['prev_workflow_state'],as_dict=1)
 			if mr.prev_workflow_state:
 				frappe.db.set_value('PRO Expense Request',jv.reference_name,{'workflow_state':mr.prev_workflow_state,'journal_entry_issue':''})
+
+
+@frappe.whitelist()
+def get_initial_annual_leave(emp,leave_type,from_date,to_date):
+	
+	allo=0
+	if leave_type=='Annual Leave':		
+		empd=frappe.db.get_value('Employee', emp, ['date_of_joining', 'leaves_per_year','opening_leaves_accrued','opening_absent'], as_dict=1)
+		if empd:
+			#year = getdate(to_date).strftime('%Y')
+			yeardays=365
+			#import calendar
+			#islp=calendar.isleap(int(year))
+			#if islp:
+			#	yeardays=366
+			
+			total_day=date_diff(getdate(to_date),getdate(empd.date_of_joining))+1			
+			if float(total_day) < yeardays:
+				allo=round(float(24/yeardays)*float(total_day),4)
+			else:
+				total_day=date_diff(getdate(to_date),getdate(from_date))+1
+				allo=round(float(30/yeardays)*float(total_day),4)
+
+				
+
+	return allo
