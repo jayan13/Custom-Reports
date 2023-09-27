@@ -85,8 +85,8 @@ def get_data(conditions,filters):
 		end_time=str(shf.end_time).split(':')
 		label=str(start_time[0])+':'+str(start_time[1])+'-'+str(end_time[0])+':'+str(end_time[1])
 		shifts.update({shf.name:label})
-
-	employee=frappe.db.sql(""" select r.employee,e.employee_name from `tabEmployee Shift Roster` r left join `tabShift Roster` s on r.shift_roster=s.name left join `tabEmployee` e on e.name=r.employee where  %s group by r.employee order by r.employee"""% (conditions),as_dict=1,debug=0)
+	cndd=conditions+" and (e.relieving_date is null or e.relieving_date > '{0}')".format(filters.get("date_from"))
+	employee=frappe.db.sql(""" select r.employee,e.employee_name from `tabEmployee Shift Roster` r left join `tabShift Roster` s on r.shift_roster=s.name left join `tabEmployee` e on e.name=r.employee where  %s group by r.employee order by r.employee"""% (cndd),as_dict=1,debug=0)
 	
 	for emp in employee:
 
