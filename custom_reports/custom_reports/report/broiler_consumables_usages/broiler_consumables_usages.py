@@ -283,8 +283,8 @@ def get_data_n(conditions,filters):
 			broiler_batch=broilerbatch.broiler_batch
 			batch_date=broilerbatch.start_date
 			bro_date=''
-			medicines=frappe.db.sql("""select b.name,b.broiler_shed,m.item,m.qty,m.uom,m.date,TIME(m.creation) as itime from `tabBroiler Batch` b left join `tabMedicine`
-	 			m on b.name=m.parent where m.item is not null and m.item!='' and b.company='{0}' and m.date >= '{1}' and m.date <= '{2}' and b.name='{3}' """.format(company,date_from,date_to,broiler_batch),as_dict=1,debug=0)
+			medicines=frappe.db.sql("""select b.name,b.broiler_shed,m.item,(m.qty) as qty,m.uom,m.date,TIME(m.creation) as itime from `tabBroiler Batch` b left join `tabMedicine`
+	 			m on b.name=m.parent where m.item is not null and m.item!='' and b.company='{0}' and m.date >= '{1}' and m.date <= '{2}' and b.name='{3}' group by m.item""".format(company,date_from,date_to,broiler_batch),as_dict=1,debug=0)
 			if medicines:
 				for medicine in medicines:
 					sett = frappe.get_doc('Broiler Shed',medicine.broiler_shed)
@@ -300,8 +300,8 @@ def get_data_n(conditions,filters):
 					conversion_factor = get_conversion_factor(medicine.item, medicine.uom).get("conversion_factor")
 					med+=base_row_rate * float(medicine.qty) * float(conversion_factor)
 
-			vaccines=frappe.db.sql("""select b.name,b.broiler_shed,m.item,m.qty,m.uom,m.date,TIME(m.creation) as itime from `tabBroiler Batch` b left join `tabVaccine`
-	 			m on b.name=m.parent where m.item is not null and m.item!='' and b.company='{0}' and m.date >= '{1}' and m.date <= '{2}' and b.name='{3}' """.format(company,date_from,date_to,broiler_batch),as_dict=1,debug=0)
+			vaccines=frappe.db.sql("""select b.name,b.broiler_shed,m.item,sum(m.qty) as qty,m.uom,m.date,TIME(m.creation) as itime from `tabBroiler Batch` b left join `tabVaccine`
+	 			m on b.name=m.parent where m.item is not null and m.item!='' and b.company='{0}' and m.date >= '{1}' and m.date <= '{2}' and b.name='{3}' group by m.item""".format(company,date_from,date_to,broiler_batch),as_dict=1,debug=0)
 			if vaccines:
 				for medicine in vaccines:
 					sett = frappe.get_doc('Broiler Shed',medicine.broiler_shed)
@@ -317,8 +317,8 @@ def get_data_n(conditions,filters):
 					conversion_factor = get_conversion_factor(medicine.item, medicine.uom).get("conversion_factor")
 					vac+=base_row_rate * float(medicine.qty) * float(conversion_factor)
 
-			starters=frappe.db.sql("""select b.name,b.broiler_shed,m.starter_item,m.starter_qty,m.starter_uom,m.date,TIME(m.creation) as itime from `tabBroiler Batch` b left join `tabFeed`
-	 			m on b.name=m.parent where m.starter_item is not null and m.starter_item!='' and b.company='{0}' and m.date >= '{1}' and m.date <= '{2}' and b.name='{3}' """.format(company,date_from,date_to,broiler_batch),as_dict=1,debug=0)
+			starters=frappe.db.sql("""select b.name,b.broiler_shed,m.starter_item,sum(m.starter_qty) as starter_qty,m.starter_uom,m.date,TIME(m.creation) as itime from `tabBroiler Batch` b left join `tabFeed`
+	 			m on b.name=m.parent where m.starter_item is not null and m.starter_item!='' and b.company='{0}' and m.date >= '{1}' and m.date <= '{2}' and b.name='{3}' group by m.starter_item """.format(company,date_from,date_to,broiler_batch),as_dict=1,debug=0)
 			if starters:
 				for medicine in starters:
 					sett = frappe.get_doc('Broiler Shed',medicine.broiler_shed)
@@ -335,8 +335,8 @@ def get_data_n(conditions,filters):
 					starter+=base_row_rate * float(medicine.starter_qty) * float(conversion_factor)
 					#if medicine.starter_item=='GM200493':
 						#frappe.msgprint(str(medicine.starter_item)+' '+str(base_row_rate)+' '+ str(medicine.starter_qty)+' '+str(conversion_factor)+' '+str(base_row_rate * float(medicine.starter_qty) * float(conversion_factor)))
-			finishers=frappe.db.sql("""select b.name,b.broiler_shed,m.finisher_item,m.finisher_qty,m.finisher_uom,m.date,TIME(m.creation) as itime from `tabBroiler Batch` b left join `tabFeed`
-			 	m on b.name=m.parent where m.finisher_item is not null and m.finisher_item!='' and b.company='{0}' and m.date >= '{1}' and m.date <= '{2}' and b.name='{3}' """.format(company,date_from,date_to,broiler_batch),as_dict=1,debug=0)
+			finishers=frappe.db.sql("""select b.name,b.broiler_shed,m.finisher_item,sum(m.finisher_qty) as finisher_qty,m.finisher_uom,m.date,TIME(m.creation) as itime from `tabBroiler Batch` b left join `tabFeed`
+			 	m on b.name=m.parent where m.finisher_item is not null and m.finisher_item!='' and b.company='{0}' and m.date >= '{1}' and m.date <= '{2}' and b.name='{3}' group by m.finisher_item """.format(company,date_from,date_to,broiler_batch),as_dict=1,debug=0)
 			if finishers:
 				for medicine in finishers:
 					sett = frappe.get_doc('Broiler Shed',medicine.broiler_shed)
