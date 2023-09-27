@@ -77,7 +77,8 @@ def get_columns(filters):
 	return columns
 
 def get_data(conditions,filters):
-	employee=frappe.db.sql(""" select r.employee,e.employee_name from `tabEmployee Shift Roster` r left join `tabShift Roster` s on r.shift_roster=s.name left join `tabEmployee` e on e.name=r.employee where  %s group by r.employee order by r.employee"""% (conditions),as_dict=1,debug=0)
+	cndd=conditions+" and (e.relieving_date is null or e.relieving_date > '{0}')".format(filters.get("date_from"))
+	employee=frappe.db.sql(""" select r.employee,e.employee_name from `tabEmployee Shift Roster` r left join `tabShift Roster` s on r.shift_roster=s.name left join `tabEmployee` e on e.name=r.employee where  %s group by r.employee order by r.employee"""% (cndd),as_dict=1,debug=0)
 	
 	for emp in employee:
 
@@ -106,7 +107,7 @@ def get_conditions(filters):
 		conditions += "  and s.department in ('{0}') ".format(dept)			
 	if filters.get("date_from"):
 		date_from=filters.get("date_from")
-		conditions += "  and r.day >= '{0}'".format(date_from)
+		conditions += " and r.day >= '{0}'".format(date_from)
 	if filters.get("date_to"):
 		date_to=filters.get("date_to")
 		conditions += "  and r.day <= '{0}'".format(date_to)
