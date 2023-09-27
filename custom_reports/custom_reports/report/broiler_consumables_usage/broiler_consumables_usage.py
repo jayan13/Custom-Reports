@@ -87,19 +87,20 @@ def get_data(conditions,filters):
 
 		manu.update({'medicine':med})	
 		feed=0
+		finisher=0
 		starter_item=frappe.db.sql(""" select sum(basic_amount) as basic_amount  from `tabStock Entry Detail` 
-		where parent in('{0}') and item_code in(select DISTINCT starter_item from `tabFeed` where parent='{1}') group by project""".format(names,cosu.project),as_dict=1,debug=0)
+		where parent in('{0}') and (item_code in(select DISTINCT starter_item from `tabFeed` where parent='{1}') or item_code in(select DISTINCT finisher_item from `tabFeed` where parent='{1}')) group by project""".format(names,cosu.project),as_dict=1,debug=0)
 		if starter_item:
 			starter=starter_item[0].basic_amount
 		else:
 			starter=0
 
-		finisher_item=frappe.db.sql(""" select sum(basic_amount) as basic_amount  from `tabStock Entry Detail` 
-		where parent in('{0}') and item_code in(select DISTINCT finisher_item from `tabFeed` where parent='{1}') group by project""".format(names,cosu.project),as_dict=1,debug=0)
-		if finisher_item:
-			finisher=finisher_item[0].basic_amount
-		else:
-			finisher=0
+		#finisher_item=frappe.db.sql(""" select sum(basic_amount) as basic_amount  from `tabStock Entry Detail` 
+		#where parent in('{0}') and item_code in(select DISTINCT finisher_item from `tabFeed` where parent='{1}') group by project""".format(names,cosu.project),as_dict=1,debug=0)
+		#if finisher_item:
+		#	finisher=finisher_item[0].basic_amount
+		#else:
+		#	finisher=0
 
 		feed=starter+finisher
 		manu.update({'feed':feed})
