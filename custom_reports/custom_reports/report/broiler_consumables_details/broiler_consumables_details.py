@@ -260,7 +260,7 @@ def get_data_n(conditions,filters):
 		broiler_batch=cosu.broiler_batch
 		broiler_date=cosu.start_date
 
-		medicines=frappe.db.sql("""select b.name,b.broiler_shed,m.item,m.item_name,sum(m.qty) as qty,m.uom,m.date,TIME(m.creation) as itime from `tabBroiler Batch` b left join `tabMedicine`
+		medicines=frappe.db.sql("""select b.name,b.broiler_shed,m.item,m.item_name,m.qty,m.uom,m.date,TIME(m.creation) as itime from `tabBroiler Batch` b left join `tabMedicine`
 	 			m on b.name=m.parent where m.item is not null and m.item!='' {0} {1} {2} {3} group by m.item""".format(companys,datefrom,dateto,broiler_batchs),as_dict=1,debug=0)
 		if medicines:
 			sett = frappe.get_doc('Broiler Shed',medicines[0].broiler_shed)
@@ -291,7 +291,7 @@ def get_data_n(conditions,filters):
 				manu.update({'transfer_amount':act_amount})
 			data.append(manu)
 
-		vaccines=frappe.db.sql("""select b.name,b.broiler_shed,m.item,m.item_name,sum(m.qty) as qty,m.uom,m.date,TIME(m.creation) as itime from `tabBroiler Batch` b left join `tabVaccine`
+		vaccines=frappe.db.sql("""select b.name,b.broiler_shed,m.item,m.item_name,m.qty,m.uom,m.date,TIME(m.creation) as itime from `tabBroiler Batch` b left join `tabVaccine`
 	 			m on b.name=m.parent where m.item is not null and m.item!='' {0} {1} {2} {3} group by m.item""".format(companys,datefrom,dateto,broiler_batchs),as_dict=1,debug=0)
 		
 		for vac in vaccines:
@@ -323,7 +323,7 @@ def get_data_n(conditions,filters):
 				manu.update({'transfer_amount':act_amount})
 			data.append(manu)
 
-		starters=frappe.db.sql("""select b.name,b.broiler_shed,m.starter_item as item,sum(m.starter_qty) as qty,m.starter_uom as uom,m.date,TIME(m.creation) as itime from `tabBroiler Batch` b left join `tabFeed`
+		starters=frappe.db.sql("""select b.name,b.broiler_shed,m.starter_item as item,m.starter_qty as qty,m.starter_uom as uom,m.date,TIME(m.creation) as itime from `tabBroiler Batch` b left join `tabFeed`
 	 			m on b.name=m.parent where m.starter_item is not null and m.starter_item!='' {0} {1} {2} {3} group by m.starter_item""".format(companys,datefrom,dateto,broiler_batchs),as_dict=1,debug=0)
 
 		for vac in starters:
@@ -355,7 +355,7 @@ def get_data_n(conditions,filters):
 				manu.update({'transfer_amount':act_amount})
 			data.append(manu)
 
-		finishers=frappe.db.sql("""select b.name,b.broiler_shed,m.finisher_item as item,sum(m.finisher_qty) as qty,m.finisher_uom as uom,m.date,TIME(m.creation) as itime from `tabBroiler Batch` b left join `tabFeed`
+		finishers=frappe.db.sql("""select b.name,b.broiler_shed,m.finisher_item as item,m.finisher_qty as qty,m.finisher_uom as uom,m.date,TIME(m.creation) as itime from `tabBroiler Batch` b left join `tabFeed`
 			 	m on b.name=m.parent where m.finisher_item is not null and m.finisher_item!='' {0} {1} {2} {3} group by m.finisher_item""".format(companys,datefrom,dateto,broiler_batchs),as_dict=1,debug=0)
 
 		for vac in finishers:
