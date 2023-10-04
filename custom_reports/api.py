@@ -1501,7 +1501,7 @@ def get_initial_annual_leave(emp,leave_type,from_date,to_date):
 			
 			total_day=date_diff(getdate(to_date),getdate(empd.date_of_joining))+1			
 			if float(total_day) < yeardays:
-				allo=round(float(24/yeardays)*float(total_day),4)
+				allo=round(float(30/yeardays)*float(total_day),4)
 			else:
 				total_day=date_diff(getdate(to_date),getdate(from_date))+1
 				allo=round(float(30/yeardays)*float(total_day),4)
