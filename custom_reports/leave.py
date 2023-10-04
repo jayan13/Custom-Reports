@@ -949,7 +949,7 @@ def get_remaining_leaves(
 			#customization for employee annulal leave allowcation for less than one year (24 with in first year)
 			join_date=frappe.db.get_value('Employee',allocation.employee,'date_of_joining')
 			total_day=date_diff(getdate(date),getdate(join_date))+1			
-			if allocation.new_leaves_allocated >= 30 and float(total_day) < 365:
+			if float(total_day) < 365:
 				new_leaves_allocated=round(24/365,4)*actualworked
 			else:
 				new_leaves_allocated=round(allocation.new_leaves_allocated/365,4)*actualworked
