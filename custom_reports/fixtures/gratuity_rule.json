@@ -1,0 +1,156 @@
+[
+ {
+  "applicable_earnings_component": [
+   {
+    "parent": "Rule Under Limited Contract (UAE)",
+    "parentfield": "applicable_earnings_component",
+    "parenttype": "Gratuity Rule",
+    "salary_component": "Basic"
+   },
+   {
+    "parent": "Rule Under Limited Contract (UAE)",
+    "parentfield": "applicable_earnings_component",
+    "parenttype": "Gratuity Rule",
+    "salary_component": "Basic(A)"
+   },
+   {
+    "parent": "Rule Under Limited Contract (UAE)",
+    "parentfield": "applicable_earnings_component",
+    "parenttype": "Gratuity Rule",
+    "salary_component": "Basic(D)"
+   },
+   {
+    "parent": "Rule Under Limited Contract (UAE)",
+    "parentfield": "applicable_earnings_component",
+    "parenttype": "Gratuity Rule",
+    "salary_component": "Basic(S)"
+   }
+  ],
+  "calculate_gratuity_amount_based_on": "Sum of all previous slabs",
+  "disable": 0,
+  "docstatus": 0,
+  "doctype": "Gratuity Rule",
+  "gratuity_rule_slabs": [
+   {
+    "fraction_of_applicable_earnings": 0.7,
+    "from_year": 0,
+    "parent": "Rule Under Limited Contract (UAE)",
+    "parentfield": "gratuity_rule_slabs",
+    "parenttype": "Gratuity Rule",
+    "to_year": 5
+   },
+   {
+    "fraction_of_applicable_earnings": 1.0,
+    "from_year": 5,
+    "parent": "Rule Under Limited Contract (UAE)",
+    "parentfield": "gratuity_rule_slabs",
+    "parenttype": "Gratuity Rule",
+    "to_year": 0
+   }
+  ],
+  "minimum_year_for_gratuity": 1,
+  "modified": "2023-10-06 20:09:35.048055",
+  "name": "Rule Under Limited Contract (UAE)",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "total_working_days_per_year": 365,
+  "work_experience_calculation_function": "Take Exact Completed Years"
+ },
+ {
+  "applicable_earnings_component": [
+   {
+    "parent": "Rule Under Unlimited Contract on termination (UAE)",
+    "parentfield": "applicable_earnings_component",
+    "parenttype": "Gratuity Rule",
+    "salary_component": "Basic"
+   }
+  ],
+  "calculate_gratuity_amount_based_on": "Current Slab",
+  "disable": 0,
+  "docstatus": 0,
+  "doctype": "Gratuity Rule",
+  "gratuity_rule_slabs": [
+   {
+    "fraction_of_applicable_earnings": 0.0,
+    "from_year": 0,
+    "parent": "Rule Under Unlimited Contract on termination (UAE)",
+    "parentfield": "gratuity_rule_slabs",
+    "parenttype": "Gratuity Rule",
+    "to_year": 1
+   },
+   {
+    "fraction_of_applicable_earnings": 0.7,
+    "from_year": 1,
+    "parent": "Rule Under Unlimited Contract on termination (UAE)",
+    "parentfield": "gratuity_rule_slabs",
+    "parenttype": "Gratuity Rule",
+    "to_year": 5
+   },
+   {
+    "fraction_of_applicable_earnings": 1.0,
+    "from_year": 5,
+    "parent": "Rule Under Unlimited Contract on termination (UAE)",
+    "parentfield": "gratuity_rule_slabs",
+    "parenttype": "Gratuity Rule",
+    "to_year": 0
+   }
+  ],
+  "minimum_year_for_gratuity": 1,
+  "modified": "2023-10-06 20:07:39.149972",
+  "name": "Rule Under Unlimited Contract on termination (UAE)",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "total_working_days_per_year": 365,
+  "work_experience_calculation_function": "Round off Work Experience"
+ },
+ {
+  "applicable_earnings_component": [
+   {
+    "parent": "Rule Under Unlimited Contract on resignation (UAE)",
+    "parentfield": "applicable_earnings_component",
+    "parenttype": "Gratuity Rule",
+    "salary_component": "Basic"
+   }
+  ],
+  "calculate_gratuity_amount_based_on": "Current Slab",
+  "disable": 0,
+  "docstatus": 0,
+  "doctype": "Gratuity Rule",
+  "gratuity_rule_slabs": [
+   {
+    "fraction_of_applicable_earnings": 0.23,
+    "from_year": 0,
+    "parent": "Rule Under Unlimited Contract on resignation (UAE)",
+    "parentfield": "gratuity_rule_slabs",
+    "parenttype": "Gratuity Rule",
+    "to_year": 3
+   },
+   {
+    "fraction_of_applicable_earnings": 0.47,
+    "from_year": 3,
+    "parent": "Rule Under Unlimited Contract on resignation (UAE)",
+    "parentfield": "gratuity_rule_slabs",
+    "parenttype": "Gratuity Rule",
+    "to_year": 5
+   },
+   {
+    "fraction_of_applicable_earnings": 0.7,
+    "from_year": 5,
+    "parent": "Rule Under Unlimited Contract on resignation (UAE)",
+    "parentfield": "gratuity_rule_slabs",
+    "parenttype": "Gratuity Rule",
+    "to_year": 0
+   }
+  ],
+  "minimum_year_for_gratuity": 1,
+  "modified": "2023-10-06 20:07:55.646300",
+  "name": "Rule Under Unlimited Contract on resignation (UAE)",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "total_working_days_per_year": 365,
+  "work_experience_calculation_function": "Take Exact Completed Years"
+ }
+]

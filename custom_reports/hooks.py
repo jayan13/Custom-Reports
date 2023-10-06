@@ -212,6 +212,103 @@ user_data_fields = [
 	}
 ]
 
+fixtures = [
+	{
+		"doctype": "Salary Component",
+		"filters": [
+            [
+                "name",
+                "in",
+                (   
+					"Basic",               
+					"Leave Salary",
+					"Previous Month Balance",
+					"Salary Advance Paid",
+					"Salary Advance",
+					"Holiday Over Time",
+					"Over time",
+                ),
+            ]
+        ],
+	},
+	{
+		"doctype": "Gratuity Rule",
+		"filters": [
+            [
+                "name",
+                "in",
+                (                  
+					"Rule Under Limited Contract (UAE)",
+					"Rule Under Unlimited Contract on termination (UAE)",
+					"Rule Under Unlimited Contract on resignation (UAE)",
+                ),
+            ]
+        ],
+	},
+	{
+		"doctype": "Leave Type",
+		"filters": [
+            [
+                "name",
+                "in",
+                (                  
+					"Compensatory Off",
+					"Annual Leave",
+                ),
+            ]
+        ],
+	},	
+	{
+        "doctype": "Custom Field",
+        "filters": [
+            [
+                "name",
+                "in",
+                (                  
+					"Company-payroll_jv_naming_series",
+					"Employee-weekly_off_2",
+					"Employee-weekly_off",
+					"Employee-leave_provision_date",
+					"Employee-ticket_provision_date",
+					"Employee-used_tickets",
+					"Employee-opening_ticket_amount_used",
+					"Employee-opening_ticket_balance",
+					"Employee-opening_ticket_balance_amount",
+					"Employee-opening_leaves_accrued",
+					"Employee-opening_balance_amount",
+					"Employee-openning_entry_date",
+					"Employee-no_of_tickets_eligible",
+					"Employee-leaves_per_year",
+					"Employee-ticket_price",
+					"Employee-ticket_period",
+					"Employee-opening_used_leaves",
+					"Employee-opening_absent",
+					"Leave Application-duty_handover_to",
+					"Leave Application-salary_paid_in_advance",
+					"Leave Application-leave_category",
+					"Payroll Entry-salary_comparison",
+					"Payroll Entry-col_comp",
+					"Payroll Entry-col_bk2",
+					"Payroll Entry-over_time_sheet",
+					"Payroll Entry-salary_sheet_without_over_time",
+					"Payroll Entry-col_bk1",
+					"Payroll Entry-employee_salary_sheet",
+					"Payroll Entry-sec_brk",
+					"Salary Slip-final_settlement_request",
+					"Salary Slip-holiday_over_time",
+					"Salary Slip-over_time",
+					"Salary Slip-annual_leave_advanced_paid",
+					"Salary Slip-annual_leave",
+					"Compensatory Leave Request-shift_roster",
+					"Leave Period-abbr",
+					"Salary Detail-narration",
+					"Additional Salary-narration"
+                ),
+            ]
+        ],
+    },
+	{ "doctype": "Client Script", "filters": [ ["name", "in", ( "Leave Allocation-Form","Payroll Entry-Form","Company-Form" )] ] },
+]
 # Authentication and authorization
 # --------------------------------
 

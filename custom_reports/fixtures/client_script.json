@@ -1,0 +1,41 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Company",
+  "enabled": 1,
+  "modified": "2022-10-05 15:59:11.875525",
+  "name": "Company-Form",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "script": "frappe.ui.form.on('Company', {\n\tsetup(frm) {\n\t\tfrappe.call({\n        method: \"cheque_management.api.get_journal_naming_series\",\n        callback: function (r) {\n        \tif(r.message)\n\t\t\t{\n\t\t\t\n\t\t\t\tfrm.set_df_property('journal_entry_naming_series', 'options',r.message);\n\t\t\t\tfrm.set_df_property('payment_journal_entry_naming_series', 'options',r.message);\n\t\t\t\tfrm.set_df_property('journal_entry_ret_naming_series', 'options',r.message);\n\t\t\t\tfrm.set_df_property('payroll_jv_naming_series', 'options',r.message);\n\t\t\t\t\n                frm.refresh_field('journal_entry_naming_series');\n                frm.refresh_field('payment_journal_entry_naming_series');\n                frm.refresh_field('journal_entry_ret_naming_series');\n                frm.refresh_field('payroll_jv_naming_series');\n\t\t\t}\n        }\n    });\n\t}\n})",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Payroll Entry",
+  "enabled": 1,
+  "modified": "2023-06-06 14:19:45.382318",
+  "name": "Payroll Entry-Form",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "script": "frappe.ui.form.on('Payroll Entry', {\n\trefresh(frm) {\n\t    \nvar companies=['Dure Oil Middle East Factory - Sole Proprietorship LLC', 'Head Office - Bin Butti Holding Group LLC', 'World Wide Emirates Services - Sole Proprietorship LLC', 'Bin Butti Rotating Machinery LLC', 'Quick Laundry \u2013 Sole Proprietorship LLC', 'Bin Butti International Real Estate Management \u2013 Unincorporated', 'Hamed General Trading &  Companies Representation - Sole Proprietorship LLC','ABU DHABI POULTRY FARM - SOLE PROPRIETORSHIP L.L.C.', 'ABU DHABI MODERNE POULTRY FARM L.L.C.'];\n\t\tif (companies.includes(frm.doc.company) && frappe.model.has_workflow(frm.doctype))\n\t\t{\n\t     if(frm.doc.workflow_state!='Approved'){\n        frm.remove_custom_button('Submit Salary Slip');\n\t    }\n\tsetTimeout(() => {\n\t    if(frm.doc.workflow_state!='Approved'){\n        frm.remove_custom_button('Submit Salary Slip');\n\t    }\n       \n        }, 10);\n        \n        if (!frm.doc.salary_slips_submitted && frm.doc.workflow_state=='Approved')\n        {\n\t\t\tfrm.doc.salary_slips_submitted=1;\n        \tsubmit_salary_slip(frm);\n        }\n        \n        if (frm.doc.docstatus == 0) {\n       if ((frm.doc.employees || []).length) {\n\t\t\t\tfrm.page.clear_primary_action();\n\t\t\t\tfrm.page.set_primary_action(__('Create Salary Slips'), () => {\n\t\t\t\t\tfrm.save('Submit').then(() => {\n\t\t\t\t\t\tfrm.page.clear_primary_action();\n\t\t\t\t\t\tfrm.refresh();\n\t\t\t\t\t\tfrm.events.refresh(frm);\n\t\t\t\t\t});\n\t\t\t\t});\n\t\t\t}\n        }\n\t\t}else{\n\n\t\t\tif (frm.doc.docstatus == 0) {\n       if ((frm.doc.employees || []).length) {\n\t\t\t\tfrm.page.clear_primary_action();\n\t\t\t\tfrm.page.set_primary_action(__('Create Salary Slips'), () => {\n\t\t\t\t\tfrm.save('Submit').then(() => {\n\t\t\t\t\t\tfrm.page.clear_primary_action();\n\t\t\t\t\t\tfrm.refresh();\n\t\t\t\t\t\tfrm.events.refresh(frm);\n\t\t\t\t\t});\n\t\t\t\t});\n\t\t\t}\n        }\n\t\t}\n        \n       \n\t},\n\temployee_salary_sheet(frm) {\n\t   var base_url = window.location.origin;\n                var url=base_url+'/app/employee-salary-shee/'+frm.doc.name\n\t\t\t\twindow.open(url, '_blank');\n\t},\n\tsalary_sheet_without_over_time(frm) {\n\t   var base_url = window.location.origin;\n                var url=base_url+'/app/salary-sheet-without/'+frm.doc.name\n\t\t\t\twindow.open(url, '_blank');\n\t},\n\tover_time_sheet(frm) {\n\t   var base_url = window.location.origin;\n                var url=base_url+'/app/over-time-sheet/'+frm.doc.name\n\t\t\t\twindow.open(url, '_blank');\n\t},\n\tsalary_comparison(frm) {\n\t   var base_url = window.location.origin;\n                var url=base_url+'/app/salary-comparison/'+frm.doc.name\n\t\t\t\twindow.open(url, '_blank');\n\t}\n})\n\nconst submit_salary_slip = function (frm) {\n\tfrappe.confirm(__('This will submit Salary Slips and create accrual Journal Entry. Do you want to proceed?'),\n\t\tfunction () {\n\t\t\tfrappe.call({\n\t\t\t\tmethod: 'submit_salary_slips',\n\t\t\t\targs: {},\n\t\t\t\tcallback: function () {\n\t\t\t\t\tfrm.events.refresh(frm);\n\t\t\t\t},\n\t\t\t\tdoc: frm.doc,\n\t\t\t\tfreeze: true,\n\t\t\t\tfreeze_message: __('Submitting Salary Slips and creating Journal Entry...')\n\t\t\t});\n\t\t},\n\t\tfunction () {\n\t\t\tif (frappe.dom.freeze_count) {\n\t\t\t\tfrappe.dom.unfreeze();\n\t\t\t\tfrm.events.refresh(frm);\n\t\t\t}\n\t\t}\n\t);\n};",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Leave Allocation",
+  "enabled": 1,
+  "modified": "2023-09-24 15:03:56.842765",
+  "name": "Leave Allocation-Form",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "script": "frappe.ui.form.on('Leave Allocation', {\n\trefresh(frm) {\n\t\t// your code here\n\t},\n\tleave_type: function(frm) {\n\t    if (frm.doc.leave_type=='Annual Leave' && frm.doc.to_date)\n        {\n        \tfrappe.call({\n        \t\t\t\tmethod: \"custom_reports.api.get_initial_annual_leave\",\n        \t\t\t\targs: {\n        \t\t\t\t\temp: frm.doc.employee,\n        \t\t\t\t\tleave_type: frm.doc.leave_type,\n        \t\t\t\t\tfrom_date: frm.doc.from_date,\n        \t\t\t\t\tto_date: frm.doc.to_date,\t\n        \t\t\t\t},\n        \t\t\t\tcallback: function(response) {\n        \t\t\t\t  if(!frm.doc.new_leaves_allocated  || frm.doc.new_leaves_allocated=='')\n        \t\t\t\t  {\n        \t\t\t\t      frm.doc.new_leaves_allocated=response.message;\n                                refresh_field(\"new_leaves_allocated\");\n        \t\t\t\t  }\n        \t\t\t\t}\n        \t\t\t  }); \n        }\n\t},\n\tfrom_date: function(frm) {\n\t    if (frm.doc.leave_type=='Annual Leave' && frm.doc.to_date)\n        {\n        \tfrappe.call({\n        \t\t\t\tmethod: \"custom_reports.api.get_initial_annual_leave\",\n        \t\t\t\targs: {\n        \t\t\t\t\temp: frm.doc.employee,\n        \t\t\t\t\tleave_type: frm.doc.leave_type,\n        \t\t\t\t\tfrom_date: frm.doc.from_date,\n        \t\t\t\t\tto_date: frm.doc.to_date,\t\n        \t\t\t\t},\n        \t\t\t\tcallback: function(response) {\n        \t\t\t\t  if(!frm.doc.new_leaves_allocated  || frm.doc.new_leaves_allocated=='')\n        \t\t\t\t  {\n        \t\t\t\t      frm.doc.new_leaves_allocated=response.message;\n                                refresh_field(\"new_leaves_allocated\");\n        \t\t\t\t  }\n        \t\t\t\t}\n        \t\t\t  }); \n        }\n\t},\n\tto_date: function(frm) {\n\t    if (frm.doc.leave_type=='Annual Leave' && frm.doc.to_date)\n        {\n        \tfrappe.call({\n        \t\t\t\tmethod: \"custom_reports.api.get_initial_annual_leave\",\n        \t\t\t\targs: {\n        \t\t\t\t\temp: frm.doc.employee,\n        \t\t\t\t\tleave_type: frm.doc.leave_type,\n        \t\t\t\t\tfrom_date: frm.doc.from_date,\n        \t\t\t\t\tto_date: frm.doc.to_date,\t\n        \t\t\t\t},\n        \t\t\t\tcallback: function(response) {\n        \t\t\t\t  if(!frm.doc.new_leaves_allocated  || frm.doc.new_leaves_allocated=='')\n        \t\t\t\t  {\n        \t\t\t\t      frm.doc.new_leaves_allocated=response.message;\n                                refresh_field(\"new_leaves_allocated\");\n        \t\t\t\t  }\n        \t\t\t\t}\n        \t\t\t  }); \n        }\n\t},\n\t\n})",
+  "view": "Form"
+ }
+]

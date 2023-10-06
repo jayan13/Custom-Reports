@@ -1,0 +1,464 @@
+[
+ {
+  "accounts": [
+   {
+    "account": null,
+    "company": "ABU DHABI POULTRY FARM - SOLE PROPRIETORSHIP L.L.C.",
+    "parent": "Basic",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "Basic Salary - GC",
+    "company": "GRAND CONTINENTAL FLAMINGO HOTEL",
+    "parent": "Basic",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "Basic Salary - GT",
+    "company": "GOLDEN TULIP DOWNTOWN ABU DHABI",
+    "parent": "Basic",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "501301 - Salaries - Direct - DURE",
+    "company": "Dure Oil Middle East Factory - Sole Proprietorship LLC",
+    "parent": "Basic",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   }
+  ],
+  "amount": 0.0,
+  "amount_based_on_formula": 0,
+  "condition": null,
+  "create_separate_payment_entry_against_benefit_claim": 0,
+  "deduct_full_tax_on_selected_payroll_date": 0,
+  "depends_on_payment_days": 1,
+  "description": "Basic",
+  "disabled": 0,
+  "do_not_include_in_total": 0,
+  "docstatus": 0,
+  "doctype": "Salary Component",
+  "exempted_from_income_tax": 0,
+  "formula": null,
+  "is_flexible_benefit": 0,
+  "is_income_tax_component": 0,
+  "is_tax_applicable": 0,
+  "max_benefit_amount": 0.0,
+  "modified": "2023-02-12 11:51:43.014500",
+  "name": "Basic",
+  "only_tax_impact": 0,
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "pay_against_benefit_claim": 0,
+  "round_to_the_nearest_integer": 1,
+  "salary_component": "Basic",
+  "salary_component_abbr": "B",
+  "statistical_component": 0,
+  "type": "Earning",
+  "variable_based_on_taxable_salary": 0
+ },
+ {
+  "accounts": [
+   {
+    "account": "Over time - GC",
+    "company": "GRAND CONTINENTAL FLAMINGO HOTEL",
+    "parent": "Over time",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "Over time - GT",
+    "company": "GOLDEN TULIP DOWNTOWN ABU DHABI",
+    "parent": "Over time",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "501324 - Over time - Direct - HO",
+    "company": "Head Office - Bin Butti Holding Group LLC",
+    "parent": "Over time",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "501324 - Over time - Direct - WWES",
+    "company": "World Wide Emirates Services - Sole Proprietorship LLC",
+    "parent": "Over time",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   }
+  ],
+  "amount": 0.0,
+  "amount_based_on_formula": 1,
+  "condition": "",
+  "create_separate_payment_entry_against_benefit_claim": 0,
+  "deduct_full_tax_on_selected_payroll_date": 0,
+  "depends_on_payment_days": 0,
+  "description": "Over time",
+  "disabled": 0,
+  "do_not_include_in_total": 0,
+  "docstatus": 0,
+  "doctype": "Salary Component",
+  "exempted_from_income_tax": 0,
+  "formula": "( B / 240 ) * over_time * 1.25 if over_time<=40 else ( B / 240 ) * 40 * 1.25 ",
+  "is_flexible_benefit": 0,
+  "is_income_tax_component": 0,
+  "is_tax_applicable": 0,
+  "max_benefit_amount": 0.0,
+  "modified": "2023-01-05 17:17:29.709591",
+  "name": "Over time",
+  "only_tax_impact": 0,
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "pay_against_benefit_claim": 0,
+  "round_to_the_nearest_integer": 1,
+  "salary_component": "Over time",
+  "salary_component_abbr": "OT",
+  "statistical_component": 0,
+  "type": "Earning",
+  "variable_based_on_taxable_salary": 0
+ },
+ {
+  "accounts": [
+   {
+    "account": null,
+    "company": "ABU DHABI POULTRY FARM - SOLE PROPRIETORSHIP L.L.C.",
+    "parent": "Holiday Over Time",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "Holiday Over Time - GC",
+    "company": "GRAND CONTINENTAL FLAMINGO HOTEL",
+    "parent": "Holiday Over Time",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "Holiday Over Time - GT",
+    "company": "GOLDEN TULIP DOWNTOWN ABU DHABI",
+    "parent": "Holiday Over Time",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "501324 - Over time - Direct - HO",
+    "company": "Head Office - Bin Butti Holding Group LLC",
+    "parent": "Holiday Over Time",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "501324 - Over time - Direct - WWES",
+    "company": "World Wide Emirates Services - Sole Proprietorship LLC",
+    "parent": "Holiday Over Time",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   }
+  ],
+  "amount": 0.0,
+  "amount_based_on_formula": 1,
+  "condition": "",
+  "create_separate_payment_entry_against_benefit_claim": 0,
+  "deduct_full_tax_on_selected_payroll_date": 0,
+  "depends_on_payment_days": 0,
+  "description": "Holiday Over Time",
+  "disabled": 0,
+  "do_not_include_in_total": 0,
+  "docstatus": 0,
+  "doctype": "Salary Component",
+  "exempted_from_income_tax": 0,
+  "formula": "( B / 240 ) * holiday_over_time * 1.50",
+  "is_flexible_benefit": 0,
+  "is_income_tax_component": 0,
+  "is_tax_applicable": 0,
+  "max_benefit_amount": 0.0,
+  "modified": "2023-01-08 18:35:42.880729",
+  "name": "Holiday Over Time",
+  "only_tax_impact": 0,
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "pay_against_benefit_claim": 0,
+  "round_to_the_nearest_integer": 1,
+  "salary_component": "Holiday Over Time",
+  "salary_component_abbr": "HOT",
+  "statistical_component": 0,
+  "type": "Earning",
+  "variable_based_on_taxable_salary": 0
+ },
+ {
+  "accounts": [
+   {
+    "account": "Leave Salary - GT",
+    "company": "GOLDEN TULIP DOWNTOWN ABU DHABI",
+    "parent": "Leave Salary",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "Leave Salary - GC",
+    "company": "GRAND CONTINENTAL FLAMINGO HOTEL",
+    "parent": "Leave Salary",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   }
+  ],
+  "amount": 0.0,
+  "amount_based_on_formula": 0,
+  "condition": null,
+  "create_separate_payment_entry_against_benefit_claim": 0,
+  "deduct_full_tax_on_selected_payroll_date": 0,
+  "depends_on_payment_days": 1,
+  "description": "Leave Salary",
+  "disabled": 0,
+  "do_not_include_in_total": 0,
+  "docstatus": 0,
+  "doctype": "Salary Component",
+  "exempted_from_income_tax": 0,
+  "formula": "",
+  "is_flexible_benefit": 0,
+  "is_income_tax_component": 0,
+  "is_tax_applicable": 0,
+  "max_benefit_amount": 0.0,
+  "modified": "2023-01-30 10:08:57.740739",
+  "name": "Leave Salary",
+  "only_tax_impact": 0,
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "pay_against_benefit_claim": 0,
+  "round_to_the_nearest_integer": 1,
+  "salary_component": "Leave Salary",
+  "salary_component_abbr": "LS",
+  "statistical_component": 0,
+  "type": "Earning",
+  "variable_based_on_taxable_salary": 0
+ },
+ {
+  "accounts": [
+   {
+    "account": "Staff Receivable - GC",
+    "company": "GRAND CONTINENTAL FLAMINGO HOTEL",
+    "parent": "Salary Advance",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "Staff Receivable - GT",
+    "company": "GOLDEN TULIP DOWNTOWN ABU DHABI",
+    "parent": "Salary Advance",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   }
+  ],
+  "amount": 0.0,
+  "amount_based_on_formula": 0,
+  "condition": null,
+  "create_separate_payment_entry_against_benefit_claim": 0,
+  "deduct_full_tax_on_selected_payroll_date": 0,
+  "depends_on_payment_days": 0,
+  "description": null,
+  "disabled": 0,
+  "do_not_include_in_total": 0,
+  "docstatus": 0,
+  "doctype": "Salary Component",
+  "exempted_from_income_tax": 0,
+  "formula": "",
+  "is_flexible_benefit": 0,
+  "is_income_tax_component": 0,
+  "is_tax_applicable": 0,
+  "max_benefit_amount": 0.0,
+  "modified": "2023-01-22 13:31:43.240625",
+  "name": "Salary Advance",
+  "only_tax_impact": 0,
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "pay_against_benefit_claim": 0,
+  "round_to_the_nearest_integer": 0,
+  "salary_component": "Salary Advance",
+  "salary_component_abbr": "SA",
+  "statistical_component": 0,
+  "type": "Deduction",
+  "variable_based_on_taxable_salary": 0
+ },
+ {
+  "accounts": [
+   {
+    "account": "Previous Month Balance - GC",
+    "company": "GRAND CONTINENTAL FLAMINGO HOTEL",
+    "parent": "Previous Month Balance",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "Previous Month Balance - GT",
+    "company": "GOLDEN TULIP DOWNTOWN ABU DHABI",
+    "parent": "Previous Month Balance",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   }
+  ],
+  "amount": 0.0,
+  "amount_based_on_formula": 0,
+  "condition": null,
+  "create_separate_payment_entry_against_benefit_claim": 0,
+  "deduct_full_tax_on_selected_payroll_date": 0,
+  "depends_on_payment_days": 0,
+  "description": null,
+  "disabled": 0,
+  "do_not_include_in_total": 0,
+  "docstatus": 0,
+  "doctype": "Salary Component",
+  "exempted_from_income_tax": 0,
+  "formula": null,
+  "is_flexible_benefit": 0,
+  "is_income_tax_component": 0,
+  "is_tax_applicable": 0,
+  "max_benefit_amount": 0.0,
+  "modified": "2023-01-22 13:39:03.417875",
+  "name": "Previous Month Balance",
+  "only_tax_impact": 0,
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "pay_against_benefit_claim": 0,
+  "round_to_the_nearest_integer": 1,
+  "salary_component": "Previous Month Balance",
+  "salary_component_abbr": "PMB",
+  "statistical_component": 0,
+  "type": "Earning",
+  "variable_based_on_taxable_salary": 0
+ },
+ {
+  "accounts": [
+   {
+    "account": "Staff Receivable - GC",
+    "company": "GRAND CONTINENTAL FLAMINGO HOTEL",
+    "parent": "Salary Advance Paid",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "Staff Receivable - GT",
+    "company": "GOLDEN TULIP DOWNTOWN ABU DHABI",
+    "parent": "Salary Advance Paid",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "122025 - Salary Advance - HO",
+    "company": "Head Office - Bin Butti Holding Group LLC",
+    "parent": "Salary Advance Paid",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "122025 - Salary Advance - WWES",
+    "company": "World Wide Emirates Services - Sole Proprietorship LLC",
+    "parent": "Salary Advance Paid",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "122025 - Salary Advance - DURE",
+    "company": "Dure Oil Middle East Factory - Sole Proprietorship LLC",
+    "parent": "Salary Advance Paid",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "122025 - Salary Advance - BBRM",
+    "company": "Bin Butti Rotating Machinery LLC",
+    "parent": "Salary Advance Paid",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "122025 - Salary Advance - AMPF",
+    "company": "ABU DHABI MODERNE POULTRY FARM L.L.C.",
+    "parent": "Salary Advance Paid",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "122025 - Salary Advance - APF",
+    "company": "ABU DHABI POULTRY FARM - SOLE PROPRIETORSHIP L.L.C.",
+    "parent": "Salary Advance Paid",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "122025 - Salary Advance - HGT",
+    "company": "Hamed General Trading &  Companies Representation - Sole Proprietorship LLC",
+    "parent": "Salary Advance Paid",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "122025 - Salary Advance - AMPF",
+    "company": "ABU DHABI MODERNE POULTRY FARM L.L.C.",
+    "parent": "Salary Advance Paid",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "122025 - Salary Advance - APF",
+    "company": "ABU DHABI POULTRY FARM - SOLE PROPRIETORSHIP L.L.C.",
+    "parent": "Salary Advance Paid",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "122025 - Salary Advance - QL",
+    "company": "Quick Laundry \u2013 Sole Proprietorship LLC",
+    "parent": "Salary Advance Paid",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   },
+   {
+    "account": "122025 - Salary Advance - REM",
+    "company": "Bin Butti International Real Estate Management \u2013 Unincorporated",
+    "parent": "Salary Advance Paid",
+    "parentfield": "accounts",
+    "parenttype": "Salary Component"
+   }
+  ],
+  "amount": 0.0,
+  "amount_based_on_formula": 0,
+  "condition": null,
+  "create_separate_payment_entry_against_benefit_claim": 0,
+  "deduct_full_tax_on_selected_payroll_date": 0,
+  "depends_on_payment_days": 0,
+  "description": "Salary Advance Paid",
+  "disabled": 0,
+  "do_not_include_in_total": 0,
+  "docstatus": 0,
+  "doctype": "Salary Component",
+  "exempted_from_income_tax": 0,
+  "formula": "",
+  "is_flexible_benefit": 0,
+  "is_income_tax_component": 0,
+  "is_tax_applicable": 0,
+  "max_benefit_amount": 0.0,
+  "modified": "2023-03-08 20:40:10.594833",
+  "name": "Salary Advance Paid",
+  "only_tax_impact": 0,
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "pay_against_benefit_claim": 0,
+  "round_to_the_nearest_integer": 0,
+  "salary_component": "Salary Advance Paid",
+  "salary_component_abbr": "SA_2",
+  "statistical_component": 0,
+  "type": "Earning",
+  "variable_based_on_taxable_salary": 0
+ }
+]
