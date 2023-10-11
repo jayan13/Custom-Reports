@@ -195,13 +195,13 @@ def get_ticket_given(emp,from_date,to_date):
 				absents+=float(emp.opening_absent or 0)
 				actual_worked+=total_days-absents
 				years+=round((actual_worked/365),4)				
-				balance+=float(emp.opening_ticket_balance)
+				balance+=float(emp.opening_ticket_balance or 0)
 				#amount_balance+=float(emp.opening_ticket_balance_amount)
 				#amount_balance+=float(balance)*float(currentticketprice)
-				accrued+=round(float(emp.opening_ticket_balance)+float(emp.used_tickets),4)
+				accrued+=round(float(emp.opening_ticket_balance)+float(emp.used_tickets or 0),4)
 				#amount_accrued+=round(emp.opening_ticket_amount_used+emp.opening_ticket_balance_amount,2)
 				amount_accrued+=float(accrued)*float(currentticketprice)
-				used+=float(emp.used_tickets)
+				used+=float(emp.used_tickets or 0)
 				#amount_used+=float(emp.opening_ticket_amount_used)
 				amount_used+=float(used)*float(currentticketprice)
 				ticket_price=currentticketprice
@@ -349,7 +349,7 @@ def get_gross_salary(emp,processing_month):
 	return gsal
 
 def getabsents(emp,opn,start_date,end_date):
-	absent=float(opn)
+	absent=float(opn or 0)
 	sal3=frappe.db.sql(""" select count(*) as absent FROM `tabAttendance` a left join `tabLeave Type` l on l.name=a.leave_type 
 	where a.docstatus=1 and a.status='On Leave' and a.employee='{0}' and a.attendance_date between '{1}' and  '{2}' and l.is_ppl='1' """.format(emp,start_date,end_date),as_dict=1,debug=0)
 	if sal3:
@@ -444,7 +444,7 @@ def get_leave_no(emp,processing_month):
 	return new_leaves_allocated
 
 def getused(emp,opn,start_date,end_date):
-	used=float(opn)
+	used=float(opn or 0)
 
 	sal=frappe.db.sql(""" select count(*) as used FROM `tabAttendance` a left join `tabLeave Type` l on l.name=a.leave_type 
 	where a.docstatus=1 and a.status='On Leave' and a.employee='{0}' and a.attendance_date between '{1}' and  '{2}' and a.leave_type='Annual Leave' """.format(emp,start_date,end_date),as_dict=1,debug=0)
@@ -930,7 +930,7 @@ def get_last_salary_slip(employee):
 
 
 def get_nonworking_days(emp,opn,start_date,end_date):
-	nwdays=float(opn)
+	nwdays=float(opn or 0)
 	filters = {
 		"docstatus": 1,
 		"status": 'On Leave',
@@ -1509,3 +1509,12 @@ def get_initial_annual_leave(emp,leave_type,from_date,to_date):
 				
 
 	return allo
+
+@frappe.whitelist()
+def get_journal_naming_series():
+	nm=frappe.db.get_list('Property Setter',filters={'doc_type': 'Journal Entry','field_name': 'naming_series'},fields=['value'],pluck='value')
+	res=''
+	if nm:
+		res=nm[0].splitlines()
+
+	return res
