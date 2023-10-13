@@ -302,7 +302,9 @@ fixtures = [
 					"Compensatory Leave Request-shift_roster",
 					"Leave Period-abbr",
 					"Salary Detail-narration",
-					"Additional Salary-narration"
+					"Additional Salary-narration",
+					"Attendance-shift_roster",
+					"Attendance-description"
                 ),
             ]
         ],
