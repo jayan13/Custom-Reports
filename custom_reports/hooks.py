@@ -309,6 +309,34 @@ fixtures = [
             ]
         ],
     },
+	{ "doctype": "Report", "filters": [ ["name", "in", 
+		( 
+			"Shift Report",
+			"Shift Roster",
+			"Employee Salary Structure",
+			"Salary Sheet Without Over Time",
+			"Employee Salary Sheet",
+			"Over Time Sheet",
+			"Department Wise Attendance Sheet",
+			"Monthly Ticket Provision",
+			"Monthly Annual Leave Provision",
+			"Monthly Gratuity Provision",
+			"Employee Head Count",
+			"Provision Leave",
+			"Provision Ticket",
+			"Provision Gratuity",
+			"This month Annual Leave Report",
+			"Department Wise Payroll Jv",
+			"Gratuity Provisions",
+			"Provision Air Ticket",
+			"Provision Annual Leave",
+			"PRO REQUEST", 
+			"Employee Checkin Report",
+			"Monthly Attendance Report",
+		)
+		
+	] ] },
+	{ "doctype": "Page", "filters": [ ["name", "in", ( "salary-comparison","salary-sheet-without","over-time-sheet","employee-salary-shee" )] ] },
 	{ "doctype": "Client Script", "filters": [ ["name", "in", ( "Leave Allocation-Form","Payroll Entry-Form","Company-Form" )] ] },
 ]
 # Authentication and authorization
