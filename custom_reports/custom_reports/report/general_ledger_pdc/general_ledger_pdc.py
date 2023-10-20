@@ -86,12 +86,7 @@ def validate_filters(filters, account_details):
 
 	if filters.from_date > filters.to_date:
 		frappe.throw(_("From Date must be before To Date"))
-	#modified
-	if filters.voucher_from_date and filters.voucher_to_date:
-		if filters.voucher_from_date > filters.voucher_to_date:
-			frappe.throw(_("Voucher From Date must be before To Date"))
-
-
+	
 	if filters.get('project'):
 		filters.project = frappe.parse_json(filters.get('project'))
 
@@ -194,7 +189,6 @@ def get_gl_entries(filters, accounting_dimensions):
 		UNION ALL
 		SELECT name as gl_entry,
 			posting_date,
-			voucher_date,
 			0 as pdc_value,'' as cheque_no,'' as cheque_date,
 			account,
 			party_type,
@@ -225,7 +219,7 @@ def get_gl_entries(filters, accounting_dimensions):
 	gl_entries = frappe.db.sql(
 		"""
 		select
-			name as gl_entry, posting_date, voucher_date, 0 as pdc_value,'' as cheque_no,'' as cheque_date, account, party_type, party,
+			name as gl_entry, posting_date,  0 as pdc_value,'' as cheque_no,'' as cheque_date, account, party_type, party,
 			voucher_type, voucher_no, {dimension_fields}
 			cost_center, project,
 			against_voucher_type, against_voucher, account_currency,
@@ -253,8 +247,7 @@ def get_gl_entries(filters, accounting_dimensions):
 					for jei in jeacc:												
 						ne={}
 						ne['gl_entry']=gl.gl_entry						
-						ne['posting_date']=str(gl.posting_date)
-						ne['voucher_date']=str(gl.voucher_date)
+						ne['posting_date']=str(gl.posting_date)						
 						ne['pdc_value']=gl.pdc_value or '0'
 						ne['account']=gl.account
 						ne['party_type']=gl.party_type or ''
@@ -282,7 +275,7 @@ def get_gl_entries(filters, accounting_dimensions):
 			frappe.db.sql(
 				"""
 				CREATE TEMPORARY TABLE gl_temp_table ( select
-					name as gl_entry, posting_date, voucher_date, 0 as pdc_value,'' as cheque_no,'' as cheque_date, account, party_type, party,
+					name as gl_entry, posting_date, 0 as pdc_value,'' as cheque_no,'' as cheque_date, account, party_type, party,
 					voucher_type, voucher_no, {dimension_fields}
 					cost_center, project,
 					against_voucher_type, against_voucher, account_currency,
@@ -472,13 +465,7 @@ def get_conditions(filters):
 		conditions.append("posting_date >=%(from_date)s")
 
 	conditions.append("(posting_date <=%(to_date)s or is_opening = 'Yes')")
-	#modified
-	if filters.get("voucher_to_date"):
-		conditions.append("voucher_date <=%(voucher_to_date)s")
-
-	if filters.get("voucher_from_date"):
-		conditions.append("voucher_date >=%(voucher_from_date)s")
-	#modified end
+	
 	if filters.get("project"):
 		conditions.append("project in %(project)s")
 
@@ -748,12 +735,7 @@ def get_columns(filters):
 			"fieldtype": "Date",
 			"width": 90
 		},
-		{
-			"label": _("Voucher Date"),
-			"fieldname": "voucher_date",
-			"fieldtype": "Date",
-			"width": 90
-		},
+		
 		{
 			"label": _("Account"),
 			"fieldname": "account",

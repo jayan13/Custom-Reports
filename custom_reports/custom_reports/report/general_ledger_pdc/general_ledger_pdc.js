@@ -176,20 +176,6 @@ frappe.query_reports["General Ledger PDC"] = {
 		"fieldtype": "Break",
 		},
 		{
-		"fieldname":"voucher_from_date",
-		"label": __("Voucher From Date"),
-		"fieldtype": "Date",
-		"default": '',		
-		"width": "60px"
-		},
-		{
-		"fieldname":"voucher_to_date",
-		"label": __("Voucher To Date"),
-		"fieldtype": "Date",
-		"default": '',		
-		"width": "60px"
-		},
-		{
 			"fieldname": "include_dimensions",
 			"label": __("Consider Accounting Dimensions"),
 			"fieldtype": "Check",
