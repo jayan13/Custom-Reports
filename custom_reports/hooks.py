@@ -304,7 +304,17 @@ fixtures = [
 					"Salary Detail-narration",
 					"Additional Salary-narration",
 					"Attendance-shift_roster",
-					"Attendance-description"
+					"Attendance-description",
+					"Payment Entry-view_reference_details",
+					"Journal Entry-payment_type",
+					"Payment Entry-expense_request",
+					"Material Request-journal_entry_issue",
+					"Material Request-journal_entry",
+					"Journal Entry-expense_request",
+					"Journal Entry-customer_group_outstanding_invoices",
+					"Company-payment_journal_entry_naming_series",
+					"Company-journal_entry_ret_naming_series",
+					"Company-journal_entry_naming_series",
                 ),
             ]
         ],
@@ -337,7 +347,7 @@ fixtures = [
 		
 	] ] },
 	{ "doctype": "Page", "filters": [ ["name", "in", ( "salary-comparison","salary-sheet-without","over-time-sheet","employee-salary-shee" )] ] },
-	{ "doctype": "Client Script", "filters": [ ["name", "in", ( "Leave Allocation-Form","Payroll Entry-Form","Company-Form" )] ] },
+	{ "doctype": "Client Script", "filters": [ ["name", "in", ( "Leave Allocation-Form","Payroll Entry-Form","Company-Form","Material Request-Form","Annual Leave Payslip-Form","Leave Application-Form","Purchase Order-Form","Payment Entry-Form","Sales Order-Form" )] ] },
 ]
 # Authentication and authorization
 # --------------------------------
