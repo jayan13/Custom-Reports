@@ -78,5 +78,25 @@
   "style": null,
   "system_page": 0,
   "title": "Salary Comparison"
+ },
+ {
+  "content": null,
+  "docstatus": 0,
+  "doctype": "Page",
+  "icon": null,
+  "modified": "2023-11-23 18:09:32.317156",
+  "module": "custom reports",
+  "name": "sif-file",
+  "page_name": "sif-file",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "restrict_to_domain": null,
+  "roles": [],
+  "script": null,
+  "standard": "Yes",
+  "style": null,
+  "system_page": 0,
+  "title": "Salary Information"
  }
 ]

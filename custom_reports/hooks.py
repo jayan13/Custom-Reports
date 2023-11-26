@@ -31,7 +31,7 @@ app_license = "MIT"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {"Payroll Entry" : "public/js/pentry.js","Employee" : "public/js/employee.js"}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -323,6 +323,11 @@ fixtures = [
 					"Company-payment_journal_entry_naming_series",
 					"Company-journal_entry_ret_naming_series",
 					"Company-journal_entry_naming_series",
+					"Company-ministry_of_labor_employer_ids",
+					"Company-ministry_of_labor_employer_id",
+					"Bank-routing_number",
+					"Employee-ministry_of_labor_employer_id",
+					"Employee-employee_labor_card_number"
                 ),
             ]
         ],
@@ -354,7 +359,7 @@ fixtures = [
 		)
 		
 	] ] },
-	{ "doctype": "Page", "filters": [ ["name", "in", ( "salary-comparison","salary-sheet-without","over-time-sheet","employee-salary-shee" )] ] },
+	{ "doctype": "Page", "filters": [ ["name", "in", ( "sif-file","salary-comparison","salary-sheet-without","over-time-sheet","employee-salary-shee" )] ] },
 	{ "doctype": "Client Script", "filters": [ ["name", "in", ( "Leave Allocation-Form","Payroll Entry-Form","Company-Form","Material Request-Form","Annual Leave Payslip-Form","Leave Application-Form","Purchase Order-Form","Payment Entry-Form","Sales Order-Form" )] ] },
 ]
 # Authentication and authorization

@@ -1,0 +1,59 @@
+<div id="report_sif" class="sif" >
+<style>
+	.table-bordered{
+		display: table;
+		text-indent: initial;
+		border-spacing: 0;
+		border-collapse: collapse;
+		width: 100%;
+		max-width: 100%;
+		font-size: inherit;
+		border:none !important;
+	}
+	.table-bordered tr td{
+		border-color: rgb(192, 191, 191) !important;
+		
+	}
+</style>
+
+	
+	<table class="table table-bordered">
+		<thead>
+			
+			<tr>
+				
+				<td style="width: 10%;font-weight: bold;">{%= __("Employee") %}</td>	
+				<!--<td style="width: 15%; text-align: right;font-weight: bold;" >{%= __("Name") %}</td>-->
+				<td style="width: 18%; text-align: center;font-weight: bold;"  >{%= __("Id") %}</td>
+				<td style="width: 18%; text-align: center;font-weight: bold;"  >{%= __("Agent ID") %}</td>
+				<td style="width: 18%; text-align: center;font-weight: bold;"  >{%= __("Bank Acc") %}</td>	
+				<td style="width: 10%; text-align: center;font-weight: bold;" >{%= __("Start Date") %}</td>
+				<td style="width: 10%; text-align: center;font-weight: bold;" >{%= __("End Date") %}</td>	
+				<td style="width: 3%; text-align: center;font-weight: bold;" >{%= __("Days") %}</td>
+				<td style="width: 5%; text-align: right;font-weight: bold;" >{%= __("Fixed Amt") %}</td>
+				<td style="width: 5%; text-align: right;font-weight: bold;" >{%= __("Variable Amt") %}</td>
+				<td style="width: 2%; text-align: center;font-weight: bold;"  >{%= __("Unpaid Leaves") %}</td>
+			</tr>
+		</thead>
+		<tbody>
+			{% for(var i=0,l=slip.length; i<l;i++) { %}
+			<tr>
+			
+			<td >{%=slip[i].employee %}</td>
+			<!--<td >{%=slip[i].employee_name %}</td>-->
+			<td >{%=slip[i].employee_labor_card_number %}</td>
+			<td >{%=slip[i].routing_number %}</td>
+			<td >{%=slip[i].bank_ac_no %}</td>
+			<td >{%=slip[i].start_date %}</td>
+			<td >{%=slip[i].end_date %}</td>
+			<td >{%=slip[i].payment_days %}</td>
+			<td style="text-align: right">{%=format_currency(slip[i].fix_pay) %}</td>
+			<td style="text-align: right">{%=format_currency(slip[i].vary_pay) %}</td>
+			<td >{%=slip[i].leave_without_pay %}</td>
+		</tr>
+			{% } %}
+		</tbody>
+	</table>
+	
+</div>
+    
