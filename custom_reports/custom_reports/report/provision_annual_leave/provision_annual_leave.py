@@ -568,7 +568,7 @@ def get_leave_no(emp,processing_month):
 		new_leaves_allocated=set[0].new_leaves_allocated
 		join_date=frappe.db.get_value('Employee',emp,'date_of_joining')
 		totalday=date_diff(getdate(processing_month),getdate(join_date))+1
-		if set[0].new_leaves_allocated >= 30 and float(totalday) < 365:
-			new_leaves_allocated=24
+		if float(totalday) < 365:
+			new_leaves_allocated=30
 			
 	return new_leaves_allocated
