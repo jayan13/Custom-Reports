@@ -41,19 +41,19 @@ def get_columns(filters):
 		{
 		"fieldname": "holiday_over_time_hr",
 		"fieldtype": "Data",
-		"label": "Normal Incentive hr",	
+		"label": "Holiday hr @ 1.5 hr",	
 		"width": 100
 		},
 		{
 		"fieldname": "over_time_incentive",
 		"fieldtype": "Data",
-		"label": "Holi @1.50",	
+		"label": "Normal Incentive hr @1.25",	
 		"width": 100
 		},
 		{
 		"fieldname": "holiday_over_time_incentive",
 		"fieldtype": "Data",
-		"label": "Holi Incentive hr",	
+		"label": "Holi Incentive hr @1.5",	
 		"width": 100
 		},						
  	 ]
